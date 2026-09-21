@@ -15,7 +15,7 @@
 /* Light is the default; the nav toggle sets data-theme="dark" on <html>. */
 :root[data-theme="dark"]{ --bg:#18140f; --fg:#efe6d6; --muted:#a89b89; --accent-warm:#ff8a50; --accent-hi:#f2cf4e; --card:#241e17; --shadow: rgba(0,0,0,.9); --accent-bold:#8fb6ff; }
 *{box-sizing:border-box}
-html{-webkit-text-size-adjust:100%;font-size:112.5%}
+html{-webkit-text-size-adjust:100%;font-size:125%}
 body{margin:0;background:var(--bg);color:var(--fg);font-family:"Source Serif 4",Georgia,serif;line-height:1.6}
 a{color:inherit}
 img{max-width:100%}
@@ -40,13 +40,13 @@ nav.links a:hover{background:var(--accent-hi);border-color:var(--fg);color:var(-
   font-family:"Space Grotesk",sans-serif;font-weight:700;cursor:pointer}
 
 /* ===== layout ===== */
-main{position:relative;max-width:1000px;margin:0 auto;padding:64px 28px 60px 28px}
+main{position:relative;max-width:1080px;margin:0 auto;padding:64px 28px 60px 28px}
 main.narrow{max-width:780px}
 
 /* ===== hero / about ===== */
 .hero{display:flex;gap:44px;align-items:center;margin-bottom:72px}
 .photo-wrap{flex:none;transform:rotate(-3deg)}
-.photo{width:190px;height:220px;display:grid;place-items:center;font-size:52px;font-weight:700;color:#fff;
+.photo{width:240px;height:280px;display:grid;place-items:center;font-size:64px;font-weight:700;color:#fff;
   background:linear-gradient(160deg,#c8b79e,#8d7a60);
   border:8px solid #fffdf8;border-bottom-width:28px;
   outline:3px solid var(--fg);outline-offset:-8px;
@@ -54,18 +54,18 @@ main.narrow{max-width:780px}
 .photo img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
 .photo::after{content:attr(data-caption);position:absolute;bottom:-24px;left:0;right:0;text-align:center;
   font-family:Caveat,cursive;font-size:1rem;color:var(--muted)}
-.name{margin:0 0 12px;font-size:3.4rem;line-height:1.05;font-weight:400;font-family:"Instrument Serif",Georgia,serif;
+.name{margin:0 0 22px;font-size:3.4rem;line-height:1.05;font-weight:400;font-family:"Instrument Serif",Georgia,serif;
   display:flex;flex-wrap:wrap;align-items:center;gap:16px;row-gap:10px}
 .name .stamp{display:inline-block;font-family:"Space Grotesk",sans-serif;
   font-weight:800;font-size:2.8rem;line-height:1;text-transform:uppercase;background:var(--fg);color:var(--bg);
   padding:6px 14px;border-radius:5px;transform:rotate(2deg);letter-spacing:0}
-.role{display:inline-block;margin:0 0 16px;font-family:"Space Grotesk",sans-serif;font-weight:700;font-size:.78rem;
+.role{display:inline-block;margin:0 0 26px;font-family:"Space Grotesk",sans-serif;font-weight:700;font-size:.72rem;
   text-transform:uppercase;letter-spacing:.08em;background:var(--accent-hi);color:var(--fg);padding:4px 10px;
   border:2px solid var(--fg);border-radius:3px;transform:rotate(-1deg)}
-.tagline{margin:0 0 22px;max-width:36ch;font-family:"Instrument Serif",Georgia,serif;font-style:italic;
+.tagline{margin:0 0 32px;max-width:36ch;font-family:"Instrument Serif",Georgia,serif;font-style:italic;
   font-size:1.6rem;line-height:1.25}
-.tagline .mark-span{font-family:"Space Grotesk",sans-serif;font-style:normal;font-weight:700;font-size:.9em;color:var(--accent-warm)}
-.about .bio{max-width:68ch}
+.tagline .mark-span{color:var(--accent-warm)}
+.about .bio{max-width:74ch}
 .bio{margin:0;text-align:justify}
 .bio p{margin:0 0 14px}
 /* inline links: bold black with a mustard highlighter stroke */
@@ -258,6 +258,7 @@ footer.site-footer{color:var(--muted);font-size:.85em;padding-top:22px;border-to
 
 /* ===== responsive ===== */
 @media (max-width:680px){
+  html{font-size:112.5%}
   .nav-toggle{display:inline-block}
   nav.links{display:none;width:100%;order:3;flex-direction:column;gap:6px;margin-top:10px}
   nav.links.open{display:flex}
@@ -270,7 +271,7 @@ footer.site-footer{color:var(--muted);font-size:.85em;padding-top:22px;border-to
   .pub{grid-template-columns:1fr;gap:6px}
   main{padding:40px 18px 48px}
   .name{font-size:2.5rem;gap:10px}
-  .photo{width:160px;height:185px}
+  .photo{width:180px;height:210px}
   .name .stamp{font-size:1.7rem;padding:4px 10px}
   h1.page-title{font-size:2rem}
   .proj-header h1{font-size:1.8rem}
