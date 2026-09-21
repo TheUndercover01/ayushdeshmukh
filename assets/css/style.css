@@ -33,8 +33,12 @@ nav.links a:hover{background:var(--accent-hi);border-color:var(--fg);color:var(-
 
 /* ===== layout ===== */
 main{position:relative;max-width:740px;margin:0 auto;padding:64px 28px 60px 28px}
-main.with-companion{margin-right:78px}
 main.narrow{max-width:660px}
+/* Reserve the robot's lane as body padding, not a one-sided main margin —
+   mixing margin:0 auto with a fixed margin-right breaks centering (the
+   auto side absorbs all the slack instead of splitting it), which shoves
+   the whole column to the right on wide screens. */
+body:has(.track){padding-right:78px}
 
 /* ===== hero / about ===== */
 .hero{display:flex;gap:34px;align-items:flex-start;margin-bottom:76px}
@@ -208,7 +212,7 @@ footer.site-footer{color:var(--muted);font-size:.85em;padding-top:22px;border-to
 /* ===== responsive ===== */
 @media (max-width:900px){
   .track{display:none}
-  main.with-companion{margin-right:auto}
+  body:has(.track){padding-right:0}
 }
 @media (max-width:680px){
   .nav-toggle{display:inline-block}
