@@ -27,8 +27,8 @@ document.addEventListener('DOMContentLoaded', () => {
   function buildRoad(){
     road.w = track.clientWidth; road.h = track.clientHeight;
     const navH = document.querySelector('header.nav').offsetHeight;
-    road.top = navH + 90; road.len = road.h - road.top - 24;
-    road.cx = road.w / 2; road.amp = road.w * 0.42;
+    road.top = navH + 160; road.len = road.h - road.top - 24;
+    road.cx = road.w / 2; road.amp = road.w * 0.38;
     road.waves = Math.max(3, road.len / 230);
     let d = '';
     for (let y = 0; y <= road.len; y += 6){
@@ -45,7 +45,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const y = road.top + t * road.len;
     const slope = Math.max(-1, Math.min(1, (wave(Math.min(1, t + 0.004)) - wave(Math.max(0, t - 0.004))) / (road.len * 0.008) * 0.9));
     walker.style.left = x + 'px';
-    walker.style.top = (y - 92) + 'px'; // feet sit on the road
+    walker.style.top = (y - 138) + 'px'; // feet sit on the road
     walker.style.transform = `translateX(-50%) rotate(${(slope * 12).toFixed(2)}deg)`;
   }
 
@@ -93,7 +93,7 @@ document.addEventListener('DOMContentLoaded', () => {
       if (i > 0) sparksContainer.appendChild(el);
       made.push(el);
       const rad = deg * Math.PI / 180;
-      const dx = Math.cos(rad) * 20, dy = Math.sin(rad) * 20 - 10;
+      const dx = Math.cos(rad) * 24, dy = Math.sin(rad) * 24 - 12;
       el.animate(
         [{transform:'translate(0px,0px) scale(.3)', opacity:0},
          {transform:`translate(${dx*0.6}px,${dy*0.6}px) scale(1)`, opacity:1, offset:.45},
