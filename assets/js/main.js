@@ -16,7 +16,7 @@ document.addEventListener('DOMContentLoaded', () => {
   const root = document.documentElement;
   const syncThemeBtn = () => {
     const dark = root.dataset.theme === 'dark';
-    themeBtn.textContent = dark ? '☀' : '☾';
+    themeBtn.textContent = dark ? '☀ Light mode' : '☾ Dark mode';
     themeBtn.setAttribute('aria-label', dark ? 'Switch to light mode' : 'Switch to dark mode');
   };
   if (themeBtn) {

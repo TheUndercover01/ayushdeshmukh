@@ -8,7 +8,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
   const figureSvg = document.getElementById('figureSvg');
   const bubble = document.getElementById('bubble');
-  const pctEl = document.getElementById('pct');
   const armL = figureSvg.querySelector('.arm-l');
   const armR = figureSvg.querySelector('.arm-r');
   const roadPath = document.getElementById('roadPath');
@@ -46,9 +45,8 @@ document.addEventListener('DOMContentLoaded', () => {
     const y = road.top + t * road.len;
     const slope = Math.max(-1, Math.min(1, (wave(Math.min(1, t + 0.004)) - wave(Math.max(0, t - 0.004))) / (road.len * 0.008) * 0.9));
     walker.style.left = x + 'px';
-    walker.style.top = (y - 75) + 'px'; // feet sit on the road
+    walker.style.top = (y - 92) + 'px'; // feet sit on the road
     walker.style.transform = `translateX(-50%) rotate(${(slope * 12).toFixed(2)}deg)`;
-    pctEl.textContent = Math.round(t * 100) + '%';
   }
 
   function onScroll(){
