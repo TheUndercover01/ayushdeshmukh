@@ -47,6 +47,10 @@ main.narrow{max-width:36rem}
 /* ===== hero / about ===== */
 .hero{display:flex;gap:2.2rem;align-items:center;margin-bottom:3.6rem}
 .photo-wrap{flex:none;transform:rotate(-3deg)}
+/* strip of tape holding the polaroid, same as on the project cards */
+.photo-wrap{position:relative}
+.photo-wrap::before{content:"";position:absolute;top:-.55rem;left:50%;z-index:2;width:4.2rem;height:1.15rem;
+  transform:translateX(-50%) rotate(4deg);background:color-mix(in oklch, var(--accent-hi) 55%, transparent)}
 .photo{width:11rem;height:13rem;display:grid;place-items:center;font-size:3rem;font-weight:700;color:#fff;
   background:linear-gradient(160deg,#c8b79e,#8d7a60);
   border:8px solid #fffdf8;border-bottom-width:28px;
