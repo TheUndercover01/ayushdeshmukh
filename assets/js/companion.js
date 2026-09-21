@@ -1,5 +1,5 @@
-/* The robot companion that walks the wavy track on the About page and
-   cheers when a section arrives. Only loaded on index.html. */
+/* The robot companion that walks beside the text on the About page and
+   cheers when a section reaches it. Only loaded on index.html. */
 
 document.addEventListener('DOMContentLoaded', () => {
   const walker = document.getElementById('walker');
@@ -10,43 +10,58 @@ document.addEventListener('DOMContentLoaded', () => {
   const bubble = document.getElementById('bubble');
   const armL = figureSvg.querySelector('.arm-l');
   const armR = figureSvg.querySelector('.arm-r');
-  const roadPath = document.getElementById('roadPath');
-
   let ticking = false, walkTimeout = null;
-  const road = {};
+  const lane = {};
 
-  // One smooth wave whose bend length and swing width drift slowly, so
-  // every curve stays clean but no two bends match.
-  function wave(f){
-    const k = f * road.waves * 2 * Math.PI;
-    const phase = k + 0.9 * Math.sin(k * 0.29 + 1.1);      // stretches / squeezes the bends
-    const swing = 0.72 + 0.28 * Math.sin(k * 0.21 + 2.3);  // wide bends and gentle ones
-    return road.cx + road.amp * swing * Math.sin(phase);
+  // Horizontal sway as a function of scroll distance (px). One smooth wave
+  // whose bend length and width drift slowly, so no two bends match.
+  function swayX(scroll){
+    const k = scroll / 260;
+    const phase = k + 0.9 * Math.sin(k * 0.29 + 1.1);
+    const swing = 0.72 + 0.28 * Math.sin(k * 0.21 + 2.3);
+    return lane.cx + lane.amp * swing * Math.sin(phase);
   }
 
-  function buildRoad(){
-    road.w = track.clientWidth; road.h = track.clientHeight;
-    const navH = document.querySelector('header.nav').offsetHeight;
-    road.top = navH + 160; road.len = road.h - road.top - 24;
-    road.cx = road.w / 2; road.amp = road.w * 0.38;
-    road.waves = Math.max(3, road.len / 230);
-    let d = '';
-    for (let y = 0; y <= road.len; y += 6){
-      d += (y ? ' L' : 'M') + wave(y / road.len).toFixed(1) + ' ' + (road.top + y).toFixed(1);
-    }
-    roadPath.setAttribute('d', d);
+  function measure(){
+    lane.w = track.clientWidth;
+    lane.cx = lane.w / 2; lane.amp = lane.w * 0.38;
+    lane.navH = document.querySelector('header.nav').offsetHeight;
   }
+
+  // The robot stays at roughly the same height on screen and the page scrolls
+  // past it, so it moves at exactly your scroll speed. It drifts gently from
+  // ~35% to ~55% of the screen height over the whole page.
+  function robotFeetY(t){
+    return Math.max(lane.navH + 160, innerHeight * (0.35 + 0.2 * t));
+  }
+
+  const sections = [...document.querySelectorAll('[data-cheer]')];
+  let lastTops = sections.map(el => el.getBoundingClientRect().top);
+  let cheeredBottom = false;
 
   function positionWalker(){
     const doc = document.documentElement;
-    const max = doc.scrollHeight - window.innerHeight;
-    const t = max > 0 ? Math.min(1, Math.max(0, window.scrollY / max)) : 0;
-    const x = wave(t);
-    const y = road.top + t * road.len;
-    const slope = Math.max(-1, Math.min(1, (wave(Math.min(1, t + 0.004)) - wave(Math.max(0, t - 0.004))) / (road.len * 0.008) * 0.9));
+    const max = doc.scrollHeight - innerHeight;
+    const y = scrollY;
+    const t = max > 0 ? Math.min(1, Math.max(0, y / max)) : 0;
+    const feet = robotFeetY(t);
+    const x = swayX(y);
+    const slope = (swayX(y + 12) - swayX(y - 12)) / 24;
     walker.style.left = x + 'px';
-    walker.style.top = (y - 138) + 'px'; // feet sit on the road
-    walker.style.transform = `translateX(-50%) rotate(${(slope * 12).toFixed(2)}deg)`;
+    walker.style.top = (feet - 138) + 'px';
+    walker.style.transform = `translateX(-50%) rotate(${Math.max(-12, Math.min(12, slope * 30)).toFixed(2)}deg)`;
+
+    // cheer when a section's top scrolls up past the robot's middle
+    const line = feet - 70;
+    sections.forEach((el, i) => {
+      const top = el.getBoundingClientRect().top;
+      if (lastTops[i] > line && top <= line) cheer(el.dataset.cheer);
+      lastTops[i] = top;
+    });
+    // sections near the end may never reach the robot, so cheer at the bottom too
+    const atBottom = max > 0 && y >= max - 4;
+    if (atBottom && !cheeredBottom) cheer(sections[sections.length - 1].dataset.cheer);
+    cheeredBottom = atBottom;
   }
 
   function onScroll(){
@@ -56,7 +71,17 @@ document.addEventListener('DOMContentLoaded', () => {
     walkTimeout = setTimeout(() => figureSvg.classList.remove('walking'), 300);
   }
 
+  // one cheer at a time; any that arrive mid-cheer wait their turn
+  const queue = []; let busy = false, lastText = '', lastAt = 0;
   function cheer(text){
+    if (text === lastText && Date.now() - lastAt < 3000) return;
+    if (busy){ if (queue[queue.length - 1] !== text) queue.push(text); return; }
+    busy = true; lastText = text; lastAt = Date.now();
+    doCheer(text);
+    setTimeout(() => { busy = false; if (queue.length) cheer(queue.shift()); }, 1300);
+  }
+
+  function doCheer(text){
     bubble.textContent = text;
     bubble.animate(
       [{opacity:0, transform:'translateY(6px) scale(.9)'},
@@ -104,12 +129,12 @@ document.addEventListener('DOMContentLoaded', () => {
     setTimeout(() => { made.slice(1).forEach(e => e.remove()); sparksContainer.setAttribute('opacity','0'); }, 850);
   }
 
-  const io = new IntersectionObserver((entries) => {
-    entries.forEach(e => { if (e.isIntersecting) cheer(e.target.dataset.cheer || 'yay!'); });
-  }, {rootMargin:'-46% 0px -46% 0px', threshold:0});
-  document.querySelectorAll('[data-cheer]').forEach(el => io.observe(el));
-
   addEventListener('scroll', onScroll, {passive:true});
-  addEventListener('resize', () => { buildRoad(); positionWalker(); });
-  buildRoad(); positionWalker();
+  addEventListener('resize', () => {
+    measure();
+    lastTops = sections.map(el => el.getBoundingClientRect().top);
+    positionWalker();
+  });
+  measure(); positionWalker();
+  setTimeout(() => cheer(sections[0].dataset.cheer), 700);
 });

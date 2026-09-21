@@ -192,8 +192,6 @@ footer.site-footer{color:var(--muted);font-size:.85em;padding-top:22px;border-to
 /* The lane straddles the right edge of the text column (content edge = 50% + 472px),
    so the robot walks close to the text and its path crosses the cards. */
 .track{position:fixed;top:0;left:min(calc(50% + 472px - 85px), calc(100% - 150px));width:140px;height:100vh;z-index:90;pointer-events:none}
-.track svg.road{position:absolute;inset:0;overflow:visible}
-.track svg.road path{fill:none;stroke:color-mix(in oklch, var(--fg) 55%, transparent);stroke-width:3;stroke-linecap:round;stroke-dasharray:3 10}
 .walker{position:absolute;width:84px;will-change:top,left,transform}
 .bob{animation:idleBob 1.6s ease-in-out infinite}
 @keyframes idleBob{0%,100%{transform:translateY(0)}50%{transform:translateY(-3px)}}
@@ -205,7 +203,7 @@ footer.site-footer{color:var(--muted);font-size:.85em;padding-top:22px;border-to
 .figure .arm-l,.figure .arm-r{transform-box:view-box}
 .bubble{position:absolute;bottom:100%;right:78px;margin-bottom:6px;min-width:90px;max-width:130px;
   background:var(--card);border:2px solid var(--fg);border-radius:8px;padding:6px 10px;
-  font-family:Caveat,cursive;font-size:1.05rem;line-height:1.15;color:var(--fg);
+  font-family:Caveat,cursive;font-size:1.35rem;line-height:1.15;color:var(--fg);
   box-shadow:3px 3px 0 var(--shadow);opacity:0;transform:translateY(6px) scale(.9);white-space:nowrap}
 .bubble::after{content:"";position:absolute;top:100%;right:14px;border:7px solid transparent;
   border-top-color:var(--fg);margin-top:-1px}
