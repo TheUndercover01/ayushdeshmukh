@@ -1,0 +1,271 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Morph Demo — Paper &amp; Ink → Brutalist</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Caveat:wght@500;700&family=Instrument+Serif:ital@0;1&family=Source+Serif+4:ital,opsz,wght@0,8..60,400;0,8..60,600;1,8..60,400&family=Space+Grotesk:wght@400;500;700&family=JetBrains+Mono:wght@400;700&display=swap">
+<style>
+:root{
+  --c-paper-bg:#f6f1e7;   --c-brutal-bg:#ffffff;
+  --c-paper-fg:#2b2622;   --c-brutal-fg:#0a0a0a;
+  --c-paper-muted:#7a6f64;--c-brutal-muted:#333333;
+  --c-paper-accent:#d9480f;--c-brutal-accent:#e6c200;
+  --c-paper-card:#fffdf8; --c-brutal-card:#ffffff;
+  --t:0; /* 0 = full paper&ink, 1 = full brutalist. Set by JS on scroll. */
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{
+  margin:0;
+  --bg:color-mix(in oklch, var(--c-paper-bg) calc((1 - var(--t))*100%), var(--c-brutal-bg));
+  --fg:color-mix(in oklch, var(--c-paper-fg) calc((1 - var(--t))*100%), var(--c-brutal-fg));
+  --muted:color-mix(in oklch, var(--c-paper-muted) calc((1 - var(--t))*100%), var(--c-brutal-muted));
+  --accent:color-mix(in oklch, var(--c-paper-accent) calc((1 - var(--t))*100%), var(--c-brutal-accent));
+  --card:color-mix(in oklch, var(--c-paper-card) calc((1 - var(--t))*100%), var(--c-brutal-card));
+  --shadow-color:color-mix(in oklch, rgba(20,15,10,.38) calc((1 - var(--t))*100%), var(--fg) calc(var(--t)*100%));
+  background:var(--bg); color:var(--fg);
+  font-family:"Source Serif 4",Georgia,serif;
+  transition:background .15s linear;
+  overflow-x:hidden;
+}
+body.brutal{ font-family:"Space Grotesk",system-ui,sans-serif; }
+a{color:inherit}
+.wash{position:fixed;inset:0;z-index:0;pointer-events:none}
+.wash.paper{opacity:calc(1 - var(--t));
+  background:
+    radial-gradient(circle at 15% 20%, rgba(217,72,15,.05), transparent 24%),
+    radial-gradient(circle at 85% 75%, rgba(122,111,100,.07), transparent 28%),
+    radial-gradient(circle at 60% 15%, rgba(217,72,15,.04), transparent 20%);
+}
+.wash.brutal{opacity:var(--t);
+  background:repeating-linear-gradient(45deg, rgba(10,10,10,.035) 0 2px, transparent 2px 16px);
+}
+
+/* progress bar */
+.progress{position:fixed;top:0;left:0;height:4px;width:calc(var(--t)*100%);
+  background:var(--fg);z-index:200;transition:background .15s linear}
+.progress-track{position:fixed;top:0;left:0;height:4px;width:100%;background:color-mix(in oklch, var(--muted) 25%, transparent);z-index:199}
+
+.badge{position:fixed;bottom:18px;right:18px;z-index:150;font-family:"JetBrains Mono",monospace;
+  font-size:11px;padding:6px 10px;border-radius:calc(10px - var(--t)*10px);
+  background:var(--card);color:var(--muted);
+  border:calc(1px + var(--t)*2px) solid var(--fg);
+  box-shadow:calc(var(--t)*4px) calc(3px + var(--t)*1px) calc((1 - var(--t))*14px) calc((1 - var(--t))*-6px) var(--shadow-color);
+}
+.badge b{color:var(--fg)}
+
+header.nav{position:fixed;top:0;left:0;right:0;z-index:100;
+  display:flex;justify-content:space-between;align-items:center;gap:16px;flex-wrap:wrap;
+  padding:14px 32px;
+  background:color-mix(in oklch, var(--bg) 80%, transparent);
+  backdrop-filter:blur(10px);
+  border-bottom:calc(1px + var(--t)*2px) solid color-mix(in oklch, var(--muted) calc(55% - var(--t)*55%), var(--fg) calc(var(--t)*100%));
+  transition:border-color .15s linear;
+}
+.logo{position:relative;display:inline-block;width:120px;height:30px}
+.logo span{position:absolute;inset:0;display:flex;align-items:center;white-space:nowrap}
+.logo .sig{font-family:Caveat,cursive;font-size:1.7rem;font-weight:700;color:var(--accent);opacity:calc(1 - var(--t))}
+.logo .block{font-family:"Space Grotesk",sans-serif;font-size:1.05rem;font-weight:800;letter-spacing:-.02em;text-transform:uppercase;opacity:var(--t)}
+.logo .block::before{content:"■ ";color:var(--accent)}
+nav.links{display:flex;gap:22px;flex-wrap:wrap;font-size:.92rem}
+nav.links a{text-decoration:none;color:var(--muted);position:relative;padding:2px 0;transition:color .15s}
+nav.links a.active{color:var(--fg)}
+body:not(.brutal) nav.links a.active{text-decoration:underline wavy var(--accent);text-underline-offset:5px}
+body.brutal nav.links a{border:2px solid var(--fg);padding:2px 10px;border-radius:0}
+body.brutal nav.links a.active{background:var(--fg);color:var(--bg)}
+
+main{position:relative;z-index:1;max-width:760px;margin:0 auto;padding:130px 28px 60px}
+
+.hero{display:flex;gap:34px;align-items:flex-start;margin-bottom:70px}
+.photo{width:150px;height:170px;flex:none;display:grid;place-items:center;font-size:38px;color:#fff;font-weight:700;
+  background:linear-gradient(160deg,
+    color-mix(in oklch, #c8b79e calc((1 - var(--t))*100%), #d0d0d0),
+    color-mix(in oklch, #8d7a60 calc((1 - var(--t))*100%), #3a3a3a));
+  border:calc(8px - var(--t)*5px) solid color-mix(in oklch, #ffffff calc((1 - var(--t))*100%), var(--fg));
+  border-bottom-width:calc(26px - var(--t)*23px);
+  transform:rotate(calc((1 - var(--t)) * -3deg));
+  box-shadow:calc(var(--t)*6px) calc(4px + var(--t)*2px) calc((1 - var(--t))*22px) calc((1 - var(--t))*-8px) var(--shadow-color);
+}
+.name{margin:0 0 6px;font-weight:400;font-size:3.1rem;line-height:1.02;letter-spacing:-.01em;
+  font-family:"Instrument Serif",Georgia,serif;}
+body.brutal .name{font-family:"Space Grotesk",sans-serif;font-weight:800;text-transform:uppercase;letter-spacing:-.03em;font-size:2.9rem}
+.role{margin:0 0 14px;color:var(--muted);font-style:italic}
+body.brutal .role{font-style:normal;text-transform:uppercase;font-size:.8rem;letter-spacing:.1em;font-weight:700;color:var(--accent)}
+.bio{margin:0 0 16px;max-width:56ch;text-align:justify}
+.hlinks{display:flex;gap:14px;flex-wrap:wrap}
+.hlinks a{text-decoration:none;font-size:.92rem;
+  text-decoration:underline wavy color-mix(in oklch, var(--accent) calc(100% - var(--t)*100%), transparent);
+  text-underline-offset:4px;
+  border:calc(var(--t)*2px) solid var(--fg);
+  padding:calc(var(--t)*2px) calc(var(--t)*10px);
+  border-radius:calc(4px - var(--t)*4px);
+}
+body.brutal .hlinks a:hover{background:var(--accent)}
+
+h2.label{display:inline-block;margin:0 0 18px;font-size:1rem;
+  font-family:Caveat,cursive;color:var(--accent);font-weight:700;transform:rotate(-1.5deg)}
+body.brutal h2.label{font-family:"Space Grotesk",sans-serif;color:var(--bg);background:var(--fg);
+  padding:2px 10px;text-transform:uppercase;font-size:.85rem;transform:none;letter-spacing:.05em}
+
+section{margin-bottom:64px}
+
+.news ul{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:10px}
+.news li{display:flex;gap:14px;font-size:.95rem;padding:8px 10px;
+  border-bottom:calc(1px - var(--t)*1px) dashed var(--muted);
+  border:calc(var(--t)*2px) solid var(--fg);
+  border-radius:calc(6px - var(--t)*6px);
+  box-shadow:calc(var(--t)*3px) calc(var(--t)*3px) 0 0 color-mix(in oklch, transparent calc(100% - var(--t)*100%), var(--fg));
+}
+.news .date{flex:none;width:88px;color:var(--muted);font-size:.85em}
+body.brutal .news .date{font-family:"JetBrains Mono",monospace;color:var(--accent);font-weight:700}
+
+.pub{display:grid;grid-template-columns:88px 1fr;gap:18px;padding:16px 14px;margin-bottom:14px;
+  background:var(--card);
+  border-radius:calc(8px - var(--t)*8px);
+  border:calc(var(--t)*3px) solid var(--fg);
+  box-shadow:calc(var(--t)*6px) calc(4px + var(--t)*2px) calc((1 - var(--t))*16px) calc((1 - var(--t))*-8px) var(--shadow-color);
+}
+.pub .year{font-family:Caveat,cursive;font-size:2rem;color:var(--accent);line-height:1}
+body.brutal .pub .year{font-family:"Space Grotesk",sans-serif;font-weight:900;font-size:1.7rem;color:var(--fg)}
+.pub .venue{display:block;font-size:.75rem;color:var(--muted);margin-top:2px}
+body.brutal .pub .venue{text-transform:uppercase;letter-spacing:.08em;font-weight:700}
+.ptitle{margin:0 0 4px;font-size:1.12rem;font-family:"Instrument Serif",Georgia,serif;font-style:italic}
+body.brutal .ptitle{font-family:"Space Grotesk",sans-serif;font-weight:700;font-style:normal;letter-spacing:-.01em}
+.authors{margin:0 0 8px;color:var(--muted);font-size:.9em}
+.plinks{display:flex;gap:12px;flex-wrap:wrap;font-size:.85em}
+.plinks a{text-decoration:underline wavy color-mix(in oklch, var(--accent) calc(100% - var(--t)*100%), transparent);text-underline-offset:3px}
+body.brutal .plinks a{text-decoration:none;font-weight:700;text-transform:uppercase;font-size:.78em;letter-spacing:.05em}
+body.brutal .plinks a:hover{color:var(--accent)}
+
+.cards{display:grid;grid-template-columns:repeat(3,1fr);gap:20px}
+.card{display:block;text-decoration:none;color:inherit;padding:10px 10px 14px;background:var(--card);
+  border-radius:calc(6px - var(--t)*6px);
+  border:calc(var(--t)*3px) solid var(--fg);
+  box-shadow:calc(var(--t)*6px) calc(4px + var(--t)*2px) calc((1 - var(--t))*16px) calc((1 - var(--t))*-8px) var(--shadow-color);
+}
+.card:nth-child(1){transform:rotate(calc((1 - var(--t)) * -2.4deg))}
+.card:nth-child(2){transform:rotate(calc((1 - var(--t)) * 1.6deg))}
+.card:nth-child(3){transform:rotate(calc((1 - var(--t)) * -1deg))}
+.thumb{aspect-ratio:16/10;margin-bottom:10px;border-radius:calc(4px - var(--t)*4px);
+  background:
+    radial-gradient(circle at 30% 60%, color-mix(in oklch, #e9c9a3 calc((1-var(--t))*100%), transparent) 0 22%, transparent 23%),
+    radial-gradient(circle at 70% 40%, color-mix(in oklch, #b9cfc0 calc((1-var(--t))*100%), transparent) 0 25%, transparent 26%),
+    repeating-linear-gradient(45deg, color-mix(in oklch, transparent calc(100% - var(--t)*100%), var(--fg)) 0 3px, transparent 3px 14px),
+    color-mix(in oklch, #efe6d6 calc((1-var(--t))*100%), var(--c-brutal-accent) calc(var(--t)*100%));
+}
+.card h3{margin:0 0 4px;font-size:1.15rem;font-family:"Instrument Serif",Georgia,serif;font-weight:400}
+body.brutal .card h3{font-family:"Space Grotesk",sans-serif;font-weight:800;text-transform:uppercase;font-size:1.02rem;letter-spacing:-.01em}
+.card p{margin:0;color:var(--muted);font-size:.9em}
+.card .tag{display:inline-block;margin-top:8px;font-size:.8em;color:var(--accent)}
+body.brutal .card .tag{font-weight:700}
+body.brutal .card .tag::before{content:"● ";color:#e00}
+
+footer{color:var(--muted);font-size:.85em;padding-top:20px;border-top:calc(1px + var(--t)*2px) solid color-mix(in oklch, var(--muted) calc(45% - var(--t)*45%), var(--fg) calc(var(--t)*100%))}
+
+@media(max-width:680px){
+  .hero{flex-direction:column}
+  .cards{grid-template-columns:1fr}
+  .pub{grid-template-columns:1fr;gap:4px}
+  main{padding-top:150px}
+  header.nav{padding:12px 18px}
+}
+</style>
+</head>
+<body>
+
+<div class="progress-track"></div>
+<div class="progress"></div>
+<div class="wash paper"></div>
+<div class="wash brutal"></div>
+<div class="badge"><b id="pct">0%</b> brutalist — scroll to morph</div>
+
+<header class="nav">
+  <a class="logo" href="#"><span class="sig">Ayush</span><span class="block">Ayush</span></a>
+  <nav class="links">
+    <a href="#" class="active">About</a>
+    <a href="#pubs">Publications</a>
+    <a href="#projects">Projects</a>
+    <a href="#">Blog</a>
+    <a href="#">CV</a>
+  </nav>
+</header>
+
+<main>
+  <section class="hero">
+    <div class="photo">A</div>
+    <div>
+      <h1 class="name">Ayush [Last Name]</h1>
+      <p class="role">PhD Student · [University Name]</p>
+      <p class="bio">I work on [research area], building [kind of methods] that [goal]. Previously at [Lab / Company]. My interests are representation learning, [interest two], and [interest three].</p>
+      <div class="hlinks"><a href="#">GitHub</a><a href="#">Scholar</a><a href="#">Twitter</a><a href="#">Email</a></div>
+    </div>
+  </section>
+
+  <section class="news">
+    <h2 class="label">Notes</h2>
+    <ul>
+      <li><span class="date">Sep 2026</span> Paper accepted to NeurIPS! 🎉</li>
+      <li><span class="date">Jun 2026</span> Started internship at [Lab].</li>
+      <li><span class="date">Jan 2026</span> New preprint out on [topic].</li>
+    </ul>
+  </section>
+
+  <section class="pubs" id="pubs">
+    <h2 class="label">Publications</h2>
+    <article class="pub">
+      <div><span class="year">2026</span><span class="venue">NeurIPS</span></div>
+      <div>
+        <h3 class="ptitle">[Paper Title One: A Method for Something Interesting]</h3>
+        <p class="authors"><b>Ayush [Last]</b>, Coauthor A, Coauthor B</p>
+        <div class="plinks"><a href="#">PDF</a><a href="#">arXiv</a><a href="#">Code</a><a href="#">BibTeX</a></div>
+      </div>
+    </article>
+    <article class="pub">
+      <div><span class="year">2025</span><span class="venue">ICML</span></div>
+      <div>
+        <h3 class="ptitle">[Paper Title Two: Understanding Another Phenomenon]</h3>
+        <p class="authors">Coauthor C, <b>Ayush [Last]</b>, Coauthor D</p>
+        <div class="plinks"><a href="#">PDF</a><a href="#">arXiv</a><a href="#">Code</a><a href="#">BibTeX</a></div>
+      </div>
+    </article>
+  </section>
+
+  <section class="projects" id="projects">
+    <h2 class="label">Projects</h2>
+    <div class="cards">
+      <a class="card" href="#"><div class="thumb"></div><h3>[Project Alpha]</h3><p>One line about what this project does.</p><span class="tag">NeurIPS 2026</span></a>
+      <a class="card" href="#"><div class="thumb"></div><h3>[Project Beta]</h3><p>A dataset / tool released with the paper.</p><span class="tag">ICML 2025</span></a>
+      <a class="card" href="#"><div class="thumb"></div><h3>[Project Gamma]</h3><p>Ongoing work, short teaser sentence.</p><span class="tag">In progress</span></a>
+    </div>
+  </section>
+
+  <footer>© 2026 Ayush [Last Name] · this page morphs from paper-&amp;-ink to brutalist as you scroll</footer>
+</main>
+
+<script>
+const root = document.documentElement;
+const body = document.body;
+const pctEl = document.getElementById('pct');
+let zone = 900, ticking = false;
+
+function computeZone(){
+  const pubs = document.getElementById('pubs');
+  zone = Math.max(400, pubs.offsetTop - 260); // morph completes just before Publications
+}
+function apply(){
+  const t = Math.min(1, Math.max(0, window.scrollY / zone));
+  root.style.setProperty('--t', t.toFixed(4));
+  body.classList.toggle('brutal', t > 0.55);
+  pctEl.textContent = Math.round(t*100) + '%';
+  ticking = false;
+}
+function onScroll(){ if(!ticking){ requestAnimationFrame(apply); ticking = true; } }
+addEventListener('scroll', onScroll, {passive:true});
+addEventListener('resize', () => { computeZone(); apply(); });
+computeZone(); apply();
+</script>
+</body>
+</html>

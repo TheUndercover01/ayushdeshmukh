@@ -1,0 +1,378 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Hybrid Demo — Paper &amp; Ink × Brutalist, with a walking companion</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Caveat:wght@500;700&family=Instrument+Serif:ital@0;1&family=Source+Serif+4:ital,opsz,wght@0,8..60,400;0,8..60,600;1,8..60,400&family=Space+Grotesk:wght@400;500;700;800&family=JetBrains+Mono:wght@400;700&display=swap">
+<style>
+:root{
+  --bg:#f6f1e7; --fg:#211d19; --muted:#726657;
+  --accent-warm:#d9480f; --accent-hi:#e8bd2a;
+  --card:#fffdf8; --shadow: rgba(33,29,25,.9);
+}
+@media (prefers-color-scheme: dark){
+  :root{ --bg:#18140f; --fg:#efe6d6; --muted:#a89b89; --accent-warm:#ff8a50; --accent-hi:#f2cf4e; --card:#241e17; --shadow: rgba(0,0,0,.9); }
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--fg);font-family:"Source Serif 4",Georgia,serif;line-height:1.6}
+a{color:inherit}
+
+header.nav{position:sticky;top:0;z-index:80;display:flex;justify-content:space-between;align-items:center;gap:16px;flex-wrap:wrap;
+  padding:14px 32px;background:color-mix(in oklch, var(--bg) 88%, transparent);backdrop-filter:blur(8px);
+  border-bottom:3px solid var(--fg)}
+.logo{display:flex;align-items:baseline;gap:8px;text-decoration:none}
+.logo .mark{background:var(--fg);color:var(--bg);font-family:"Space Grotesk",sans-serif;font-weight:800;font-size:.85rem;padding:3px 7px;border-radius:3px}
+.logo .sig{font-family:Caveat,cursive;font-weight:700;font-size:1.5rem;color:var(--accent-warm)}
+nav.links{display:flex;gap:8px;flex-wrap:wrap;font-size:.85rem}
+nav.links a{text-decoration:none;color:var(--fg);border:2px solid var(--fg);padding:3px 11px;border-radius:3px;font-family:"Space Grotesk",sans-serif;font-weight:600}
+nav.links a.active{background:var(--fg);color:var(--bg)}
+nav.links a:hover{background:var(--accent-hi);border-color:var(--fg);color:var(--fg)}
+
+main{position:relative;max-width:740px;margin:0 auto;padding:64px 28px 60px 28px;margin-right:78px}
+
+.hero{display:flex;gap:34px;align-items:flex-start;margin-bottom:76px}
+.photo-wrap{flex:none;transform:rotate(-3deg)}
+.photo{width:148px;height:170px;display:grid;place-items:center;font-size:40px;font-weight:700;color:#fff;
+  background:linear-gradient(160deg,#c8b79e,#8d7a60);
+  border:8px solid #fffdf8;border-bottom-width:28px;
+  outline:3px solid var(--fg);outline-offset:-8px;
+  box-shadow:7px 7px 0 var(--shadow);position:relative}
+.photo::after{content:"Sept '26";position:absolute;bottom:-24px;left:0;right:0;text-align:center;
+  font-family:Caveat,cursive;font-size:1rem;color:var(--muted)}
+.name{margin:0 0 10px;font-size:3rem;line-height:1.05;font-weight:400;font-family:"Instrument Serif",Georgia,serif}
+.name .stamp{display:inline-block;margin-left:10px;vertical-align:middle;font-family:"Space Grotesk",sans-serif;
+  font-weight:800;font-size:.95rem;text-transform:uppercase;background:var(--fg);color:var(--bg);
+  padding:4px 9px;border-radius:3px;transform:rotate(2deg);letter-spacing:.02em}
+.role{display:inline-block;margin:0 0 16px;font-family:"Space Grotesk",sans-serif;font-weight:700;font-size:.78rem;
+  text-transform:uppercase;letter-spacing:.08em;background:var(--accent-hi);color:var(--fg);padding:4px 10px;
+  border:2px solid var(--fg);border-radius:3px;transform:rotate(-1deg)}
+.bio{margin:0 0 18px;max-width:56ch;text-align:justify}
+.bio .mark-span{text-decoration:underline wavy var(--accent-warm);text-underline-offset:4px}
+.hlinks{display:flex;gap:12px;flex-wrap:wrap}
+.hlinks a{text-decoration:none;font-family:"Space Grotesk",sans-serif;font-weight:600;font-size:.88rem;
+  border:2px solid var(--fg);padding:5px 13px;border-radius:3px;background:var(--card);
+  box-shadow:3px 3px 0 var(--shadow)}
+.hlinks a:nth-child(odd){transform:rotate(-1deg)}
+.hlinks a:nth-child(even){transform:rotate(1deg)}
+.hlinks a:hover{background:var(--accent-hi);transform:translate(-1px,-1px) rotate(0);box-shadow:4px 4px 0 var(--shadow)}
+
+h2.label{display:inline-block;margin:0 0 20px;font-family:Caveat,cursive;font-size:1.5rem;font-weight:700;
+  color:var(--accent-warm);position:relative}
+h2.label .tag{display:inline-block;font-family:"Space Grotesk",sans-serif;font-weight:800;font-size:.72rem;
+  text-transform:uppercase;letter-spacing:.08em;background:var(--fg);color:var(--bg);padding:3px 9px;
+  border-radius:3px;margin-left:10px;vertical-align:middle;transform:rotate(-1.5deg)}
+
+section{margin-bottom:70px;scroll-margin-top:90px}
+
+.news ul{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:12px}
+.news li{display:flex;gap:14px;font-size:.95rem;padding:10px 14px;background:var(--card);
+  border:2px solid var(--fg);border-radius:4px;box-shadow:4px 4px 0 var(--shadow);position:relative}
+.news li:nth-child(odd){transform:rotate(-.6deg)}
+.news li:nth-child(even){transform:rotate(.5deg)}
+.news li::before{content:"";position:absolute;top:-7px;left:16px;width:34px;height:14px;
+  background:color-mix(in oklch, var(--accent-hi) 55%, transparent);transform:rotate(-4deg)}
+.news .date{flex:none;width:84px;font-family:Caveat,cursive;font-size:1.1rem;color:var(--accent-warm)}
+
+.pub{display:grid;grid-template-columns:74px 1fr;gap:18px;padding:18px;margin-bottom:16px;background:var(--card);
+  border:3px solid var(--fg);border-radius:4px;box-shadow:6px 6px 0 var(--shadow)}
+.pub .stampcirc{width:56px;height:56px;border-radius:50%;border:3px solid var(--fg);display:grid;place-items:center;
+  transform:rotate(-6deg)}
+.pub .year{font-family:Caveat,cursive;font-size:1.55rem;font-weight:700;color:var(--accent-warm)}
+.venue{display:inline-block;font-family:"Space Grotesk",sans-serif;font-weight:800;font-size:.68rem;
+  text-transform:uppercase;letter-spacing:.06em;background:var(--fg);color:var(--bg);padding:2px 7px;
+  border-radius:2px;margin-top:6px}
+.ptitle{margin:0 0 5px;font-size:1.18rem;font-family:"Instrument Serif",Georgia,serif;font-style:italic}
+.authors{margin:0 0 10px;color:var(--muted);font-size:.9em}
+.plinks{display:flex;gap:10px;flex-wrap:wrap;font-size:.82em}
+.plinks a{text-decoration:none;font-family:"Space Grotesk",sans-serif;font-weight:700;border:1.5px solid var(--fg);
+  padding:2px 8px;border-radius:3px}
+.plinks a:hover{background:var(--accent-hi)}
+
+.cards{display:grid;grid-template-columns:repeat(3,1fr);gap:20px}
+.card{display:block;text-decoration:none;color:inherit;padding:10px 10px 14px;background:var(--card);
+  border:3px solid var(--fg);border-radius:4px;box-shadow:6px 6px 0 var(--shadow);position:relative}
+.card:nth-child(1){transform:rotate(-2deg)}
+.card:nth-child(2){transform:rotate(1.5deg)}
+.card:nth-child(3){transform:rotate(-1deg)}
+.card::before{content:"";position:absolute;top:-8px;left:50%;width:56px;height:16px;transform:translateX(-50%) rotate(-3deg);
+  background:color-mix(in oklch, var(--accent-hi) 55%, transparent)}
+.card:hover{transform:translate(-2px,-2px) rotate(0);box-shadow:8px 8px 0 var(--shadow)}
+.thumb{aspect-ratio:16/10;margin-bottom:10px;border:2px solid var(--fg);border-radius:2px;
+  background:
+    radial-gradient(circle at 30% 60%, #e9c9a3 0 22%, transparent 23%),
+    radial-gradient(circle at 70% 40%, #b9cfc0 0 25%, transparent 26%),
+    repeating-linear-gradient(45deg, color-mix(in oklch, var(--fg) 10%, transparent) 0 3px, transparent 3px 14px),
+    #efe6d6}
+.card h3{margin:0 0 4px;font-size:1.08rem;font-family:"Space Grotesk",sans-serif;font-weight:800;
+  text-transform:uppercase;letter-spacing:-.01em}
+.card p{margin:0;color:var(--muted);font-size:.9em}
+.card .tag{display:inline-block;margin-top:8px;font-family:Caveat,cursive;font-size:1.05rem;color:var(--accent-warm)}
+.card .tag::before{content:"● ";color:#c0392b;font-family:sans-serif}
+
+footer{color:var(--muted);font-size:.85em;padding-top:22px;border-top:3px solid var(--fg)}
+
+/* ===== walking companion ===== */
+.track{position:fixed;top:0;right:10px;width:64px;height:100vh;z-index:90;pointer-events:none}
+.track svg.road{position:absolute;inset:0;overflow:visible}
+.track svg.road path{fill:none;stroke:color-mix(in oklch, var(--fg) 55%, transparent);stroke-width:3;stroke-linecap:round;stroke-dasharray:3 10}
+.walker{position:absolute;width:46px;will-change:top,left,transform}
+.bob{animation:idleBob 1.6s ease-in-out infinite}
+@keyframes idleBob{0%,100%{transform:translateY(0)}50%{transform:translateY(-3px)}}
+.figure .leg-l,.figure .leg-r{transform-box:view-box}
+.walking .leg-l{animation:scizzorL .55s ease-in-out infinite}
+.walking .leg-r{animation:scizzorR .55s ease-in-out infinite}
+@keyframes scizzorL{0%,100%{transform:rotate(20deg)}50%{transform:rotate(-20deg)}}
+@keyframes scizzorR{0%,100%{transform:rotate(-20deg)}50%{transform:rotate(20deg)}}
+.figure .arm-l,.figure .arm-r{transform-box:view-box}
+.bubble{position:absolute;bottom:100%;right:52px;margin-bottom:6px;min-width:90px;max-width:130px;
+  background:var(--card);border:2px solid var(--fg);border-radius:8px;padding:6px 10px;
+  font-family:Caveat,cursive;font-size:1.05rem;line-height:1.15;color:var(--fg);
+  box-shadow:3px 3px 0 var(--shadow);opacity:0;transform:translateY(6px) scale(.9);white-space:nowrap}
+.bubble::after{content:"";position:absolute;top:100%;right:14px;border:7px solid transparent;
+  border-top-color:var(--fg);margin-top:-1px}
+.bubble::before{content:"";position:absolute;top:100%;right:15px;border:6px solid transparent;
+  border-top-color:var(--card);z-index:1}
+.pct{position:absolute;top:-26px;left:50%;transform:translateX(-50%);font-family:"JetBrains Mono",monospace;
+  font-size:10px;color:var(--muted);white-space:nowrap}
+
+@media (max-width:900px){
+  .track{display:none}
+  main{margin-right:auto}
+}
+@media (max-width:680px){
+  .hero{flex-direction:column}
+  .cards{grid-template-columns:1fr}
+  .pub{grid-template-columns:1fr;gap:6px}
+  main{padding:48px 18px 48px}
+}
+</style>
+</head>
+<body>
+
+<header class="nav">
+  <a class="logo" href="#"><span class="mark">■ AYUSH</span><span class="sig">Ayush</span></a>
+  <nav class="links">
+    <a href="#hero" class="active">About</a>
+    <a href="#news">Notes</a>
+    <a href="#pubs">Publications</a>
+    <a href="#projects">Projects</a>
+    <a href="#">CV</a>
+  </nav>
+</header>
+
+<main>
+  <section class="hero" id="hero" data-cheer="hi there! 👋">
+    <div class="photo-wrap"><div class="photo">A</div></div>
+    <div>
+      <h1 class="name">Ayush<span class="stamp">[Last Name]</span></h1>
+      <span class="role">PhD Student · [University Name]</span>
+      <p class="bio">I work on <span class="mark-span">[research area]</span>, building [kind of methods] that [goal]. Previously at [Lab / Company]. My interests are representation learning, [interest two], and [interest three].</p>
+      <div class="hlinks"><a href="#">GitHub</a><a href="#">Scholar</a><a href="#">Twitter</a><a href="#">Email</a></div>
+    </div>
+  </section>
+
+  <section class="news" id="news" data-cheer="notes~ ✏️">
+    <h2 class="label">Notes<span class="tag">Log</span></h2>
+    <ul>
+      <li><span class="date">Sep 2026</span> Paper accepted to NeurIPS! 🎉</li>
+      <li><span class="date">Jun 2026</span> Started internship at [Lab].</li>
+      <li><span class="date">Jan 2026</span> New preprint out on [topic].</li>
+    </ul>
+  </section>
+
+  <section class="pubs" id="pubs" data-cheer="papers! 🎉">
+    <h2 class="label">Publications<span class="tag">Research</span></h2>
+    <article class="pub">
+      <div class="stampcirc"><span class="year">'26</span></div>
+      <div><span class="venue">NeurIPS</span>
+        <h3 class="ptitle">[Paper Title One: A Method for Something Interesting]</h3>
+        <p class="authors"><b>Ayush [Last]</b>, Coauthor A, Coauthor B</p>
+        <div class="plinks"><a href="#">PDF</a><a href="#">arXiv</a><a href="#">Code</a><a href="#">BibTeX</a></div>
+      </div>
+    </article>
+    <article class="pub">
+      <div class="stampcirc"><span class="year">'25</span></div>
+      <div><span class="venue">ICML</span>
+        <h3 class="ptitle">[Paper Title Two: Understanding Another Phenomenon]</h3>
+        <p class="authors">Coauthor C, <b>Ayush [Last]</b>, Coauthor D</p>
+        <div class="plinks"><a href="#">PDF</a><a href="#">arXiv</a><a href="#">Code</a><a href="#">BibTeX</a></div>
+      </div>
+    </article>
+  </section>
+
+  <section class="projects" id="projects" data-cheer="cool stuff! ✨">
+    <h2 class="label">Projects<span class="tag">Work</span></h2>
+    <div class="cards">
+      <a class="card" href="#"><div class="thumb"></div><h3>[Project Alpha]</h3><p>One line about what this project does.</p><span class="tag">NeurIPS 2026</span></a>
+      <a class="card" href="#"><div class="thumb"></div><h3>[Project Beta]</h3><p>A dataset / tool released with the paper.</p><span class="tag">ICML 2025</span></a>
+      <a class="card" href="#"><div class="thumb"></div><h3>[Project Gamma]</h3><p>Ongoing work, short teaser sentence.</p><span class="tag">In progress</span></a>
+    </div>
+  </section>
+
+  <footer id="end" data-cheer="thanks for scrolling! 🙌">© 2026 Ayush [Last Name]</footer>
+</main>
+
+<div class="track">
+  <svg class="road" id="roadSvg"><path id="roadPath"/></svg>
+  <div class="walker" id="walker">
+    <span class="pct" id="pct">0%</span>
+    <div class="bubble" id="bubble"></div>
+    <div class="bob">
+      <svg class="figure" id="figureSvg" viewBox="0 -10 44 76" width="46" height="79">
+        <!-- legs (blocky, with knee plates + feet) -->
+        <g class="leg-l" style="transform-origin:18px 44px">
+          <rect x="15.5" y="44" width="5" height="15" rx="1" fill="#b9b3a8" stroke="#211d19" stroke-width="2.5"/>
+          <rect x="12" y="58" width="10" height="4" rx="1" fill="#211d19"/>
+        </g>
+        <g class="leg-r" style="transform-origin:26px 44px">
+          <rect x="23.5" y="44" width="5" height="15" rx="1" fill="#b9b3a8" stroke="#211d19" stroke-width="2.5"/>
+          <rect x="22" y="58" width="10" height="4" rx="1" fill="#211d19"/>
+        </g>
+        <!-- torso -->
+        <rect x="11" y="22" width="22" height="23" rx="4" fill="#e8bd2a" stroke="#211d19" stroke-width="3"/>
+        <rect x="17" y="28" width="10" height="9" rx="1.5" fill="#fffdf8" stroke="#211d19" stroke-width="1.8"/>
+        <circle class="core" cx="22" cy="32.5" r="2" fill="#d9480f"/>
+        <circle cx="14" cy="25" r="1" fill="#211d19"/><circle cx="30" cy="25" r="1" fill="#211d19"/>
+        <circle cx="14" cy="42" r="1" fill="#211d19"/><circle cx="30" cy="42" r="1" fill="#211d19"/>
+        <!-- arms (segmented, claw hands) -->
+        <g class="arm-l" style="transform-origin:11px 26px">
+          <rect x="3" y="24" width="9" height="4.5" rx="1" fill="#b9b3a8" stroke="#211d19" stroke-width="2.2" transform="rotate(-50 11 26)"/>
+          <path d="M5.5 32.5 l-2.5 2.5 M5.5 32.5 l0.5 3.5" stroke="#211d19" stroke-width="2" stroke-linecap="round" fill="none"/>
+        </g>
+        <g class="arm-r" style="transform-origin:33px 26px">
+          <rect x="32" y="24" width="9" height="4.5" rx="1" fill="#b9b3a8" stroke="#211d19" stroke-width="2.2" transform="rotate(50 33 26)"/>
+          <path d="M38.5 32.5 l2.5 2.5 M38.5 32.5 l-0.5 3.5" stroke="#211d19" stroke-width="2" stroke-linecap="round" fill="none"/>
+        </g>
+        <circle cx="11" cy="26" r="2.4" fill="#211d19"/><circle cx="33" cy="26" r="2.4" fill="#211d19"/>
+        <!-- neck + head -->
+        <rect x="19" y="18" width="6" height="5" fill="#211d19"/>
+        <line x1="22" y1="0" x2="22" y2="-6" stroke="#211d19" stroke-width="2.2"/>
+        <circle class="antenna" cx="22" cy="-7" r="2.6" fill="#d9480f" stroke="#211d19" stroke-width="1.6"/>
+        <rect x="10" y="0" width="24" height="19" rx="4" fill="#fffdf8" stroke="#211d19" stroke-width="3"/>
+        <rect x="7.5" y="6" width="3" height="7" rx="1" fill="#211d19"/><rect x="33.5" y="6" width="3" height="7" rx="1" fill="#211d19"/>
+        <rect x="13" y="4" width="18" height="9" rx="2" fill="#211d19"/>
+        <rect class="eye" x="15.5" y="6.5" width="4.5" height="4" rx="1" fill="#e8bd2a"/>
+        <rect class="eye" x="24" y="6.5" width="4.5" height="4" rx="1" fill="#e8bd2a"/>
+        <path d="M17 16 h10" stroke="#211d19" stroke-width="1.5" stroke-dasharray="1.5 1.5"/>
+        <g id="sparks" opacity="0">
+          <path class="spark" d="M22 -2 l1.4 3.2 3.2 1.4 -3.2 1.4 -1.4 3.2 -1.4 -3.2 -3.2 -1.4 3.2 -1.4z" fill="#d9480f"/>
+        </g>
+      </svg>
+    </div>
+  </div>
+</div>
+
+<script>
+const walker = document.getElementById('walker');
+const track = document.querySelector('.track');
+const figureSvg = document.getElementById('figureSvg');
+const bubble = document.getElementById('bubble');
+const pctEl = document.getElementById('pct');
+const armL = figureSvg.querySelector('.arm-l');
+const armR = figureSvg.querySelector('.arm-r');
+
+let ticking = false, walkTimeout = null;
+
+const roadPath = document.getElementById('roadPath');
+const road = {};
+// One smooth wave whose bend length and swing width drift slowly, so every curve stays clean but no two match.
+function wave(f){
+  const k = f * road.waves * 2 * Math.PI;
+  const phase = k + 0.9 * Math.sin(k * 0.29 + 1.1);   // stretches / squeezes the bends
+  const swing = 0.72 + 0.28 * Math.sin(k * 0.21 + 2.3); // wide bends and gentle ones
+  return road.cx + road.amp * swing * Math.sin(phase);
+}
+function buildRoad(){
+  road.w = track.clientWidth; road.h = track.clientHeight;
+  const navH = document.querySelector('header.nav').offsetHeight;
+  road.top = navH + 90; road.len = road.h - road.top - 24;
+  road.cx = road.w / 2; road.amp = road.w * 0.42;
+  road.waves = Math.max(3, road.len / 230);
+  let d = '';
+  for(let y = 0; y <= road.len; y += 6){
+    d += (y ? ' L' : 'M') + wave(y / road.len).toFixed(1) + ' ' + (road.top + y).toFixed(1);
+  }
+  roadPath.setAttribute('d', d);
+}
+function positionWalker(){
+  const doc = document.documentElement;
+  const max = doc.scrollHeight - window.innerHeight;
+  const t = max > 0 ? Math.min(1, Math.max(0, window.scrollY / max)) : 0;
+  const x = wave(t);
+  const y = road.top + t * road.len;
+  const slope = Math.max(-1, Math.min(1, (wave(Math.min(1, t + 0.004)) - wave(Math.max(0, t - 0.004))) / (road.len * 0.008) * 0.9));
+  walker.style.left = x + 'px';
+  walker.style.top = (y - 75) + 'px'; // feet sit on the road
+  walker.style.transform = `translateX(-50%) rotate(${(slope * 12).toFixed(2)}deg)`;
+  pctEl.textContent = Math.round(t*100) + '%';
+}
+
+function onScroll(){
+  if(!ticking){ requestAnimationFrame(()=>{ positionWalker(); ticking = false; }); ticking = true; }
+  figureSvg.classList.add('walking');
+  clearTimeout(walkTimeout);
+  walkTimeout = setTimeout(()=> figureSvg.classList.remove('walking'), 300);
+}
+
+function cheer(text){
+  bubble.textContent = text;
+  bubble.animate(
+    [{opacity:0, transform:'translateY(6px) scale(.9)'},
+     {opacity:1, transform:'translateY(0) scale(1)', offset:.18},
+     {opacity:1, transform:'translateY(0) scale(1)', offset:.75},
+     {opacity:0, transform:'translateY(-4px) scale(.95)'}],
+    {duration:1500, easing:'ease-out'}
+  );
+  figureSvg.animate(
+    [{transform:'translateY(0) scale(1)'},
+     {transform:'translateY(-14px) scale(1.08)', offset:.35},
+     {transform:'translateY(0) scale(1)', offset:.6},
+     {transform:'translateY(-6px) scale(1.03)', offset:.8},
+     {transform:'translateY(0) scale(1)'}],
+    {duration:750, easing:'ease-out'}
+  );
+  const armKf = (from,to)=>[{transform:`rotate(${from}deg)`},{transform:`rotate(${to}deg)`,offset:.4},{transform:`rotate(${to*0.85}deg)`,offset:.7},{transform:`rotate(${from}deg)`}];
+  armL.animate(armKf(0,115), {duration:750, easing:'ease-out'});
+  armR.animate(armKf(0,-115), {duration:750, easing:'ease-out'});
+
+  figureSvg.querySelectorAll('.eye').forEach(e=>e.animate(
+    [{fill:'#e8bd2a'},{fill:'#fff6b0',offset:.2},{fill:'#d9480f',offset:.5},{fill:'#fff6b0',offset:.8},{fill:'#e8bd2a'}],
+    {duration:900}));
+  figureSvg.querySelector('.antenna').animate(
+    [{fill:'#d9480f'},{fill:'#ffe600'},{fill:'#d9480f'},{fill:'#ffe600'},{fill:'#d9480f'}],{duration:900});
+  const sparks = figureSvg.querySelectorAll('#sparks .spark');
+  const base = sparks[0];
+  const container = figureSvg.querySelector('#sparks');
+  container.setAttribute('opacity','1');
+  const angles = [-70,-25,20,65,110,160];
+  const made = [];
+  angles.forEach((deg,i)=>{
+    const el = i===0 ? base : base.cloneNode(true);
+    if(i>0) container.appendChild(el);
+    made.push(el);
+    const rad = deg*Math.PI/180;
+    const dx = Math.cos(rad)*20, dy = Math.sin(rad)*20 - 10;
+    el.animate(
+      [{transform:'translate(0px,0px) scale(.3)', opacity:0},
+       {transform:`translate(${dx*0.6}px,${dy*0.6}px) scale(1)`, opacity:1, offset:.45},
+       {transform:`translate(${dx}px,${dy}px) scale(.5)`, opacity:0}],
+      {duration:800, easing:'ease-out'}
+    );
+  });
+  setTimeout(()=>{ made.slice(1).forEach(e=>e.remove()); container.setAttribute('opacity','0'); }, 850);
+}
+
+const io = new IntersectionObserver((entries)=>{
+  entries.forEach(e=>{ if(e.isIntersecting) cheer(e.target.dataset.cheer || 'yay!'); });
+}, {rootMargin:'-46% 0px -46% 0px', threshold:0});
+document.querySelectorAll('[data-cheer]').forEach(el=>io.observe(el));
+
+addEventListener('scroll', onScroll, {passive:true});
+addEventListener('resize', ()=>{ buildRoad(); positionWalker(); });
+buildRoad(); positionWalker();
+</script>
+</body>
+</html>
