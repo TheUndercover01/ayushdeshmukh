@@ -26,6 +26,7 @@ document.addEventListener('DOMContentLoaded', () => {
       if (dark) root.dataset.theme = 'dark'; else delete root.dataset.theme;
       try { localStorage.setItem('theme', dark ? 'dark' : 'light'); } catch (e) {}
       syncThemeBtn();
+      document.dispatchEvent(new CustomEvent('themechange', {detail:{dark}}));
     });
   }
 
