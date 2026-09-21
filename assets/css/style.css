@@ -188,40 +188,72 @@ section{margin-bottom:70px;scroll-margin-top:90px}
 
 footer.site-footer{color:var(--muted);font-size:.85em;padding-top:22px;border-top:3px solid var(--fg)}
 
-/* ===== walking companion (index page only) ===== */
-/* The lane straddles the right edge of the text column (content edge = 50% + 472px),
-   so the robot walks close to the text and its path crosses the cards. */
-.track{position:fixed;top:0;left:min(calc(50% + 472px - 85px), calc(100% - 150px));width:140px;height:100vh;z-index:90;pointer-events:none}
-.walker{position:absolute;width:84px;will-change:top,left,transform}
-.bob{animation:idleBob 1.6s ease-in-out infinite}
+/* ===== robots (About page only; driven by assets/js/robot.js) ===== */
+.robot{position:relative;display:block;background:none;border:0;padding:0;margin:0;cursor:pointer;
+  font:inherit;color:inherit;line-height:0;-webkit-tap-highlight-color:transparent}
+.robot:focus-visible{outline:3px dashed var(--accent-warm);outline-offset:4px;border-radius:6px}
+.robot svg{display:block;overflow:visible}
+.bob{display:block;animation:idleBob 1.6s ease-in-out infinite}
 @keyframes idleBob{0%,100%{transform:translateY(0)}50%{transform:translateY(-3px)}}
-.figure .leg-l,.figure .leg-r{transform-box:view-box}
-.walking .leg-l{animation:scizzorL .55s ease-in-out infinite}
-.walking .leg-r{animation:scizzorR .55s ease-in-out infinite}
-@keyframes scizzorL{0%,100%{transform:rotate(20deg)}50%{transform:rotate(-20deg)}}
-@keyframes scizzorR{0%,100%{transform:rotate(-20deg)}50%{transform:rotate(20deg)}}
-.figure .arm-l,.figure .arm-r{transform-box:view-box}
-.bubble{position:absolute;bottom:100%;right:78px;margin-bottom:6px;min-width:90px;max-width:130px;
-  background:var(--card);border:2px solid var(--fg);border-radius:8px;padding:6px 10px;
-  font-family:Caveat,cursive;font-size:1.35rem;line-height:1.15;color:var(--fg);
-  box-shadow:3px 3px 0 var(--shadow);opacity:0;transform:translateY(6px) scale(.9);white-space:nowrap}
+.figure .arm-l,.figure .arm-r,.figure .head{transform-box:view-box}
+.figure .head{transition:transform .6s ease}
+.figure .eyes{transition:transform .15s ease-out}
+.figure .eye{transform-box:fill-box;transform-origin:center;transition:transform .2s,fill .4s}
+/* headlamp beam only in dark mode */
+.figure .lamp{opacity:0;transition:opacity .5s}
+[data-theme="dark"] .figure .lamp{opacity:1}
+.robot.squint .eye{transform:scaleY(.2)}
+/* napping: dim eyes, drooping head, slower breathing, floating z's */
+.robot.asleep .eye{transform:scaleY(.25);fill:#6b6152}
+.robot.asleep .head{transform:rotate(-12deg)}
+.robot.asleep .bob{animation-duration:3.2s}
+.robot .zzz{position:absolute;top:-6px;right:-12px;font-family:Caveat,cursive;font-size:1.35rem;line-height:1;
+  color:var(--muted);opacity:0;pointer-events:none;white-space:nowrap}
+.robot.asleep .zzz{animation:zzz 2.4s ease-in-out infinite}
+@keyframes zzz{0%{opacity:0;transform:translate(0,8px) scale(.8)}30%{opacity:1}100%{opacity:0;transform:translate(14px,-24px) scale(1.15)}}
+.bubble{position:absolute;bottom:92%;right:72%;z-index:5;width:max-content;max-width:230px;
+  background:var(--card);border:2px solid var(--fg);border-radius:8px;padding:6px 11px;
+  font-family:Caveat,cursive;font-size:1.3rem;line-height:1.15;color:var(--fg);text-align:left;
+  box-shadow:3px 3px 0 var(--shadow);opacity:0;pointer-events:none}
 .bubble::after{content:"";position:absolute;top:100%;right:14px;border:7px solid transparent;
   border-top-color:var(--fg);margin-top:-1px}
 .bubble::before{content:"";position:absolute;top:100%;right:15px;border:6px solid transparent;
   border-top-color:var(--card);z-index:1}
 
+/* the hero robot stands at the top right, beside the name */
+.hero{position:relative}
+.robot-home{position:absolute;top:-8px;right:0;z-index:3}
+.hero .name{padding-right:90px}
+.hero .role{max-width:calc(100% - 90px)}
+
+/* peekers hide behind the top edge of a card; clip-path cuts only the bottom edge,
+   so the speech bubble and sparks can still spill out above and to the sides */
+.has-peek{position:relative}
+.peek-window{position:absolute;bottom:100%;right:22px;width:56px;height:97px;z-index:4;pointer-events:none;
+  clip-path:inset(-400px -400px 0 -400px)}
+.peek-window .robot{position:absolute;left:0;bottom:-6px;transform:translateY(100%);
+  transition:transform .45s cubic-bezier(.3,1.5,.5,1)}
+.peek-window[data-state="eyes"] .robot{transform:translateY(62%)}
+.peek-window[data-state="up"] .robot{transform:translateY(0);pointer-events:auto}
+.cards > .peek-window{right:auto;left:250px}
+.site-footer.has-peek{margin-top:40px}
+.robots-big .section-peek{display:none}
+
+@media (prefers-reduced-motion: reduce){
+  .bob,.robot.asleep .zzz{animation:none}
+  .peek-window .robot{transition:none}
+}
+
 /* ===== responsive ===== */
-@media (max-width:1000px){
-  .track{display:none}
-}
-@media (max-width:900px){
-}
 @media (max-width:680px){
   .nav-toggle{display:inline-block}
   nav.links{display:none;width:100%;order:3;flex-direction:column;gap:6px;margin-top:10px}
   nav.links.open{display:flex}
   header.nav{padding:12px 18px;justify-content:flex-end}
   .hero{flex-direction:column}
+  .robot-home{top:0}
+  .hero .name{padding-right:0}
+  .hero .role{max-width:none}
   .cards{grid-template-columns:1fr}
   .pub{grid-template-columns:1fr;gap:6px}
   main{padding:40px 18px 48px}
