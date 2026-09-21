@@ -15,7 +15,8 @@
 /* Light is the default; the nav toggle sets data-theme="dark" on <html>. */
 :root[data-theme="dark"]{ --bg:#18140f; --fg:#efe6d6; --muted:#a89b89; --accent-warm:#ff8a50; --accent-hi:#f2cf4e; --card:#241e17; --shadow: rgba(0,0,0,.9); --accent-bold:#8fb6ff; }
 *{box-sizing:border-box}
-html{-webkit-text-size-adjust:100%;font-size:125%}
+/* text scales with the screen: ~20px on a laptop, ~23.5px at 1920 wide, 26px on bigger/sharper screens */
+html{-webkit-text-size-adjust:100%;font-size:clamp(18px, 12px + .6vw, 26px)}
 body{margin:0;background:var(--bg);color:var(--fg);font-family:"Source Serif 4",Georgia,serif;line-height:1.6}
 a{color:inherit}
 img{max-width:100%}
@@ -40,13 +41,13 @@ nav.links a:hover{background:var(--accent-hi);border-color:var(--fg);color:var(-
   font-family:"Space Grotesk",sans-serif;font-weight:700;cursor:pointer}
 
 /* ===== layout ===== */
-main{position:relative;max-width:1080px;margin:0 auto;padding:64px 28px 60px 28px}
-main.narrow{max-width:780px}
+main{position:relative;max-width:48rem;margin:0 auto;padding:64px 28px 60px 28px}
+main.narrow{max-width:36rem}
 
 /* ===== hero / about ===== */
-.hero{display:flex;gap:44px;align-items:center;margin-bottom:72px}
+.hero{display:flex;gap:2.2rem;align-items:center;margin-bottom:3.6rem}
 .photo-wrap{flex:none;transform:rotate(-3deg)}
-.photo{width:240px;height:280px;display:grid;place-items:center;font-size:64px;font-weight:700;color:#fff;
+.photo{width:11rem;height:13rem;display:grid;place-items:center;font-size:3rem;font-weight:700;color:#fff;
   background:linear-gradient(160deg,#c8b79e,#8d7a60);
   border:8px solid #fffdf8;border-bottom-width:28px;
   outline:3px solid var(--fg);outline-offset:-8px;
@@ -106,12 +107,12 @@ section{margin-bottom:70px;scroll-margin-top:90px}
 .news li:nth-child(even){transform:rotate(.5deg)}
 .news li::before{content:"";position:absolute;top:-7px;left:16px;width:34px;height:14px;
   background:color-mix(in oklch, var(--accent-hi) 55%, transparent);transform:rotate(-4deg)}
-.news .date{flex:none;width:70px;font-family:Caveat,cursive;font-size:1.1rem;color:var(--accent-warm)}
+.news .date{flex:none;width:3.6rem;font-family:Caveat,cursive;font-size:1.1rem;color:var(--accent-warm)}
 
 /* ===== publications ===== */
-.pub{display:grid;grid-template-columns:78px 1fr;gap:20px;padding:22px;margin-bottom:16px;background:var(--card);
+.pub{display:grid;grid-template-columns:3.9rem 1fr;gap:20px;padding:22px;margin-bottom:16px;background:var(--card);
   border:3px solid var(--fg);border-radius:4px;box-shadow:6px 6px 0 var(--shadow)}
-.pub .stampcirc{width:56px;height:56px;border-radius:50%;border:3px solid var(--fg);display:grid;place-items:center;
+.pub .stampcirc{width:2.9rem;height:2.9rem;border-radius:50%;border:3px solid var(--fg);display:grid;place-items:center;
   transform:rotate(-6deg);flex:none}
 .pub .year{font-family:Caveat,cursive;font-size:1.55rem;font-weight:700;color:var(--accent-warm)}
 .venue{display:inline-block;font-family:"Space Grotesk",sans-serif;font-weight:800;font-size:.68rem;
@@ -134,7 +135,7 @@ section{margin-bottom:70px;scroll-margin-top:90px}
 
 /* ===== project cards ===== */
 .cards{display:grid;grid-template-columns:repeat(3,1fr);gap:20px}
-.cards.single{grid-template-columns:minmax(240px,340px)}
+.cards.single{grid-template-columns:minmax(12rem,17rem)}
 .card{display:block;text-decoration:none;color:inherit;padding:10px 10px 14px;background:var(--card);
   border:3px solid var(--fg);border-radius:4px;box-shadow:6px 6px 0 var(--shadow);position:relative}
 .card:nth-child(1){transform:rotate(-2deg)}
@@ -205,6 +206,8 @@ footer.site-footer{color:var(--muted);font-size:.85em;padding-top:22px;border-to
   font:inherit;color:inherit;line-height:0;-webkit-tap-highlight-color:transparent}
 .robot:focus-visible{outline:3px dashed var(--accent-warm);outline-offset:4px;border-radius:6px}
 .robot svg{display:block;overflow:visible}
+.robot-home .figure{width:3.6rem;height:auto}
+.peek-window .figure{width:2.8rem;height:auto}
 .bob{display:block;animation:idleBob 1.6s ease-in-out infinite}
 @keyframes idleBob{0%,100%{transform:translateY(0)}50%{transform:translateY(-3px)}}
 .figure .arm-l,.figure .arm-r,.figure .head{transform-box:view-box}
@@ -223,7 +226,7 @@ footer.site-footer{color:var(--muted);font-size:.85em;padding-top:22px;border-to
   color:var(--muted);opacity:0;pointer-events:none;white-space:nowrap}
 .robot.asleep .zzz{animation:zzz 2.4s ease-in-out infinite}
 @keyframes zzz{0%{opacity:0;transform:translate(0,8px) scale(.8)}30%{opacity:1}100%{opacity:0;transform:translate(14px,-24px) scale(1.15)}}
-.bubble{position:absolute;bottom:92%;right:72%;z-index:5;width:max-content;max-width:230px;
+.bubble{position:absolute;bottom:92%;right:72%;z-index:5;width:max-content;max-width:11.5rem;
   background:var(--card);border:2px solid var(--fg);border-radius:8px;padding:6px 11px;
   font-family:Caveat,cursive;font-size:1.3rem;line-height:1.15;color:var(--fg);text-align:left;
   box-shadow:3px 3px 0 var(--shadow);opacity:0;pointer-events:none}
@@ -235,19 +238,25 @@ footer.site-footer{color:var(--muted);font-size:.85em;padding-top:22px;border-to
 /* the hero robot stands at the top right, beside the name */
 .hero{position:relative}
 .robot-home{position:absolute;top:-8px;right:0;z-index:3}
-.hero .name{padding-right:90px}
-.hero .role{max-width:calc(100% - 90px)}
+.hero .name{padding-right:4.5rem}
+.hero .role{max-width:calc(100% - 4.5rem)}
 
 /* peekers hide behind the top edge of a card; clip-path cuts only the bottom edge,
    so the speech bubble and sparks can still spill out above and to the sides */
+/* wide screens: the robot stands in the right margin so the name and role get the full width */
+@media (min-width:1200px){
+  .robot-home{right:-4.5rem}
+  .hero .name{padding-right:0}
+  .hero .role{max-width:none;white-space:nowrap}
+}
 .has-peek{position:relative}
-.peek-window{position:absolute;bottom:100%;right:22px;width:56px;height:97px;z-index:4;pointer-events:none;
+.peek-window{position:absolute;bottom:100%;right:22px;width:2.8rem;height:4.85rem;z-index:4;pointer-events:none;
   clip-path:inset(-400px -400px 0 -400px)}
 .peek-window .robot{position:absolute;left:0;bottom:-6px;transform:translateY(100%);
   transition:transform .45s cubic-bezier(.3,1.5,.5,1)}
 .peek-window[data-state="eyes"] .robot{transform:translateY(62%)}
 .peek-window[data-state="up"] .robot{transform:translateY(0);pointer-events:auto}
-.cards > .peek-window{right:auto;left:250px}
+.cards > .peek-window{right:auto;left:12rem}
 .site-footer.has-peek{margin-top:40px}
 .robots-big .section-peek{display:none}
 
@@ -271,7 +280,7 @@ footer.site-footer{color:var(--muted);font-size:.85em;padding-top:22px;border-to
   .pub{grid-template-columns:1fr;gap:6px}
   main{padding:40px 18px 48px}
   .name{font-size:2.5rem;gap:10px}
-  .photo{width:180px;height:210px}
+  .photo{width:10rem;height:11.6rem}
   .name .stamp{font-size:1.7rem;padding:4px 10px}
   h1.page-title{font-size:2rem}
   .proj-header h1{font-size:1.8rem}
