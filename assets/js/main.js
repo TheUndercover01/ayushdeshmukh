@@ -11,6 +11,24 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
+  // --- light / dark toggle (light is the default; choice is remembered) ---
+  const themeBtn = document.querySelector('.theme-toggle');
+  const root = document.documentElement;
+  const syncThemeBtn = () => {
+    const dark = root.dataset.theme === 'dark';
+    themeBtn.textContent = dark ? '☀' : '☾';
+    themeBtn.setAttribute('aria-label', dark ? 'Switch to light mode' : 'Switch to dark mode');
+  };
+  if (themeBtn) {
+    syncThemeBtn();
+    themeBtn.addEventListener('click', () => {
+      const dark = root.dataset.theme !== 'dark';
+      if (dark) root.dataset.theme = 'dark'; else delete root.dataset.theme;
+      try { localStorage.setItem('theme', dark ? 'dark' : 'light'); } catch (e) {}
+      syncThemeBtn();
+    });
+  }
+
   // --- BibTeX show/hide + copy ---
   document.querySelectorAll('[data-bibtex-toggle]').forEach(btn => {
     btn.addEventListener('click', () => {

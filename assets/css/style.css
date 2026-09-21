@@ -11,9 +11,8 @@
   --accent-warm:#d9480f; --accent-hi:#e8bd2a;
   --card:#fffdf8; --shadow: rgba(33,29,25,.9);
 }
-@media (prefers-color-scheme: dark){
-  :root{ --bg:#18140f; --fg:#efe6d6; --muted:#a89b89; --accent-warm:#ff8a50; --accent-hi:#f2cf4e; --card:#241e17; --shadow: rgba(0,0,0,.9); }
-}
+/* Light is the default; the nav toggle sets data-theme="dark" on <html>. */
+:root[data-theme="dark"]{ --bg:#18140f; --fg:#efe6d6; --muted:#a89b89; --accent-warm:#ff8a50; --accent-hi:#f2cf4e; --card:#241e17; --shadow: rgba(0,0,0,.9); }
 *{box-sizing:border-box}
 html{-webkit-text-size-adjust:100%}
 body{margin:0;background:var(--bg);color:var(--fg);font-family:"Source Serif 4",Georgia,serif;line-height:1.6}
@@ -21,24 +20,27 @@ a{color:inherit}
 img{max-width:100%}
 
 /* ===== nav ===== */
-header.nav{position:sticky;top:0;z-index:80;display:flex;justify-content:flex-end;align-items:center;gap:16px;flex-wrap:wrap;
+header.nav{position:sticky;top:0;z-index:80;display:flex;justify-content:center;align-items:center;gap:16px;flex-wrap:wrap;
   padding:14px 32px;background:color-mix(in oklch, var(--bg) 88%, transparent);backdrop-filter:blur(8px);
   border-bottom:3px solid var(--fg)}
 nav.links{display:flex;gap:8px;flex-wrap:wrap;font-size:.85rem}
 nav.links a{text-decoration:none;color:var(--fg);border:2px solid var(--fg);padding:3px 11px;border-radius:3px;font-family:"Space Grotesk",sans-serif;font-weight:600}
 nav.links a.active{background:var(--fg);color:var(--bg)}
 nav.links a:hover{background:var(--accent-hi);border-color:var(--fg);color:var(--fg)}
-.nav-toggle{display:none;background:var(--card);border:2px solid var(--fg);border-radius:3px;padding:5px 9px;
+.theme-toggle{background:var(--card);color:var(--fg);border:2px solid var(--fg);border-radius:3px;padding:3px 10px;
+  font-size:.95rem;line-height:1.4;cursor:pointer;box-shadow:2px 2px 0 var(--shadow)}
+.theme-toggle:hover{background:var(--accent-hi);color:#211d19}
+[data-theme="dark"] .figure{filter:drop-shadow(0 0 1px #efe6d6) drop-shadow(0 0 1px #efe6d6)}
+/* mustard highlights keep dark text in both themes */
+[data-theme="dark"] :is(.role,.cv-download),
+[data-theme="dark"] :is(nav.links a,.hlinks a,.plinks a,.plinks button,.proj-links a,.post-row,.copy-btn):hover{color:#211d19}
+[data-theme="dark"] .thumb,[data-theme="dark"] .proj-teaser{filter:brightness(.8)}
+.nav-toggle{display:none;background:var(--card);color:var(--fg);border:2px solid var(--fg);border-radius:3px;padding:5px 9px;
   font-family:"Space Grotesk",sans-serif;font-weight:700;cursor:pointer}
 
 /* ===== layout ===== */
-main{position:relative;max-width:740px;margin:0 auto;padding:64px 28px 60px 28px}
+main{position:relative;max-width:880px;margin:0 auto;padding:64px 28px 60px 28px}
 main.narrow{max-width:660px}
-/* Reserve the robot's lane as body padding, not a one-sided main margin —
-   mixing margin:0 auto with a fixed margin-right breaks centering (the
-   auto side absorbs all the slack instead of splitting it), which shoves
-   the whole column to the right on wide screens. */
-body:has(.track){padding-right:78px}
 
 /* ===== hero / about ===== */
 .hero{display:flex;gap:34px;align-items:flex-start;margin-bottom:76px}
@@ -59,7 +61,7 @@ body:has(.track){padding-right:78px}
 .role{display:inline-block;margin:0 0 16px;font-family:"Space Grotesk",sans-serif;font-weight:700;font-size:.78rem;
   text-transform:uppercase;letter-spacing:.08em;background:var(--accent-hi);color:var(--fg);padding:4px 10px;
   border:2px solid var(--fg);border-radius:3px;transform:rotate(-1deg)}
-.bio{margin:0 0 18px;max-width:56ch;text-align:justify}
+.bio{margin:0 0 18px;max-width:62ch;text-align:justify}
 .bio .mark-span{text-decoration:underline wavy var(--accent-warm);text-underline-offset:4px}
 .hlinks{display:flex;gap:12px;flex-wrap:wrap}
 .hlinks a{text-decoration:none;font-family:"Space Grotesk",sans-serif;font-weight:600;font-size:.88rem;
@@ -212,13 +214,12 @@ footer.site-footer{color:var(--muted);font-size:.85em;padding-top:22px;border-to
 /* ===== responsive ===== */
 @media (max-width:900px){
   .track{display:none}
-  body:has(.track){padding-right:0}
 }
 @media (max-width:680px){
   .nav-toggle{display:inline-block}
   nav.links{display:none;width:100%;order:3;flex-direction:column;gap:6px;margin-top:10px}
   nav.links.open{display:flex}
-  header.nav{padding:12px 18px}
+  header.nav{padding:12px 18px;justify-content:flex-end}
   .hero{flex-direction:column}
   .cards{grid-template-columns:1fr}
   .pub{grid-template-columns:1fr;gap:6px}
