@@ -61,7 +61,14 @@ main.narrow{max-width:780px}
 .role{display:inline-block;margin:0 0 16px;font-family:"Space Grotesk",sans-serif;font-weight:700;font-size:.78rem;
   text-transform:uppercase;letter-spacing:.08em;background:var(--accent-hi);color:var(--fg);padding:4px 10px;
   border:2px solid var(--fg);border-radius:3px;transform:rotate(-1deg)}
+.tagline{margin:0 0 16px;max-width:34ch;font-family:"Instrument Serif",Georgia,serif;font-style:italic;
+  font-size:1.6rem;line-height:1.25}
+.tagline .mark-span{text-decoration:underline wavy var(--accent-warm);text-underline-offset:5px;text-decoration-thickness:1.5px}
 .bio{margin:0 0 20px;max-width:64ch;text-align:justify}
+.bio p{margin:0 0 12px}
+.bio a,.timeline p a,.timeline h3 a,.role a{color:inherit;text-decoration:underline;text-decoration-color:var(--accent-warm);
+  text-decoration-thickness:2px;text-underline-offset:3px}
+.bio a:hover,.timeline a:hover{color:var(--accent-warm)}
 .bio .mark-span{text-decoration:underline wavy var(--accent-warm);text-underline-offset:4px}
 .hlinks{display:flex;gap:12px;flex-wrap:wrap}
 .hlinks a{display:inline-flex;align-items:center;gap:7px;text-decoration:none;font-family:"Space Grotesk",sans-serif;font-weight:600;font-size:.88rem;
