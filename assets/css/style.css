@@ -183,6 +183,12 @@ main > .cards{margin-bottom:3rem}
 
 /* ===== paper project page (simple, centred; e.g. projects/no-eyes-no-problem) ===== */
 main.paper{max-width:52rem}
+.paper-bar{position:sticky;top:0;z-index:80;display:flex;justify-content:flex-end;align-items:center;gap:1.2rem;
+  padding:.6rem 1.6rem;background:color-mix(in oklch, var(--bg) 90%, transparent);backdrop-filter:blur(8px);border-bottom:3px solid var(--fg)}
+.paper-home{display:inline-flex;align-items:center;gap:.4rem;text-decoration:none;font-family:"Space Grotesk",sans-serif;font-weight:700;font-size:.9rem}
+.paper-home svg{width:1.05em;height:1.05em}
+.paper-home:hover{text-decoration:underline;text-decoration-thickness:2px;text-underline-offset:3px}
+.paper-foot{text-align:center}
 .paper-head{text-align:center;margin:0 0 2.2rem}
 .paper-title{margin:0 0 .4rem;font-family:"Instrument Serif",Georgia,serif;font-weight:400;font-size:3rem;line-height:1.05}
 .paper-sub{margin:0 0 1.4rem;font-family:"Instrument Serif",Georgia,serif;font-style:italic;font-size:1.45rem;line-height:1.3}
