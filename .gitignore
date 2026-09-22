@@ -1,2 +1,5 @@
 .DS_Store
 Thumbs.db
+
+# paper under double-blind review: never publish the submission PDF
+assets/*SUBMISSION*.pdf

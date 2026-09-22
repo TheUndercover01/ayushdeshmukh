@@ -1,0 +1,177 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>No Eyes, No Problem — Blind Baoding Ball Manipulation</title>
+<meta name="description" content="Zero-shot sim-to-real transfer of blind Baoding ball rotation on the Shadow Dexterous Hand Lite, using only proprioception and binary touch.">
+<!-- under double-blind review: keep out of search until the paper is public -->
+<meta name="robots" content="noindex">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Caveat:wght@500;700&family=Instrument+Serif:ital@0;1&family=Source+Serif+4:ital,opsz,wght@0,8..60,400;0,8..60,600;1,8..60,400&family=Space+Grotesk:wght@400;500;700;800&family=JetBrains+Mono:wght@400;700&display=swap">
+<link rel="stylesheet" href="../../assets/css/style.css">
+<script>try{if(localStorage.getItem("theme")==="dark")document.documentElement.dataset.theme="dark"}catch(e){}</script>
+</head>
+<body>
+
+<header class="nav">
+  <button class="nav-toggle" aria-label="Toggle menu" aria-expanded="false">☰ Menu</button>
+  <nav class="links">
+    <a href="../../index.html">About</a>
+    <a href="../../publications.html">Publications</a>
+    <a href="../index.html" class="active">Projects</a>
+    <a href="../../blog/index.html">Blog</a>
+    <a href="../../cv.html">CV</a>
+  </nav>
+  <button class="theme-toggle" type="button" aria-label="Switch to dark mode">☾ Dark mode</button>
+</header>
+
+<main class="paper">
+  <header class="paper-head">
+    <h1 class="paper-title">No Eyes, No Problem</h1>
+    <p class="paper-sub">What Does Touch Contribute to Blind Baoding Ball Manipulation?</p>
+    <p class="paper-authors">[Authors — anonymous during review]</p>
+    <p class="paper-affil">[Affiliations]</p>
+    <!-- links: replace href="#" and drop the "todo" class once each link exists -->
+    <div class="paper-links">
+      <a class="todo" href="#">Paper</a>
+      <a class="todo" href="#">arXiv</a>
+      <a class="todo" href="#">Code</a>
+      <a class="todo" href="#">Video</a>
+    </div>
+  </header>
+
+  <p class="tldr"><b>TL;DR</b> A policy trained only in simulation spins two Baoding balls on a real Shadow Hand Lite using nothing but joint readings and binary touch: <b>225 consecutive half-rotations</b> in a single run, with no cameras.</p>
+
+  <!-- long-horizon demonstration run -->
+  <figure class="paper-fig">
+    <div class="video-slot" data-video="demo"><span>demonstration video coming soon</span></div>
+    <figcaption><b>Long-horizon demonstration.</b> The C3 policy completing 112.5 full rotations in 310 s on the physical hand, deployed zero-shot from simulation.</figcaption>
+  </figure>
+
+  <section>
+    <h2 class="paper-h">Abstract</h2>
+    <p class="paper-text">Humans manipulate objects within their hands through touch alone with remarkable ease, but for robots, achieving sustained real-world manipulation without vision remains an open challenge. Although reinforcement learning (RL) can generate sophisticated blind manipulation policies in simulation, transferring them to a real dexterous hand remains hindered by continuously changing contacts, motion-induced tactile information drift, and the gap between simulated and physical dynamics. We study this problem through Baoding ball rotation on the Shadow Dexterous Hand Lite, using only proprioception and binary tactile feedback as observations. We achieve successful zero-shot transfer through a combination of a sensor-aligned, coupling-aware embodiment in simulation, tactile calibration, and two novel episodic domain randomisations: slew-rate action limits and STuck-AT Taxels. On the physical hand, the policy achieves sustained blind Baoding rotation, completing 225 consecutive 180° rotations (112.5 full rotations) at ~0.36 rot/s in a single continuous trial without any vision or object-state information. Furthermore, we evaluate the contribution of tactile sensing relative to proprioception alone and identify the hand regions where tactile information is most important. This is the strongest reported hardware result for Baoding ball manipulation in both rotation count and speed, irrespective of the sensing modality used. By effectively bridging the sim-to-real gap, our framework sets a new benchmark for sustained tactile-driven dexterous manipulation on physical hardware.</p>
+  </section>
+
+  <figure class="paper-fig">
+    <img src="img/fig1.jpg" alt="A 1.2-second Baoding ball rotation in simulation (top) and on the physical Shadow Hand Lite (bottom) at matched time steps." loading="lazy">
+    <figcaption><b>Zero-shot sim-to-real transfer.</b> A 1.2 s, 180° rotation in simulation (top) and on the physical Shadow Dexterous Hand Lite (bottom) at matched time steps. The policy sees only proprioception and binary contact signals.</figcaption>
+  </figure>
+
+  <section>
+    <h2 class="paper-h">Method</h2>
+    <figure class="paper-fig">
+      <img src="img/fig4.jpg" alt="Method overview: training in simulation with coupling correction, zero-shot hardware transfer with action slewing and tactile calibration, and episode-reset randomisations." loading="lazy">
+      <figcaption><b>Overview.</b> Training in simulation through a corrected tendon-coupling model (top left); zero-shot deployment at 60 Hz with tactile calibration and rate-limited actions (bottom left); randomisations applied at every episode reset, including our Stuck-AT Taxels and slew-rate randomisation (right).</figcaption>
+    </figure>
+    <ul class="paper-list">
+      <li>A <b>hardware-aligned simulation</b> of the Shadow Hand Lite, with matched tactile sites and the real sequential tendon coupling.</li>
+      <li><b>Per-channel tactile calibration</b> with hysteresis to cope with sensor noise and drift.</li>
+      <li><b>Slew-rate randomisation</b> (SlewDR), which teaches smoother motions the hardware can follow.</li>
+      <li><b>Stuck-AT Taxels</b> (STAT), which randomly freezes touch channels so the policy never relies on any single one.</li>
+    </ul>
+  </section>
+
+  <section>
+    <h2 class="paper-h">Benchmark</h2>
+    <p class="paper-text">Each configuration was deployed zero-shot on the physical hand for 10 trials. Numbers are hardware mean ± std.</p>
+    <div class="ckpt-grid">
+
+      <article class="ckpt ours">
+        <div class="video-slot" data-video="c3"><span>video coming soon</span></div>
+        <h3>C3 <em>(ours)</em></h3>
+        <p class="ckpt-desc">Physical + SlewDR + STAT randomisation · proprioception + touch</p>
+        <dl class="ckpt-stats">
+          <div><dt>Full rotations</dt><dd>34.75 ± 26.06</dd></div>
+          <div><dt>Time to drop</dt><dd>94.8 ± 68.0 s</dd></div>
+          <div><dt>Speed</dt><dd>0.36 rot/s</dd></div>
+        </dl>
+      </article>
+
+      <article class="ckpt">
+        <div class="video-slot" data-video="c3-tacoff"><span>video coming soon</span></div>
+        <h3>C3-TacOff</h3>
+        <p class="ckpt-desc">The C3 policy with touch switched off at deployment</p>
+        <dl class="ckpt-stats">
+          <div><dt>Full rotations</dt><dd>5.0 ± 4.1</dd></div>
+          <div><dt>Time to drop</dt><dd>19.0 ± 11.2 s</dd></div>
+          <div><dt>Speed</dt><dd>0.256 rot/s</dd></div>
+        </dl>
+      </article>
+
+      <article class="ckpt">
+        <div class="video-slot" data-video="proprio-only"><span>video coming soon</span></div>
+        <h3>Proprio-only</h3>
+        <p class="ckpt-desc">Physical randomisation · trained with proprioception only</p>
+        <dl class="ckpt-stats">
+          <div><dt>Full rotations</dt><dd>4.4 ± 2.44</dd></div>
+          <div><dt>Time to drop</dt><dd>21.4 ± 12.2 s</dd></div>
+          <div><dt>Speed</dt><dd>0.226 rot/s</dd></div>
+        </dl>
+      </article>
+
+      <article class="ckpt">
+        <div class="video-slot" data-video="c2"><span>video coming soon</span></div>
+        <h3>C2</h3>
+        <p class="ckpt-desc">Physical + SlewDR randomisation · proprioception + touch</p>
+        <dl class="ckpt-stats">
+          <div><dt>Full rotations</dt><dd>0.5 ± 0.53</dd></div>
+          <div><dt>Time to drop</dt><dd>4.1 ± 1.5 s</dd></div>
+          <div><dt>Speed</dt><dd>0.101 rot/s</dd></div>
+        </dl>
+      </article>
+
+      <article class="ckpt">
+        <div class="video-slot" data-video="c1"><span>video coming soon</span></div>
+        <h3>C1</h3>
+        <p class="ckpt-desc">Physical randomisation only · proprioception + touch</p>
+        <dl class="ckpt-stats">
+          <div><dt>Full rotations</dt><dd>0.35 ± 0.63</dd></div>
+          <div><dt>Time to drop</dt><dd>5.9 ± 4.3 s</dd></div>
+          <div><dt>Speed</dt><dd>0.054 rot/s</dd></div>
+        </dl>
+      </article>
+
+      <article class="ckpt">
+        <div class="video-slot" data-video="open-loop"><span>video coming soon</span></div>
+        <h3>Open-loop</h3>
+        <p class="ckpt-desc">A recorded trajectory replayed with no feedback</p>
+        <dl class="ckpt-stats">
+          <div><dt>Full rotations</dt><dd>1.7 ± 1.99</dd></div>
+          <div><dt>Time to drop</dt><dd>6.1 ± 4.7 s</dd></div>
+          <div><dt>Speed</dt><dd>0.168 rot/s</dd></div>
+        </dl>
+      </article>
+
+    </div>
+  </section>
+
+  <section>
+    <h2 class="paper-h">Hardware</h2>
+    <figure class="paper-fig">
+      <img src="img/fig2.jpg" alt="Force-sensitive resistor placement on the physical Shadow Hand Lite and the matching simulation model." loading="lazy">
+      <figcaption><b>Touch sensing.</b> Twelve force-sensitive resistors and four BioTac fingertips on the physical hand (left), mirrored in the simulation model (right), give 16 binary contact signals.</figcaption>
+    </figure>
+  </section>
+
+  <section>
+    <h2 class="paper-h">BibTeX</h2>
+    <div class="bibtex-box open">
+      <button class="copy-btn" type="button">Copy</button>
+      <pre>@article{noeyes2026,
+  title  = {No Eyes, No Problem: What Does Touch Contribute
+            to Blind Baoding Ball Manipulation?},
+  author = {[Authors]},
+  year   = {2026}
+}</pre>
+    </div>
+  </section>
+
+  <footer class="site-footer">© 2026 Ayush Deshmukh · <a href="../index.html">← all projects</a></footer>
+</main>
+
+<script src="../../assets/js/main.js"></script>
+</body>
+</html>
