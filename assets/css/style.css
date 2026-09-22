@@ -180,7 +180,7 @@ section{margin-bottom:70px;scroll-margin-top:90px}
 .placeholder{color:var(--muted);font-style:italic}
 
 /* ===== paper project page (simple, centred; e.g. projects/no-eyes-no-problem) ===== */
-main.paper{max-width:44rem}
+main.paper{max-width:52rem}
 .paper-head{text-align:center;margin:0 0 2.2rem}
 .paper-title{margin:0 0 .4rem;font-family:"Instrument Serif",Georgia,serif;font-weight:400;font-size:3rem;line-height:1.05}
 .paper-sub{margin:0 0 1.4rem;font-family:"Instrument Serif",Georgia,serif;font-style:italic;font-size:1.45rem;line-height:1.3}
@@ -209,17 +209,31 @@ main.paper{max-width:44rem}
   border:3px solid var(--fg);border-radius:4px;box-shadow:6px 6px 0 var(--shadow)}
 .video-slot span{font-family:Caveat,cursive;font-size:1.3rem;color:var(--muted)}
 .video-slot video,.video-slot iframe{position:absolute;inset:0;width:100%;height:100%;border:0;object-fit:cover;background:#000}
-.ckpt-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:1.6rem}
-.ckpt{background:var(--card);border:3px solid var(--fg);border-radius:4px;box-shadow:5px 5px 0 var(--shadow);padding:.7rem .7rem 1rem}
-.ckpt .video-slot{border-width:2px;box-shadow:none;margin-bottom:.8rem}
-.ckpt h3{margin:0 .2rem .2rem;font-family:"Space Grotesk",sans-serif;font-weight:800;font-size:1.05rem}
-.ckpt h3 em{font-style:normal;color:var(--accent-warm)}
-.ckpt.ours{outline:3px solid var(--accent-hi);outline-offset:3px}
-.ckpt-desc{margin:0 .2rem .7rem;color:var(--muted);font-size:.8rem;line-height:1.45}
-.ckpt-stats{display:grid;grid-template-columns:repeat(3,1fr);gap:.8rem;margin:0 .2rem}
-.ckpt-stats div{border-top:2px solid var(--fg);padding-top:.3rem}
-.ckpt-stats dt{font-family:"Space Grotesk",sans-serif;font-weight:700;font-size:.62rem;text-transform:uppercase;letter-spacing:.05em;color:var(--muted)}
-.ckpt-stats dd{margin:0;font-family:"JetBrains Mono",monospace;font-size:.68rem}
+.ckpt-list{display:flex;flex-direction:column;gap:2rem}
+.ckpt-row{background:var(--card);border:3px solid var(--fg);border-radius:4px;box-shadow:5px 5px 0 var(--shadow);padding:.9rem 1rem 1.1rem}
+.ckpt-row.ours{outline:3px solid var(--accent-hi);outline-offset:3px}
+.ckpt-row h3{margin:0 0 .15rem;font-family:"Space Grotesk",sans-serif;font-weight:800;font-size:1.1rem}
+.ckpt-row h3 em{font-style:normal;color:var(--accent-warm)}
+.ckpt-desc{margin:0 0 .8rem;color:var(--muted);font-size:.85rem;line-height:1.45}
+.ckpt-pair{display:grid;grid-template-columns:1fr 1fr;gap:1rem}
+.ckpt-pair figure{margin:0}
+.ckpt-pair figcaption{font-family:"Space Grotesk",sans-serif;font-weight:700;font-size:.7rem;text-transform:uppercase;letter-spacing:.06em;margin-bottom:.35rem}
+.ckpt-pair .video-slot{border-width:2px;box-shadow:none}
+.video-slot.na span{font-size:1.05rem;text-align:center;padding:0 1rem}
+.results-wrap{overflow-x:auto;border:3px solid var(--fg);border-radius:4px;box-shadow:6px 6px 0 var(--shadow);background:var(--card)}
+.results{width:100%;border-collapse:collapse;font-size:.68rem;min-width:40rem}
+.results th,.results td{padding:.45rem .4rem;text-align:center;border-bottom:1px solid color-mix(in oklch, var(--fg) 18%, transparent);white-space:nowrap}
+.results thead th{font-family:"Space Grotesk",sans-serif;font-weight:700;font-size:.72rem;background:var(--fg);color:var(--bg);border-bottom:0}
+.results thead tr:first-child th.sim{background:color-mix(in oklch, var(--fg) 80%, #2a6);}
+.results thead th small,.results td small{display:block;font-weight:400;font-size:.85em;opacity:.75}
+.results thead th.sim+th.hw,.results td:nth-child(4),.results thead tr:last-child th:nth-child(3){border-left:3px solid var(--fg)}
+.results thead tr:first-child th.hw{border-left:3px solid var(--bg)}
+.results tbody th{text-align:left;font-family:"Space Grotesk",sans-serif;font-weight:700}
+.results td{font-family:"JetBrains Mono",monospace}
+.results tr.grp th{font-family:Caveat,cursive;font-size:1.05rem;font-weight:700;color:var(--accent-warm);background:transparent;padding-top:.7rem}
+.results tr.ours{background:color-mix(in oklch, var(--accent-hi) 35%, transparent)}
+.results tr.ours th,.results tr.ours td{font-weight:800}
+.table-notes{margin:.9rem 0 0;color:var(--muted);font-size:.75rem;line-height:1.5}
 .paper .site-footer a{color:inherit}
 
 /* ===== CV / timeline ===== */
@@ -332,7 +346,6 @@ footer.site-footer{color:var(--muted);font-size:.85em;padding-top:22px;border-to
   h1.page-title{font-size:2rem}
   .proj-header h1{font-size:1.8rem}
   .post-row{flex-direction:column;gap:4px}
-  .ckpt-grid{grid-template-columns:1fr}
   .paper-title{font-size:2.3rem}
   .paper-sub{font-size:1.2rem}
   .paper-text{text-align:left}
