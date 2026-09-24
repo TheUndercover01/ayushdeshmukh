@@ -43,8 +43,24 @@
 
   <p class="tldr"><b>TL;DR</b> We trained a robot hand in simulation to spin two Baoding balls, then ran it on a real Shadow Hand Lite with no cameras and no fine-tuning. It feels its way using only its joint sensors and 16 on/off touch sensors. In one unbroken run it made <b>225 consecutive half-turns (112.5 full rotations)</b> without dropping a ball.</p>
 
+  <!-- quick index: a sticky list in the left margin on wide screens, a row of chips here otherwise -->
+  <nav class="paper-toc" aria-label="On this page">
+    <p class="toc-h">Jump to videos <small>avg full rotations on hardware</small></p>
+    <ol>
+      <li><a href="#demo">Demo run <b>112.5</b></a></li>
+      <li class="ours"><a href="#c3">C3 (ours) <b>34.75</b></a></li>
+      <li><a href="#c3-tacoff">C3-TacOff <b>5.0</b></a></li>
+      <li><a href="#proprio-only">Proprio-only <b>4.4</b></a></li>
+      <li><a href="#c2">C2 <b>0.5</b></a></li>
+      <li><a href="#c1">C1 <b>0.35</b></a></li>
+      <li><a href="#open-loop">Open-loop <b>1.7</b></a></li>
+      <li class="toc-sep"><a href="#results">Full results table</a></li>
+      <li><a href="#method">Method</a></li>
+    </ol>
+  </nav>
+
   <!-- long-horizon demonstration run: stats count up and the video starts muted once scrolled into view (main.js) -->
-  <section class="demo" aria-label="Long-horizon demonstration">
+  <section class="demo" id="demo" aria-label="Long-horizon demonstration">
     <div class="demo-stats">
       <div class="demo-stat lead"><span class="num" data-count="225">225</span><span class="lbl">consecutive 180° rotations</span></div>
       <div class="demo-stat"><span class="num" data-count="112.5">112.5</span><span class="lbl">full 360° rotations</span></div>
@@ -64,49 +80,55 @@
     <h2 class="paper-h">Benchmark</h2>
     <p class="paper-text">Each row is one policy, shown in simulation and on the real hand. Every policy was deployed zero-shot, with no training or tuning on the hardware. Each hardware clip is one of the 10 trials recorded for that policy.</p>
     <div class="ckpt-list">
-      <article class="ckpt-row ours">
+      <article class="ckpt-row ours" id="c3">
         <h3>C3 <em>(ours)</em></h3>
         <p class="ckpt-desc">Our full method. Senses joints and touch; trained with physical, slew-rate and Stuck-AT Taxel randomisation.</p>
+        <dl class="ckpt-stats"><div><dt>Full rotations <small>hardware</small></dt><dd>34.75 <small>avg · best 74</small></dd></div><div><dt>Speed <small>hardware</small></dt><dd>0.36 <small>rot/s · best 0.45</small></dd></div><div><dt>Speed <small>sim</small></dt><dd>0.416 <small>rot/s</small></dd></div></dl>
         <div class="ckpt-pair">
           <figure><figcaption>Simulation</figcaption><div class="video-slot" data-video="c3-sim"><video src="videos/c3-sim.mp4" data-autoplay muted loop controls playsinline preload="metadata"></video></div></figure>
           <figure><figcaption>Hardware</figcaption><div class="video-slot" data-video="c3-hw"><video src="videos/c3-hw.mp4" data-autoplay muted loop controls playsinline preload="metadata"></video></div></figure>
         </div>
       </article>
-      <article class="ckpt-row">
+      <article class="ckpt-row" id="c3-tacoff">
         <h3>C3-TacOff</h3>
         <p class="ckpt-desc">The same C3 policy with its touch input set to zero at deployment. This shows what touch contributes.</p>
+        <dl class="ckpt-stats"><div><dt>Full rotations <small>hardware</small></dt><dd>5.0 <small>avg · best 14.5</small></dd></div><div><dt>Speed <small>hardware</small></dt><dd>0.256 <small>rot/s · best 0.4</small></dd></div><div><dt>Speed <small>sim</small></dt><dd>0.291 <small>rot/s</small></dd></div></dl>
         <div class="ckpt-pair">
           <figure><figcaption>Simulation</figcaption><div class="video-slot" data-video="c3-tacoff-sim"><video src="videos/c3-tacoff-sim.mp4" data-autoplay muted loop controls playsinline preload="metadata"></video></div></figure>
           <figure><figcaption>Hardware</figcaption><div class="video-slot" data-video="c3-tacoff-hw"><video src="videos/c3-tacoff-hw.mp4" data-autoplay muted loop controls playsinline preload="metadata"></video></div></figure>
         </div>
       </article>
-      <article class="ckpt-row">
+      <article class="ckpt-row" id="proprio-only">
         <h3>Proprio-only</h3>
         <p class="ckpt-desc">Trained from scratch without any touch sensing, using joint readings alone; physical randomisation.</p>
+        <dl class="ckpt-stats"><div><dt>Full rotations <small>hardware</small></dt><dd>4.4 <small>avg · best 8.0</small></dd></div><div><dt>Speed <small>hardware</small></dt><dd>0.226 <small>rot/s · best 0.35</small></dd></div><div><dt>Speed <small>sim</small></dt><dd>0.591 <small>rot/s</small></dd></div></dl>
         <div class="ckpt-pair">
           <figure><figcaption>Simulation</figcaption><div class="video-slot" data-video="proprio-only-sim"><video src="videos/proprio-only-sim.mp4" data-autoplay muted loop controls playsinline preload="metadata"></video></div></figure>
           <figure><figcaption>Hardware</figcaption><div class="video-slot" data-video="proprio-only-hw"><video src="videos/proprio-only-hw.mp4" data-autoplay muted loop controls playsinline preload="metadata"></video></div></figure>
         </div>
       </article>
-      <article class="ckpt-row">
+      <article class="ckpt-row" id="c2">
         <h3>C2</h3>
         <p class="ckpt-desc">Joints and touch; physical and slew-rate randomisation, but no Stuck-AT Taxels. Moves more smoothly than C1, yet still drops the balls within seconds.</p>
+        <dl class="ckpt-stats"><div><dt>Full rotations <small>hardware</small></dt><dd>0.5 <small>avg · best 1.5</small></dd></div><div><dt>Speed <small>hardware</small></dt><dd>0.101 <small>rot/s · best 0.25</small></dd></div><div><dt>Speed <small>sim</small></dt><dd>0.277 <small>rot/s</small></dd></div></dl>
         <div class="ckpt-pair">
           <figure><figcaption>Simulation</figcaption><div class="video-slot" data-video="c2-sim"><video src="videos/c2-sim.mp4" data-autoplay muted loop controls playsinline preload="metadata"></video></div></figure>
           <figure><figcaption>Hardware</figcaption><div class="video-slot" data-video="c2-hw"><video src="videos/c2-hw.mp4" data-autoplay muted loop controls playsinline preload="metadata"></video></div></figure>
         </div>
       </article>
-      <article class="ckpt-row">
+      <article class="ckpt-row" id="c1">
         <h3>C1</h3>
         <p class="ckpt-desc">Joints and touch; physical randomisation only. The fastest policy in simulation, but its aggressive motion falls apart on the real hand.</p>
+        <dl class="ckpt-stats"><div><dt>Full rotations <small>hardware</small></dt><dd>0.35 <small>avg · best 2</small></dd></div><div><dt>Speed <small>hardware</small></dt><dd>0.054 <small>rot/s · best 0.2</small></dd></div><div><dt>Speed <small>sim</small></dt><dd>0.959 <small>rot/s</small></dd></div></dl>
         <div class="ckpt-pair">
           <figure><figcaption>Simulation</figcaption><div class="video-slot" data-video="c1-sim"><video src="videos/c1-sim.mp4" data-autoplay muted loop controls playsinline preload="metadata"></video></div></figure>
           <figure><figcaption>Hardware</figcaption><div class="video-slot" data-video="c1-hw"><video src="videos/c1-hw.mp4" data-autoplay muted loop controls playsinline preload="metadata"></video></div></figure>
         </div>
       </article>
-      <article class="ckpt-row">
+      <article class="ckpt-row" id="open-loop">
         <h3>Open-loop</h3>
         <p class="ckpt-desc">No policy at all: a recorded joint trajectory replayed on the hand with no feedback. The baseline for "just repeat the motion".</p>
+        <dl class="ckpt-stats"><div><dt>Full rotations <small>hardware</small></dt><dd>1.7 <small>avg · best 5.0</small></dd></div><div><dt>Speed <small>hardware</small></dt><dd>0.168 <small>rot/s · best 0.4</small></dd></div><div><dt>Speed <small>sim</small></dt><dd>—</dd></div></dl>
         <div class="ckpt-pair">
           <figure><figcaption>Simulation</figcaption><div class="video-slot na"><span>not applicable: hardware replay only</span></div></figure>
           <figure><figcaption>Hardware</figcaption><div class="video-slot" data-video="open-loop-hw"><video src="videos/open-loop-hw.mp4" data-autoplay muted loop controls playsinline preload="metadata"></video></div></figure>
@@ -116,7 +138,7 @@
   </section>
 
   <section>
-    <h2 class="paper-h">Evaluation</h2>
+    <h2 class="paper-h" id="results">Evaluation</h2>
     <p class="paper-text">Hardware numbers are the mean ± standard deviation over 10 trials, with the min–max range in small type. Each trial started with both balls placed by hand and ran until a ball left the hand, with no time limit. Simulation numbers come from 768 ten-second episodes across three training seeds. A dash means the metric wasn't measured or reported.</p>
     <div class="results-wrap">
       <table class="results">
@@ -167,7 +189,7 @@
   </section>
 
   <section>
-    <h2 class="paper-h">Method</h2>
+    <h2 class="paper-h" id="method">Method</h2>
     <figure class="paper-fig">
       <img src="img/fig4.jpg" alt="Method overview: training in simulation with coupling correction, zero-shot hardware transfer with action slewing and tactile calibration, and episode-reset randomisations." loading="lazy">
       <figcaption><b>Overview.</b> Top left: training in simulation, with every action passed through the corrected tendon coupling. Bottom left: the trained policy runs unchanged on the real hand at 60 Hz, with calibrated touch and rate-limited actions. Right: randomisations applied at every episode reset, including our Stuck-AT Taxels and slew-rate randomisation.</figcaption>

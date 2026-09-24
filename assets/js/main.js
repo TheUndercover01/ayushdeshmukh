@@ -100,4 +100,16 @@ document.addEventListener('DOMContentLoaded', () => {
     }), { threshold: 0.6 });
     nums.forEach(el => { fmt(el, 0); nio.observe(el); });
   }
+
+  // --- paper pages: highlight the quick-index entry for the section on screen ---
+  const tocLinks = [...document.querySelectorAll('.paper-toc a[href^="#"]')];
+  if (tocLinks.length && 'IntersectionObserver' in window) {
+    const byId = new Map(tocLinks.map(a => [a.getAttribute('href').slice(1), a]));
+    const tio = new IntersectionObserver(entries => entries.forEach(e => {
+      if (!e.isIntersecting) return;
+      tocLinks.forEach(a => a.classList.remove('active'));
+      byId.get(e.target.id)?.classList.add('active');
+    }), { rootMargin: '-40% 0px -55% 0px' });
+    byId.forEach((a, id) => { const el = document.getElementById(id); if (el) tio.observe(el); });
+  }
 });
