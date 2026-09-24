@@ -4,11 +4,11 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>No Eyes, No Problem — Blind Baoding Ball Manipulation</title>
-<meta name="description" content="Zero-shot sim-to-real transfer of blind Baoding ball rotation on the Shadow Dexterous Hand Lite, using only proprioception and binary touch.">
+<meta name="description" content="A robot hand trained only in simulation spins two Baoding balls on real hardware without cameras, using joint readings and binary touch: 225 consecutive half-rotations in one run.">
 <link rel="canonical" href="https://theundercover01.github.io/ayushdeshmukh/projects/no-eyes-no-problem/">
 <meta property="og:type" content="website">
 <meta property="og:title" content="No Eyes, No Problem — Blind Baoding Ball Manipulation">
-<meta property="og:description" content="Zero-shot sim-to-real transfer of blind Baoding ball rotation on the Shadow Dexterous Hand Lite, using only proprioception and binary touch.">
+<meta property="og:description" content="A robot hand trained only in simulation spins two Baoding balls on real hardware without cameras, using joint readings and binary touch: 225 consecutive half-rotations in one run.">
 <meta property="og:url" content="https://theundercover01.github.io/ayushdeshmukh/projects/no-eyes-no-problem/">
 <meta property="og:image" content="https://theundercover01.github.io/ayushdeshmukh/projects/no-eyes-no-problem/img/fig1.jpg">
 <meta name="twitter:card" content="summary_large_image">
@@ -41,64 +41,75 @@
     </div>
   </header>
 
-  <p class="tldr"><b>TL;DR</b> A policy trained only in simulation spins two Baoding balls on a real Shadow Hand Lite using nothing but joint readings and binary touch: <b>225 consecutive half-rotations</b> in a single run, with no cameras.</p>
+  <p class="tldr"><b>TL;DR</b> We trained a robot hand in simulation to spin two Baoding balls, then ran it on a real Shadow Hand Lite with no cameras and no fine-tuning. It feels its way using only its joint sensors and 16 on/off touch sensors. In one unbroken run it made <b>225 consecutive half-turns (112.5 full rotations)</b> without dropping a ball.</p>
 
-  <!-- long-horizon demonstration run -->
-  <figure class="paper-fig">
-    <div class="video-slot" data-video="demo"><video src="videos/demo.mp4" controls playsinline preload="metadata"></video></div>
-    <figcaption><b>Long-horizon demonstration.</b> The C3 policy completing 112.5 full rotations in 310 s on the physical hand, deployed zero-shot from simulation.</figcaption>
-  </figure>
+  <!-- long-horizon demonstration run: stats count up and the video starts muted once scrolled into view (main.js) -->
+  <section class="demo" aria-label="Long-horizon demonstration">
+    <div class="demo-stats">
+      <div class="demo-stat lead"><span class="num" data-count="225">225</span><span class="lbl">consecutive 180° rotations</span></div>
+      <div class="demo-stat"><span class="num" data-count="112.5">112.5</span><span class="lbl">full 360° rotations</span></div>
+      <div class="demo-stat"><span class="num" data-count="310" data-suffix=" s">310 s</span><span class="lbl">in one run, zero drops</span></div>
+      <div class="demo-stat"><span class="num">0</span><span class="lbl">cameras</span></div>
+    </div>
+    <figure class="paper-fig">
+      <div class="video-slot demo-video" data-video="demo">
+        <video src="videos/demo.mp4" data-autoplay muted controls playsinline preload="metadata"></video>
+        <span class="demo-badge">Real hand · no vision · 225 × 180°</span>
+      </div>
+      <figcaption><b>Long-horizon demonstration.</b> One continuous run of our C3 policy on the physical hand, deployed straight from simulation. Nothing in the loop can see the balls: the policy only reads joint positions and binary touch. This run was recorded separately from the 10 benchmark trials below and isn't included in their statistics.</figcaption>
+    </figure>
+  </section>
 
   <section>
     <h2 class="paper-h">Benchmark</h2>
-    <p class="paper-text">The same configuration in simulation and on the physical hand, deployed zero-shot.</p>
+    <p class="paper-text">Each row is one policy, shown in simulation and on the real hand. Every policy was deployed zero-shot, with no training or tuning on the hardware. Each hardware clip is one of the 10 trials recorded for that policy.</p>
     <div class="ckpt-list">
       <article class="ckpt-row ours">
         <h3>C3 <em>(ours)</em></h3>
-        <p class="ckpt-desc">Physical + SlewDR + STAT randomisation · proprioception + touch</p>
+        <p class="ckpt-desc">Our full method. Senses joints and touch; trained with physical, slew-rate and Stuck-AT Taxel randomisation.</p>
         <div class="ckpt-pair">
-          <figure><figcaption>Simulation</figcaption><div class="video-slot" data-video="c3-sim"><video src="videos/c3-sim.mp4" autoplay muted loop playsinline preload="metadata"></video></div></figure>
-          <figure><figcaption>Hardware <small>· trial 9</small></figcaption><div class="video-slot" data-video="c3-hw"><video src="videos/c3-hw.mp4" autoplay muted loop playsinline preload="metadata"></video></div></figure>
+          <figure><figcaption>Simulation</figcaption><div class="video-slot" data-video="c3-sim"><video src="videos/c3-sim.mp4" data-autoplay muted loop controls playsinline preload="metadata"></video></div></figure>
+          <figure><figcaption>Hardware</figcaption><div class="video-slot" data-video="c3-hw"><video src="videos/c3-hw.mp4" data-autoplay muted loop controls playsinline preload="metadata"></video></div></figure>
         </div>
       </article>
       <article class="ckpt-row">
         <h3>C3-TacOff</h3>
-        <p class="ckpt-desc">The C3 policy with touch switched off at deployment</p>
+        <p class="ckpt-desc">The same C3 policy with its touch input set to zero at deployment. This shows what touch contributes.</p>
         <div class="ckpt-pair">
-          <figure><figcaption>Simulation</figcaption><div class="video-slot" data-video="c3-tacoff-sim"><video src="videos/c3-tacoff-sim.mp4" autoplay muted loop playsinline preload="metadata"></video></div></figure>
-          <figure><figcaption>Hardware <small>· trial 10</small></figcaption><div class="video-slot" data-video="c3-tacoff-hw"><video src="videos/c3-tacoff-hw.mp4" autoplay muted loop playsinline preload="metadata"></video></div></figure>
+          <figure><figcaption>Simulation</figcaption><div class="video-slot" data-video="c3-tacoff-sim"><video src="videos/c3-tacoff-sim.mp4" data-autoplay muted loop controls playsinline preload="metadata"></video></div></figure>
+          <figure><figcaption>Hardware</figcaption><div class="video-slot" data-video="c3-tacoff-hw"><video src="videos/c3-tacoff-hw.mp4" data-autoplay muted loop controls playsinline preload="metadata"></video></div></figure>
         </div>
       </article>
       <article class="ckpt-row">
         <h3>Proprio-only</h3>
-        <p class="ckpt-desc">Physical randomisation · trained with proprioception only</p>
+        <p class="ckpt-desc">Trained from scratch without any touch sensing, using joint readings alone; physical randomisation.</p>
         <div class="ckpt-pair">
-          <figure><figcaption>Simulation</figcaption><div class="video-slot" data-video="proprio-only-sim"><video src="videos/proprio-only-sim.mp4" autoplay muted loop playsinline preload="metadata"></video></div></figure>
-          <figure><figcaption>Hardware <small>· trial 6</small></figcaption><div class="video-slot" data-video="proprio-only-hw"><video src="videos/proprio-only-hw.mp4" autoplay muted loop playsinline preload="metadata"></video></div></figure>
+          <figure><figcaption>Simulation</figcaption><div class="video-slot" data-video="proprio-only-sim"><video src="videos/proprio-only-sim.mp4" data-autoplay muted loop controls playsinline preload="metadata"></video></div></figure>
+          <figure><figcaption>Hardware</figcaption><div class="video-slot" data-video="proprio-only-hw"><video src="videos/proprio-only-hw.mp4" data-autoplay muted loop controls playsinline preload="metadata"></video></div></figure>
         </div>
       </article>
       <article class="ckpt-row">
         <h3>C2</h3>
-        <p class="ckpt-desc">Physical + SlewDR randomisation · proprioception + touch</p>
+        <p class="ckpt-desc">Joints and touch; physical and slew-rate randomisation, but no Stuck-AT Taxels. Moves more smoothly than C1, yet still drops the balls within seconds.</p>
         <div class="ckpt-pair">
-          <figure><figcaption>Simulation</figcaption><div class="video-slot" data-video="c2-sim"><video src="videos/c2-sim.mp4" autoplay muted loop playsinline preload="metadata"></video></div></figure>
-          <figure><figcaption>Hardware <small>· trial 3</small></figcaption><div class="video-slot" data-video="c2-hw"><video src="videos/c2-hw.mp4" autoplay muted loop playsinline preload="metadata"></video></div></figure>
+          <figure><figcaption>Simulation</figcaption><div class="video-slot" data-video="c2-sim"><video src="videos/c2-sim.mp4" data-autoplay muted loop controls playsinline preload="metadata"></video></div></figure>
+          <figure><figcaption>Hardware</figcaption><div class="video-slot" data-video="c2-hw"><video src="videos/c2-hw.mp4" data-autoplay muted loop controls playsinline preload="metadata"></video></div></figure>
         </div>
       </article>
       <article class="ckpt-row">
         <h3>C1</h3>
-        <p class="ckpt-desc">Physical randomisation only · proprioception + touch</p>
+        <p class="ckpt-desc">Joints and touch; physical randomisation only. The fastest policy in simulation, but its aggressive motion falls apart on the real hand.</p>
         <div class="ckpt-pair">
-          <figure><figcaption>Simulation</figcaption><div class="video-slot" data-video="c1-sim"><video src="videos/c1-sim.mp4" autoplay muted loop playsinline preload="metadata"></video></div></figure>
-          <figure><figcaption>Hardware <small>· trial 1</small></figcaption><div class="video-slot" data-video="c1-hw"><video src="videos/c1-hw.mp4" autoplay muted loop playsinline preload="metadata"></video></div></figure>
+          <figure><figcaption>Simulation</figcaption><div class="video-slot" data-video="c1-sim"><video src="videos/c1-sim.mp4" data-autoplay muted loop controls playsinline preload="metadata"></video></div></figure>
+          <figure><figcaption>Hardware</figcaption><div class="video-slot" data-video="c1-hw"><video src="videos/c1-hw.mp4" data-autoplay muted loop controls playsinline preload="metadata"></video></div></figure>
         </div>
       </article>
       <article class="ckpt-row">
         <h3>Open-loop</h3>
-        <p class="ckpt-desc">A recorded trajectory replayed on the hand with no feedback</p>
+        <p class="ckpt-desc">No policy at all: a recorded joint trajectory replayed on the hand with no feedback. The baseline for "just repeat the motion".</p>
         <div class="ckpt-pair">
           <figure><figcaption>Simulation</figcaption><div class="video-slot na"><span>not applicable: hardware replay only</span></div></figure>
-          <figure><figcaption>Hardware <small>· trial 1</small></figcaption><div class="video-slot" data-video="open-loop-hw"><video src="videos/open-loop-hw.mp4" autoplay muted loop playsinline preload="metadata"></video></div></figure>
+          <figure><figcaption>Hardware</figcaption><div class="video-slot" data-video="open-loop-hw"><video src="videos/open-loop-hw.mp4" data-autoplay muted loop controls playsinline preload="metadata"></video></div></figure>
         </div>
       </article>
     </div>
@@ -106,7 +117,7 @@
 
   <section>
     <h2 class="paper-h">Evaluation</h2>
-    <p class="paper-text">Hardware: mean ± std over 10 trials, with the min–max range underneath. Simulation: aggregated over 768 episodes across three training seeds. Dashes mean the metric wasn't evaluated or reported.</p>
+    <p class="paper-text">Hardware numbers are the mean ± standard deviation over 10 trials, with the min–max range in small type. Each trial started with both balls placed by hand and ran until a ball left the hand, with no time limit. Simulation numbers come from 768 ten-second episodes across three training seeds. A dash means the metric wasn't measured or reported.</p>
     <div class="results-wrap">
       <table class="results">
         <thead>
@@ -130,15 +141,28 @@
         </tbody>
       </table>
     </div>
-    <p class="table-notes"><sup>†</sup> Nagabandi et al. report ~54% success at a single 180° half-rotation within a 10 s horizon (read as ~0.5 full rotations), inferred from a video demonstration. <sup>‡</sup> Yuan et al. report ~3 full rotations within a 10 s horizon (~0.30 rot/s). <sup>§</sup> Yang et al. show a single qualitative 180° half-rotation on hardware without object vision. None report trial-to-trial variance, time-to-drop or continuous rotation longevity. η is exchange efficiency: the fraction of gait cycles that complete a ball exchange.</p>
+    <p class="table-notes"><b>Full rotations:</b> complete 360° turns before a ball leaves the hand (one full rotation is two ball exchanges). <b>Time to drop:</b> seconds from both balls being seated until one falls. <b>Speed:</b> full rotations in the first 10 s, divided by the time the balls stayed up in that window. <b>η (exchange efficiency):</b> the fraction of gait cycles that actually complete a ball exchange; 1.0 means no wasted cycles. <b>Drop rate:</b> the share of trials in which a ball fell within the first 10 s.</p>
+    <p class="table-notes"><sup>†</sup> Nagabandi et al. report ~54% success at a single 180° half-rotation within 10 s (read as ~0.5 full rotations), inferred from a video demonstration. <sup>‡</sup> Yuan et al. report ~3 full rotations within 10 s (~0.30 rot/s). <sup>§</sup> Yang et al. show a single qualitative 180° half-rotation on hardware without object vision. None of them report trial-to-trial variance, time to drop, or how long rotation can be sustained.</p>
   </section>
 
   <section>
-    <h2 class="paper-h">Abstract</h2>
-    <p class="paper-text">Humans manipulate objects within their hands through touch alone with remarkable ease, but for robots, achieving sustained real-world manipulation without vision remains an open challenge. Although reinforcement learning (RL) can generate sophisticated blind manipulation policies in simulation, transferring them to a real dexterous hand remains hindered by continuously changing contacts, motion-induced tactile information drift, and the gap between simulated and physical dynamics. We study this problem through Baoding ball rotation on the Shadow Dexterous Hand Lite, using only proprioception and binary tactile feedback as observations. We achieve successful zero-shot transfer through a combination of a sensor-aligned, coupling-aware embodiment in simulation, tactile calibration, and two novel episodic domain randomisations: slew-rate action limits and STuck-AT Taxels. On the physical hand, the policy achieves sustained blind Baoding rotation, completing 225 consecutive 180° rotations (112.5 full rotations) at ~0.36 rot/s in a single continuous trial without any vision or object-state information. Furthermore, we evaluate the contribution of tactile sensing relative to proprioception alone and identify the hand regions where tactile information is most important. This is the strongest reported hardware result for Baoding ball manipulation in both rotation count and speed, irrespective of the sensing modality used. By effectively bridging the sim-to-real gap, our framework sets a new benchmark for sustained tactile-driven dexterous manipulation on physical hardware.</p>
+    <h2 class="paper-h">What we found</h2>
+    <ul class="paper-list">
+      <li><b>Touch turns motion into progress.</b> Without touch, the hand keeps cycling through its learned gait, but many cycles don't complete an exchange. Exchange efficiency climbs from 0.58 with touch switched off to 0.90 with it on.</li>
+      <li><b>Touch lets the hand recover.</b> When the balls drift out of place, the policy uses contact to reposition them and carry on. With touch, C3 made about 7× as many rotations and stayed up about 5× as long as the same policy without it. In one trial the thumb didn't push a ball far enough toward the ring finger. It held on to the incoming ball while the index and middle fingers repositioned the other one, and the gait resumed.</li>
+      <li><b>Looking good in simulation isn't enough.</b> C1 is the fastest policy in simulation (~0.96 rot/s), yet it barely manages a single rotation on the real hand. Its commands move faster than the real joints can follow.</li>
+      <li><b>Each randomisation fixes a specific failure.</b> Slew-rate randomisation (C2) teaches smoother motions that the hardware can track. Adding Stuck-AT Taxels (C3) stops the policy depending on any one touch sensor, taking the hardware result from 0.5 to 34.75 full rotations on average.</li>
+    </ul>
+  </section>
+
+  <section>
+    <h2 class="paper-h">Overview</h2>
+    <p class="paper-text">People can spin objects in one hand without looking, relying on touch alone. Robots still struggle with this. Reinforcement learning can produce impressive blind manipulation in simulation, but moving those skills onto a real hand is hard. Contacts change constantly, touch sensors drift as the hand moves, and the simulator never quite matches real physics.</p>
+    <p class="paper-text">We study this problem with two Baoding balls on a four-fingered Shadow Dexterous Hand Lite. The policy observes only its joint readings and 16 binary contact signals. It never sees the balls and never receives their positions. Four ingredients make zero-shot transfer work: a simulated hand that matches the real sensors and tendon coupling, per-sensor touch calibration, and two new training randomisations, slew-rate limits and Stuck-AT Taxels.</p>
+    <p class="paper-text">On the real hand, the policy completed <b>225 consecutive 180° rotations (112.5 full rotations) at about 0.36 rot/s</b> in a single continuous run, without any vision or object tracking. This is the strongest hardware result reported for Baoding balls, in both rotation count and speed, regardless of sensing modality. We also measure what touch adds on top of joint sensing alone, and which regions of the hand matter most.</p>
     <figure class="paper-fig">
       <img src="img/fig1.jpg" alt="A 1.2-second Baoding ball rotation in simulation (top) and on the physical Shadow Hand Lite (bottom) at matched time steps." loading="lazy">
-      <figcaption><b>Zero-shot sim-to-real transfer.</b> A 1.2 s, 180° rotation in simulation (top) and on the physical Shadow Dexterous Hand Lite (bottom) at matched time steps. The policy sees only proprioception and binary contact signals.</figcaption>
+      <figcaption><b>The same motion in simulation and on the real hand.</b> A 1.2 s, 180° rotation in simulation (top) and on the physical Shadow Dexterous Hand Lite (bottom), at matching time steps. The policy was trained entirely in simulation and sees only joint readings and binary contact signals.</figcaption>
     </figure>
   </section>
 
@@ -146,13 +170,13 @@
     <h2 class="paper-h">Method</h2>
     <figure class="paper-fig">
       <img src="img/fig4.jpg" alt="Method overview: training in simulation with coupling correction, zero-shot hardware transfer with action slewing and tactile calibration, and episode-reset randomisations." loading="lazy">
-      <figcaption><b>Overview.</b> Training in simulation through a corrected tendon-coupling model (top left); zero-shot deployment at 60 Hz with tactile calibration and rate-limited actions (bottom left); randomisations applied at every episode reset, including our Stuck-AT Taxels and slew-rate randomisation (right).</figcaption>
+      <figcaption><b>Overview.</b> Top left: training in simulation, with every action passed through the corrected tendon coupling. Bottom left: the trained policy runs unchanged on the real hand at 60 Hz, with calibrated touch and rate-limited actions. Right: randomisations applied at every episode reset, including our Stuck-AT Taxels and slew-rate randomisation.</figcaption>
     </figure>
     <ul class="paper-list">
-      <li>A <b>hardware-aligned simulation</b> of the Shadow Hand Lite, with matched tactile sites and the real sequential tendon coupling.</li>
-      <li><b>Per-channel tactile calibration</b> with hysteresis to cope with sensor noise and drift.</li>
-      <li><b>Slew-rate randomisation</b> (SlewDR), which teaches smoother motions the hardware can follow.</li>
-      <li><b>Stuck-AT Taxels</b> (STAT), which randomly freezes touch channels so the policy never relies on any single one.</li>
+      <li><b>A simulated hand that behaves like the real one.</b> On the real hand, each finger's middle knuckle bends first, and the fingertip knuckle only starts moving once the middle one reaches ~100°. The stock simulation model moves both knuckles together. We model the real sequential coupling and place simulated touch sensors exactly where the physical ones are.</li>
+      <li><b>Per-sensor touch calibration.</b> A force sensor's resting reading shifts with hand pose and cable movement, even with nothing in the hand. Each channel gets its own on and off thresholds, measured from an empty-hand recording, with a gap between them (hysteresis) so the signal doesn't flicker.</li>
+      <li><b>Slew-rate randomisation (SlewDR).</b> The real joints can't move as fast as the policy commands. We cap how far each command can move per step and randomise that cap during training, so the policy learns motions the hardware can actually follow.</li>
+      <li><b>Stuck-AT Taxels (STAT).</b> At the start of each training episode, up to six touch sensors are frozen at "on" or "off". The policy learns not to rely on any single sensor, which matters because real sensors misfire.</li>
     </ul>
   </section>
 
@@ -160,7 +184,7 @@
     <h2 class="paper-h">Hardware</h2>
     <figure class="paper-fig">
       <img src="img/fig2.jpg" alt="Force-sensitive resistor placement on the physical Shadow Hand Lite and the matching simulation model." loading="lazy">
-      <figcaption><b>Touch sensing.</b> Twelve force-sensitive resistors and four BioTac fingertips on the physical hand (left), mirrored in the simulation model (right), give 16 binary contact signals.</figcaption>
+      <figcaption><b>Touch sensing.</b> Twelve force-sensitive resistors on the palm and fingers, plus four BioTac fingertips, give 16 binary contact signals on the physical hand (left). The simulation model mirrors the same layout (right).</figcaption>
     </figure>
   </section>
 

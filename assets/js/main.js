@@ -56,4 +56,48 @@ document.addEventListener('DOMContentLoaded', () => {
       }
     });
   });
+
+  // --- paper pages: play videos only while on screen (muted, so browsers allow it) ---
+  const vids = document.querySelectorAll('video[data-autoplay]');
+  if ('IntersectionObserver' in window) {
+    // a pause the viewer makes themselves sticks: scrolling back won't restart it
+    const vio = new IntersectionObserver(entries => entries.forEach(e => {
+      const v = e.target;
+      v.dataset.visible = e.isIntersecting ? '1' : '';
+      if (e.isIntersecting) { if (!v.dataset.userPaused) v.play().catch(() => {}); }
+      else if (!v.paused) { v.dataset.autoPausing = '1'; v.pause(); }
+    }), { threshold: 0.35 });
+    vids.forEach(v => {
+      v.addEventListener('pause', () => {
+        if (v.dataset.autoPausing) delete v.dataset.autoPausing;
+        else if (v.dataset.visible && !v.ended) v.dataset.userPaused = '1';
+      });
+      v.addEventListener('play', () => { delete v.dataset.userPaused; });
+      vio.observe(v);
+    });
+  } else {
+    vids.forEach(v => v.play().catch(() => {}));
+  }
+
+  // --- paper pages: count stat numbers up once they scroll into view ---
+  const nums = document.querySelectorAll('[data-count]');
+  const still = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  if (nums.length && !still && 'IntersectionObserver' in window) {
+    const fmt = (el, x) => {
+      const target = el.dataset.count, dec = (target.split('.')[1] || '').length;
+      el.textContent = x.toFixed(dec) + (el.dataset.suffix || '');
+    };
+    const nio = new IntersectionObserver(entries => entries.forEach(e => {
+      if (!e.isIntersecting) return;
+      nio.unobserve(e.target);
+      const el = e.target, end = parseFloat(el.dataset.count), t0 = performance.now(), dur = 1600;
+      const step = now => {
+        const k = Math.min(1, (now - t0) / dur);
+        fmt(el, end * (1 - Math.pow(1 - k, 3)));
+        if (k < 1) requestAnimationFrame(step);
+      };
+      requestAnimationFrame(step);
+    }), { threshold: 0.6 });
+    nums.forEach(el => { fmt(el, 0); nio.observe(el); });
+  }
 });
