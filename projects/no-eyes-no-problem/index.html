@@ -83,7 +83,7 @@
       <article class="ckpt-row ours" id="c3">
         <h3>C3 <em>(ours)</em></h3>
         <p class="ckpt-desc">Our full method. Senses joints and touch; trained with physical, slew-rate and Stuck-AT Taxel randomisation.</p>
-        <dl class="ckpt-stats"><div><dt>Full rotations <small>hardware</small></dt><dd>34.75 <small>avg · best 74</small></dd></div><div><dt>Speed <small>hardware</small></dt><dd>0.36 <small>rot/s · best 0.45</small></dd></div><div><dt>Speed <small>sim</small></dt><dd>0.416 <small>rot/s</small></dd></div></dl>
+        <dl class="ckpt-stats"><div><dt>Full rotations <small>hardware</small></dt><dd>34.75 <small>avg · best 74<sup>*</sup></small></dd></div><div><dt>Speed <small>hardware</small></dt><dd>0.36 <small>rot/s · best 0.45</small></dd></div><div><dt>Speed <small>sim</small></dt><dd>0.416 <small>rot/s</small></dd></div></dl>
         <div class="ckpt-pair">
           <figure><figcaption>Simulation</figcaption><div class="video-slot" data-video="c3-sim"><video src="videos/c3-sim.mp4" data-autoplay muted loop controls playsinline preload="metadata"></video></div></figure>
           <figure><figcaption>Hardware</figcaption><div class="video-slot" data-video="c3-hw"><video src="videos/c3-hw.mp4" data-autoplay muted loop controls playsinline preload="metadata"></video></div></figure>
@@ -135,6 +135,7 @@
         </div>
       </article>
     </div>
+    <p class="table-notes"><sup>*</sup> Benchmark results come from 10 separate hardware trials per policy. The 112.5-rotation demonstration run at the top of the page is not one of them and is not included in these statistics.</p>
   </section>
 
   <section>
@@ -157,13 +158,14 @@
         <tr><th scope="row">Open-loop</th><td>—</td><td>—</td><td>1.7 ± 1.99<small>0–5.0</small></td><td>6.1 ± 4.7<small>1–14</small></td><td>—</td><td>0.168 ± 0.179<small>0–0.4</small></td><td>80%</td></tr>
         <tr><th scope="row">Proprio-only</th><td>0.591 ± 0.128</td><td>17%</td><td>4.4 ± 2.44<small>0.5–8.0</small></td><td>21.4 ± 12.2<small>4–43</small></td><td>0.31 ± 0.13</td><td>0.226 ± 0.098<small>0.05–0.35</small></td><td>20%</td></tr>
         <tr><th scope="row">C3-TacOff</th><td>0.291 ± 0.167</td><td>32%</td><td>5.0 ± 4.1<small>0–14.5</small></td><td>19.0 ± 11.2<small>3–40</small></td><td>0.58 ± 0.26</td><td>0.256 ± 0.112<small>0–0.4</small></td><td>20%</td></tr>
-        <tr class="ours"><th scope="row">C3 (ours)</th><td>0.416 ± 0.129</td><td>2%</td><td>34.75 ± 26.06<small>2.0–74</small></td><td>94.8 ± 68.0<small>8–201</small></td><td>0.90 ± 0.16</td><td>0.36 ± 0.061<small>0.25–0.45</small></td><td>10%</td></tr>
+        <tr class="ours"><th scope="row">C3 (ours)</th><td>0.416 ± 0.129</td><td>2%</td><td>34.75 ± 26.06<small>2.0–74<sup>*</sup></small></td><td>94.8 ± 68.0<small>8–201</small></td><td>0.90 ± 0.16</td><td>0.36 ± 0.061<small>0.25–0.45</small></td><td>10%</td></tr>
         <tr><th scope="row">C1</th><td>0.959 ± 0.071</td><td>2%</td><td>0.35 ± 0.63<small>0–2</small></td><td>5.9 ± 4.3<small>2–13</small></td><td>—</td><td>0.054 ± 0.079<small>0–0.2</small></td><td>70%</td></tr>
         <tr><th scope="row">C2</th><td>0.277 ± 0.082</td><td>9%</td><td>0.5 ± 0.53<small>0–1.5</small></td><td>4.1 ± 1.5<small>2–7</small></td><td>—</td><td>0.101 ± 0.094<small>0–0.25</small></td><td>100%</td></tr>
         </tbody>
       </table>
     </div>
     <p class="table-notes"><b>Full rotations:</b> complete 360° rotations before either ball leaves the hand; one full rotation is two successful ball exchanges. <b>Time to drop</b> (<i>t</i><sub>drop</sub>): time from both balls being seated until either ball leaves the hand. <b>Speed:</b> <i>R</i><sub>10</sub> / min(10, <i>t</i><sub>drop</sub>), where <i>R</i><sub>10</sub> is the number of full rotations in the first 10 s (in simulation, <i>t</i><sub>drop</sub> is the episode survival time). <b>η (exchange efficiency):</b> 2<i>R</i><sub>10</sub> / (<i>f</i><sub>gait</sub><i>T</i>), the fraction of executed gait cycles that complete a ball exchange, with <i>T</i> = min(10, <i>t</i><sub>drop</sub>); η ≤ 1. <b>Drop rate:</b> the fraction of episodes (simulation) or trials (hardware) in which a ball leaves the hand within 10 s.</p>
+    <p class="table-notes"><sup>*</sup> Benchmark results come from 10 separate hardware trials per policy. The 112.5-rotation demonstration run at the top of the page is not one of them and is not included in these statistics.</p>
     <p class="table-notes"><sup>†</sup> Nagabandi et al. report ~54% success at a single 180° half-rotation within 10 s (read as ~0.5 full rotations), inferred from a video demonstration. <sup>‡</sup> Yuan et al. report ~3 full rotations within 10 s (~0.30 rot/s). <sup>§</sup> Yang et al. show a single qualitative 180° half-rotation on hardware without object vision. None of them report trial-to-trial variance, time to drop, or how long rotation can be sustained.</p>
   </section>
 
