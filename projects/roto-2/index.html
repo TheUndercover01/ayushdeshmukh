@@ -15,7 +15,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Caveat:wght@500;700&family=Instrument+Serif:ital@0;1&family=Source+Serif+4:ital,opsz,wght@0,8..60,400;0,8..60,600;1,8..60,400&family=Space+Grotesk:wght@400;500;700;800&family=JetBrains+Mono:wght@400;700&display=swap">
-<link rel="stylesheet" href="../../assets/css/style.css?v=6">
+<link rel="stylesheet" href="../../assets/css/style.css?v=7">
 <script>try{if(localStorage.getItem("theme")==="dark")document.documentElement.dataset.theme="dark"}catch(e){}</script>
 </head>
 <body>
@@ -38,6 +38,15 @@
   </header>
 
   <p class="tldr"><b>TL;DR</b> A GPU-parallel benchmark for <b>blind</b> dexterous manipulation (proprioception and touch only, no object state) across four robot hands. Our blind agents reach <b>13 Baoding ball rotations in 10 seconds</b>.</p>
+
+  <section class="demo" aria-label="Headline results">
+    <div class="demo-stats even">
+      <div class="demo-stat lead"><span class="num" data-count="13">13</span><span class="lbl">Baoding rotations in 10 s, blind</span></div>
+      <div class="demo-stat"><span class="num" data-count="4">4</span><span class="lbl">robot hands</span></div>
+      <div class="demo-stat"><span class="num">16–24</span><span class="lbl">degrees of freedom</span></div>
+      <div class="demo-stat"><span class="num">0</span><span class="lbl">cameras or object state</span></div>
+    </div>
+  </section>
 
   <figure class="paper-fig">
       <img src="img/hands.jpg" alt="The four robot hands in roto 2.0: ORCA Hand, Shadow Hand Lite, Allegro Hand and Shadow Dexterous Hand." loading="lazy">

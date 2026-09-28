@@ -15,7 +15,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Caveat:wght@500;700&family=Instrument+Serif:ital@0;1&family=Source+Serif+4:ital,opsz,wght@0,8..60,400;0,8..60,600;1,8..60,400&family=Space+Grotesk:wght@400;500;700;800&family=JetBrains+Mono:wght@400;700&display=swap">
-<link rel="stylesheet" href="../../assets/css/style.css?v=6">
+<link rel="stylesheet" href="../../assets/css/style.css?v=7">
 <script>try{if(localStorage.getItem("theme")==="dark")document.documentElement.dataset.theme="dark"}catch(e){}</script>
 </head>
 <body>
@@ -40,6 +40,15 @@
   </header>
 
   <p class="tldr"><b>TL;DR</b> I designed a small attention module (<b>CAGA</b>) and added it to EfficientViT-L1. The result classifies Mpox skin lesions at <b>98% accuracy</b> on MCSI with <b>37.5% fewer parameters</b> than the original backbone, and it is the most accurate model on all three datasets I tested.</p>
+
+  <section class="demo" aria-label="Headline results">
+    <div class="demo-stats even">
+      <div class="demo-stat lead"><span class="num" data-count="98" data-suffix="%">98%</span><span class="lbl">accuracy on MCSI</span></div>
+      <div class="demo-stat"><span class="num" data-count="37.5" data-suffix="%">37.5%</span><span class="lbl">fewer parameters than EfficientViT-L1</span></div>
+      <div class="demo-stat"><span class="num" data-count="4.86">4.86</span><span class="lbl">GFLOPs, 3.5× less than ViT-Base</span></div>
+      <div class="demo-stat"><span class="num">3/3</span><span class="lbl">datasets where it's the most accurate</span></div>
+    </div>
+  </section>
 
   <section>
     <h2 class="paper-h">The problem</h2>
