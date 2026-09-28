@@ -55,7 +55,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Caveat:wght@500;700&family=Instrument+Serif:ital@0;1&family=Source+Serif+4:ital,opsz,wght@0,8..60,400;0,8..60,600;1,8..60,400&family=Space+Grotesk:wght@400;500;700;800&family=JetBrains+Mono:wght@400;700&display=swap">
-<link rel="stylesheet" href="assets/css/style.css?v=3">
+<link rel="stylesheet" href="assets/css/style.css?v=4">
 <script>try{if(localStorage.getItem("theme")==="dark")document.documentElement.dataset.theme="dark"}catch(e){}</script>
 </head>
 <body>
@@ -100,7 +100,7 @@
 
   <section class="news" id="news" data-cheer="news! 📰">
     <h2 class="label">News<span class="tag">Updates</span></h2>
-    <ul>
+    <ul class="collapsed">
       <li><span class="date">2026</span> <span>Started a new position at the <a href="https://informatics.ed.ac.uk/slmc" target="_blank" rel="noopener">SLMC lab</a>, working with Kawada Robotics.</span></li>
       <li><span class="date">Aug 2026</span> <span>Submitted my MSc dissertation, <a href="projects/actuator-nets/"><em>Manipulation in the Dark</em></a>, and completed my MSc in AI at the University of Edinburgh.</span></li>
       <li><span class="date">2026</span> <span><em>roto 2.0 — The Robot Tactile Olympiad</em> accepted at the ViTac workshop, ICRA 2026.</span></li>
@@ -110,6 +110,11 @@
       <li><span class="date">2025</span> <span>Paper published at DAGM GCPR 2025 on Mpox lesion classification.</span></li>
       <li><span class="date">2025</span> <span>Graduated from NITK Surathkal (BTech, Information Technology).</span></li>
     </ul>
+    <button class="news-more" type="button" aria-expanded="false" hidden>Show all news</button>
+    <script>(function(){var u=document.querySelector(".news ul"),b=document.querySelector(".news-more"),n=u.children.length;
+      if(n<=3){u.classList.remove("collapsed");return}
+      b.hidden=false;b.textContent="Show "+(n-3)+" older ↓";
+      b.addEventListener("click",function(){var o=u.classList.toggle("collapsed");b.setAttribute("aria-expanded",String(!o));b.textContent=o?"Show "+(n-3)+" older ↓":"Show less ↑"})})()</script>
   </section>
 
   <section class="pubs" id="pubs" data-cheer="papers! 🎉">
