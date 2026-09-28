@@ -15,7 +15,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Caveat:wght@500;700&family=Instrument+Serif:ital@0;1&family=Source+Serif+4:ital,opsz,wght@0,8..60,400;0,8..60,600;1,8..60,400&family=Space+Grotesk:wght@400;500;700;800&family=JetBrains+Mono:wght@400;700&display=swap">
-<link rel="stylesheet" href="../../assets/css/style.css?v=5">
+<link rel="stylesheet" href="../../assets/css/style.css?v=6">
 <script>try{if(localStorage.getItem("theme")==="dark")document.documentElement.dataset.theme="dark"}catch(e){}</script>
 </head>
 <body>
@@ -34,11 +34,19 @@
       <a href="../../assets/papers/msc-dissertation.pdf" target="_blank" rel="noopener">MSc dissertation (PDF)</a>
       <a href="https://github.com/TheUndercover01/Neural-Dynamics" target="_blank" rel="noopener">Pipeline code</a>
       <a href="../../blog/sim-to-real-three-gaps.html" target="_blank" rel="noopener">Blog: the three gaps</a>
-      <a href="../no-eyes-no-problem/" target="_blank" rel="noopener">Where it's used</a>
     </div>
   </header>
 
   <p class="tldr"><b>TL;DR</b> On the Shadow Hand Lite, one motor drives two finger joints through a tendon, and the real tendon goes <b>slack</b> in a way no PD controller can copy. I built a hardware data pipeline (<b>114 episodes</b>) and tried <b>three</b> ways to learn a residual actuator model for it. None worked, and the reasons turned out to be the interesting part.</p>
+
+    <figure class="paper-fig">
+      <div class="vid-row">
+        <figure><div class="video-slot portrait"><video src="videos/curling_uncurling_ring.mp4" poster="videos/curling_uncurling_ring.jpg" data-autoplay muted loop controls playsinline preload="none"></video></div><figcaption>Ring finger, curling and uncurling</figcaption></figure>
+        <figure><div class="video-slot portrait"><video src="videos/uncurling_3fingers.mp4" poster="videos/uncurling_3fingers.jpg" data-autoplay muted loop controls playsinline preload="none"></video></div><figcaption>All three coupled fingers uncurling</figcaption></figure>
+        <figure><div class="video-slot portrait"><video src="videos/nalin_biotachand.mp4" poster="videos/nalin_biotachand.jpg" data-autoplay muted loop controls playsinline preload="none"></video></div><figcaption>The same motion on the BioTac-fitted hand</figcaption></figure>
+      </div>
+      <figcaption><b>Tendon slack on the real Shadow Hand Lite.</b> Watch the fingertip joint (J1): it starts to move before the middle joint (J2) has finished, instead of waiting for the clean handoff the simulator assumes.</figcaption>
+    </figure>
 
   <section>
     <h2 class="paper-h">The problem: coupled joints</h2>
@@ -54,14 +62,6 @@
     </figure>
     <p class="paper-text">So I measured the coupling directly with slow back-and-forth sweeps, one finger at a time, three cycles each. On every finger, <b>J1 started moving before the nominal 100° handoff</b>. The early motion differed from finger to finger, both joints were often moving at the same time, and it got worse at higher speeds.</p>
     <p class="paper-text">That pattern is <b>tendon slack</b>: the tendon is loose, so the motor can move without immediately pulling the next joint, and once it goes taut the dependent joint starts early. I sent a clip to Shadow Robotics and they agreed that slack was the likely cause.</p>
-    <figure class="paper-fig">
-      <div class="vid-row">
-        <figure><div class="video-slot portrait"><video src="videos/curling_uncurling_ring.mp4" poster="videos/curling_uncurling_ring.jpg" data-autoplay muted loop controls playsinline preload="none"></video></div><figcaption>Ring finger, curling and uncurling</figcaption></figure>
-        <figure><div class="video-slot portrait"><video src="videos/uncurling_3fingers.mp4" poster="videos/uncurling_3fingers.jpg" data-autoplay muted loop controls playsinline preload="none"></video></div><figcaption>All three coupled fingers uncurling</figcaption></figure>
-        <figure><div class="video-slot portrait"><video src="videos/nalin_biotachand.mp4" poster="videos/nalin_biotachand.jpg" data-autoplay muted loop controls playsinline preload="none"></video></div><figcaption>The same motion on the BioTac-fitted hand</figcaption></figure>
-      </div>
-      <figcaption><b>Tendon slack on the real hand.</b> Watch the fingertip joint (J1): it starts to move before the middle joint (J2) has finished, instead of waiting for the clean handoff the simulator assumes.</figcaption>
-    </figure>
     <p class="paper-text">This matters because no set of PD gains can reproduce it. The error is state-dependent and bounded, and it sits <i>on top of</i> the controller. That is exactly the kind of thing a learned residual, or <b>actuator network</b>, is supposed to capture.</p>
     <p class="paper-text">All the details, including the full pipeline, the model specifications and the gains I identified, are in my <a href="../../assets/papers/msc-dissertation.pdf" target="_blank" rel="noopener">MSc dissertation</a> (chapters 6–7 and the appendices).</p>
   </section>
@@ -83,14 +83,14 @@
   </section>
 
   <section>
-    <h2 class="paper-h">Attempt 1: learning it with RL</h2>
-    <p class="paper-text">First I tried an <b>unsupervised actuator network</b>: a small MLP adds 16 residual torques to the simulated PD output, and it is trained with RL on a reward for matching the recorded hardware trajectories. No torque labels needed.</p>
+    <h2 class="paper-h">Attempt 1: learning it with RL (UAN)</h2>
+    <p class="paper-text">First I tried an <b>unsupervised actuator network</b> (UAN)<sup><a href="#ref-1">[1]</a></sup>: a small MLP adds 16 residual torques to the simulated PD output, and it is trained with RL on a reward for matching the recorded hardware trajectories. No torque labels needed.</p>
     <p class="paper-text">It diverged. The mean return fell from 3.1 to <b>−1727</b> within 4.8M steps and never recovered over 80M more, while the residual torques kept growing. The trajectory-matching reward just wasn't a strong enough learning signal. I only ran four hyperparameter trials, so a different reward weighting might still work.</p>
   </section>
 
   <section>
-    <h2 class="paper-h">Attempt 2: a physics-based position loss</h2>
-    <p class="paper-text">Since the next joint position <i>is</i> in the data, I moved the loss into position space. Isaac Lab gives me the mass matrix, Coriolis and gravity terms, so I pushed the predicted torque through τ = M(q)q̈ + C(q, q̇) + G(q) and a differentiable semi-implicit Euler step, then compared the result against the recorded position.</p>
+    <h2 class="paper-h">Attempt 2: a physics-based position loss (GenAN)</h2>
+    <p class="paper-text">Since the next joint position <i>is</i> in the data, I moved the loss into position space, following Generalized Actuator Networks (GenAN)<sup><a href="#ref-2">[2]</a></sup>. Isaac Lab<sup><a href="#ref-4">[4]</a></sup> gives me the mass matrix, Coriolis and gravity terms, so I pushed the predicted torque through τ = M(q)q̈ + C(q, q̇) + G(q) and a differentiable semi-implicit Euler step<sup><a href="#ref-3">[3]</a></sup>, then compared the result against the recorded position.</p>
     <p class="paper-text">The implementation was right: given the true torque, it reproduced the next position to within 10<sup>−4</sup> rad. But the coupled finger links are tiny and very light, so M<sup>−1</sup> on those joints is <b>15,000–44,000</b>. A torque error of about 0.01 N·m becomes <b>several degrees</b> of position error in a single step. Moving the loss into position space didn't remove the sensitivity, it just moved it, and it is worst on exactly the joints I was trying to fix.</p>
   </section>
 
@@ -108,6 +108,16 @@
     <h2 class="paper-h">What happened in the end</h2>
     <p class="paper-text">None of the three made it into the final system. What rescued the project was an experiment I almost didn't run. I replayed a simulated Baoding trajectory <b>open-loop</b> on the real hand, and it worked. The learned strategy pushes the balls rather than curling the fingers deeply, so J2 never goes past about 100° and the slack region is never entered. For Baoding the problem could be <i>avoided</i> rather than modelled.</p>
     <p class="paper-text">I still think it's a useful negative result. On a tendon-driven hand with no torque sensing, torque supervision doesn't exist, position supervision is badly conditioned on the light coupled links, and a learned scale can't be separated from the residual. Anything that needs deep finger flexion will run into this. The next things I'd try are a calibrated torque signal, or a formulation that doesn't divide by those tiny link inertias.</p>
+  </section>
+
+  <section>
+    <h2 class="paper-h">References</h2>
+    <ol class="refs">
+      <li id="ref-1">N. Fey, G. B. Margolis, M. Peticco, P. Agrawal. <a href="https://arxiv.org/abs/2502.10894" target="_blank" rel="noopener">Bridging the Sim-to-Real Gap for Athletic Loco-Manipulation</a>. arXiv:2502.10894, 2025. <i>(UAN)</i></li>
+      <li id="ref-2">J. Schneider, M. Mahajan, L. Chen, S. Guist, B. Schölkopf, I. Posner, D. Büchler. <a href="https://arxiv.org/abs/2604.09487" target="_blank" rel="noopener">Sim-to-Real Transfer for Muscle-Actuated Robots via Generalized Actuator Networks</a>. arXiv:2604.09487, 2026. <i>(GenAN)</i></li>
+      <li id="ref-3">K. M. Jatavallabhula et al. <a href="https://arxiv.org/abs/2104.02646" target="_blank" rel="noopener">gradSim: Differentiable Simulation for System Identification and Visuomotor Control</a>. arXiv:2104.02646, 2021.</li>
+      <li id="ref-4">M. Mittal et al. <a href="https://arxiv.org/abs/2511.04831" target="_blank" rel="noopener">Isaac Lab: A GPU-Accelerated Simulation Framework for Multi-Modal Robot Learning</a>. arXiv:2511.04831, 2025.</li>
+    </ol>
   </section>
 
   <footer class="site-footer paper-foot">© 2026 Ayush Deshmukh · <a href="../index.html">All projects</a></footer>
