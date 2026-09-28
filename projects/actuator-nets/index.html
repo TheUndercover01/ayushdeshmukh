@@ -1,0 +1,110 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Tendon Slack & Actuator Networks — Ayush Deshmukh</title>
+<meta name="description" content="Finding tendon slack in the Shadow Hand Lite&#x27;s coupled finger joints, building a hardware data pipeline, and trying three ways to learn an actuator network for it.">
+<link rel="canonical" href="https://theundercover01.github.io/ayushdeshmukh/projects/actuator-nets/">
+<meta property="og:type" content="website">
+<meta property="og:title" content="Tendon Slack & Actuator Networks — Ayush Deshmukh">
+<meta property="og:description" content="Finding tendon slack in the Shadow Hand Lite&#x27;s coupled finger joints, building a hardware data pipeline, and trying three ways to learn an actuator network for it.">
+<meta property="og:url" content="https://theundercover01.github.io/ayushdeshmukh/projects/actuator-nets/">
+<meta property="og:image" content="https://theundercover01.github.io/ayushdeshmukh/projects/actuator-nets/img/handoff.jpg">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Caveat:wght@500;700&family=Instrument+Serif:ital@0;1&family=Source+Serif+4:ital,opsz,wght@0,8..60,400;0,8..60,600;1,8..60,400&family=Space+Grotesk:wght@400;500;700;800&family=JetBrains+Mono:wght@400;700&display=swap">
+<link rel="stylesheet" href="../../assets/css/style.css">
+<script>try{if(localStorage.getItem("theme")==="dark")document.documentElement.dataset.theme="dark"}catch(e){}</script>
+</head>
+<body>
+
+<header class="paper-bar">
+  <a class="paper-home" href="../../index.html"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 3 2 11.5h3V21h5.5v-6h3v6H19v-9.5h3z"/></svg>Ayush Deshmukh Home</a>
+  <button class="theme-toggle" type="button" aria-label="Switch to dark mode">☾ Dark mode</button>
+</header>
+
+<main class="paper">
+  <header class="paper-head">
+    <h1 class="paper-title">Tendon Slack & Actuator Networks</h1>
+    <p class="paper-sub">Trying to learn the Shadow Hand Lite's coupled finger joints from hardware data</p>
+    <p class="paper-authors"><b>Ayush Deshmukh</b> · part of my MSc at the University of Edinburgh, supervised by <a href='https://elle-miller.github.io/' target='_blank' rel='noopener'>Elle Miller</a> and <a href='https://homepages.inf.ed.ac.uk/svijayak/' target='_blank' rel='noopener'>Prof. Sethu Vijayakumar</a> (<a href='https://informatics.ed.ac.uk/slmc' target='_blank' rel='noopener'>SLMC</a>)</p>
+    <div class="paper-links">
+      <a href="../../assets/papers/msc-dissertation.pdf" target="_blank" rel="noopener">MSc dissertation (PDF)</a>
+      <a href="https://github.com/TheUndercover01/Neural-Dynamics" target="_blank" rel="noopener">Pipeline code</a>
+      <a href="../../blog/sim-to-real-three-gaps.html" target="_blank" rel="noopener">Blog: the three gaps</a>
+      <a href="../no-eyes-no-problem/" target="_blank" rel="noopener">Where it's used</a>
+    </div>
+  </header>
+
+  <p class="tldr"><b>TL;DR</b> On the Shadow Hand Lite, one motor drives two finger joints through a tendon, and the real tendon goes <b>slack</b> in a way no PD controller can copy. I built a hardware data pipeline (<b>114 episodes</b>) and tried <b>three</b> ways to learn a residual actuator model for it. None worked, and the reasons turned out to be the interesting part.</p>
+
+  <section>
+    <h2 class="paper-h">The problem: coupled joints</h2>
+    <p class="paper-text">The Shadow Hand Lite has 16 finger joints but only 13 motors. On the first, middle and ring fingers, the two joints nearest the tip (J1 and J2) share a single motor and are linked by a tendon. In simulation that coupling is modelled as a clean handoff: J2 bends all the way to 100°, and then J1 takes over.</p>
+    <p class="paper-text">I started with ordinary system identification. For each of the 13 motors I fit stiffness, damping and friction so the simulated joint follows the real one under the same command. I used chirp, step, ramp and random excitation, with a Latin Hypercube search run offline. It helped the directly driven joints: mean tracking error went from <b>0.188 to 0.155 rad</b>, about 17% better. On the coupled fingers it did <b>nothing</b>, and the identified and default gains produced practically the same trajectory.</p>
+  </section>
+
+  <section>
+    <h2 class="paper-h">Finding the tendon slack</h2>
+    <figure class="paper-fig">
+      <img src="img/handoff.jpg" alt="Scatter plots of J2 versus J1 position for three fingers, compared with the ideal sequential handoff." loading="lazy">
+      <figcaption><b>Ideal vs. real coupling.</b> In simulation, J2 bends fully before J1 starts (orange). On the real hand, J1 starts moving much earlier, by a different amount on each finger.</figcaption>
+    </figure>
+    <p class="paper-text">So I measured the coupling directly with slow back-and-forth sweeps, one finger at a time, three cycles each. On every finger, <b>J1 started moving before the nominal 100° handoff</b>. The early motion differed from finger to finger, both joints were often moving at the same time, and it got worse at higher speeds.</p>
+    <p class="paper-text">That pattern is <b>tendon slack</b>: the tendon is loose, so the motor can move without immediately pulling the next joint, and once it goes taut the dependent joint starts early. I sent a clip to Shadow Robotics and they agreed that slack was the likely cause.</p>
+    <p class="paper-text">This matters because no set of PD gains can reproduce it. The error is state-dependent and bounded, and it sits <i>on top of</i> the controller. That is exactly the kind of thing a learned residual, or <b>actuator network</b>, is supposed to capture.</p>
+    <p class="paper-text">All the details, including the full pipeline, the model specifications and the gains I identified, are in my <a href="../../assets/papers/msc-dissertation.pdf" target="_blank" rel="noopener">MSc dissertation</a> (chapters 6–7 and the appendices).</p>
+  </section>
+
+  <section>
+    <h2 class="paper-h">The data pipeline</h2>
+    <figure class="paper-fig">
+      <img src="img/pipeline.jpg" alt="Data pipeline: excitation signals run on the physical hand, joint, controller and tactile streams recorded, then aligned, split and turned into training samples." loading="lazy">
+      <figcaption><b>From hand to dataset.</b> Excitation signals run on the real hand. Joint states (125 Hz), controller state (100 Hz) and touch (325 Hz) are recorded, aligned, split by episode and turned into training samples.</figcaption>
+    </figure>
+    <ul class="paper-list">
+      <li><b>The rosbag is the single source of truth.</b> Everything after recording is offline and re-runnable, so I could change the dataset design without going back to the robot.</li>
+      <li><b>Excitation:</b> random walks, multi-sines, chirps and steps. Joints that weren't being excited were parked fully curled, because parking them at zero made the fingers collide.</li>
+      <li><b>Alignment:</b> every stream is resampled onto one <b>60 Hz</b> grid, the policy's control rate. Gaps are flagged and never stitched across.</li>
+      <li><b>Samples</b> are laid out <i>exactly</i> like the RL policy's observation: 4 stacked frames × 52 features (position, velocity, controller error and action for 13 motors). A trained model can drop straight into the simulator.</li>
+      <li><b>114 episodes</b>, split 70/15/15 <i>by episode</i> so nothing leaks across time, with a QC report for each episode.</li>
+      <li>There is no calibrated torque on this hand. The motor readout is an uncalibrated number in [−900, 900], so I couldn't just regress torque.</li>
+    </ul>
+  </section>
+
+  <section>
+    <h2 class="paper-h">Attempt 1: learning it with RL</h2>
+    <p class="paper-text">First I tried an <b>unsupervised actuator network</b>: a small MLP adds 16 residual torques to the simulated PD output, and it is trained with RL on a reward for matching the recorded hardware trajectories. No torque labels needed.</p>
+    <p class="paper-text">It diverged. The mean return fell from 3.1 to <b>−1727</b> within 4.8M steps and never recovered over 80M more, while the residual torques kept growing. The trajectory-matching reward just wasn't a strong enough learning signal. I only ran four hyperparameter trials, so a different reward weighting might still work.</p>
+  </section>
+
+  <section>
+    <h2 class="paper-h">Attempt 2: a physics-based position loss</h2>
+    <p class="paper-text">Since the next joint position <i>is</i> in the data, I moved the loss into position space. Isaac Lab gives me the mass matrix, Coriolis and gravity terms, so I pushed the predicted torque through τ = M(q)q̈ + C(q, q̇) + G(q) and a differentiable semi-implicit Euler step, then compared the result against the recorded position.</p>
+    <p class="paper-text">The implementation was right: given the true torque, it reproduced the next position to within 10<sup>−4</sup> rad. But the coupled finger links are tiny and very light, so M<sup>−1</sup> on those joints is <b>15,000–44,000</b>. A torque error of about 0.01 N·m becomes <b>several degrees</b> of position error in a single step. Moving the loss into position space didn't remove the sensitivity, it just moved it, and it is worst on exactly the joints I was trying to fix.</p>
+  </section>
+
+  <section>
+    <h2 class="paper-h">Attempt 3: the raw motor signal</h2>
+    <figure class="paper-fig">
+      <img src="img/workflow.jpg" alt="Workflow diagram: a neural network predicts a residual torque that is scaled and added to the PD torque, drives Isaac Sim, and is compared with hardware joint positions." loading="lazy">
+      <figcaption><b>Residual-torque loop.</b> The network's output is scaled, added to the PD torque, drives the simulated hand, and the resulting state feeds both the loss and the next step.</figcaption>
+    </figure>
+    <p class="paper-text">So I went back to torque space, this time using the uncalibrated motor signal as the target, with a learned scale α to absorb the unknown units: τ = τ<sub>PD</sub> + α·f<sub>θ</sub>(x). One motor drives two joints, so I split its signal between J1 and J2 using how much each one actually moved over the next 10 steps. That handles the slack, where both move at once.</p>
+    <p class="paper-text">The network learned the signal well (MSE 0.0022, 73.8% sign agreement on the coupled first-finger pair). The problem is <b>identifiability</b>: the residual and its scale only ever appear as a product, α·f<sub>θ</sub>, so the data pins down the product and not the two factors. Pick a different scale and a different residual compensates exactly. Once I scaled it into real torque units and ran it in simulation, the middle finger drifted well outside its recorded range, and because each wrong state feeds the next prediction, the error compounded. Separating the two would need either a calibrated torque signal (which this hand doesn't have) or a usable position loss (see attempt 2).</p>
+  </section>
+
+  <section>
+    <h2 class="paper-h">What happened in the end</h2>
+    <p class="paper-text">None of the three made it into the final system. What rescued the project was an experiment I almost didn't run. I replayed a simulated Baoding trajectory <b>open-loop</b> on the real hand, and it worked. The learned strategy pushes the balls rather than curling the fingers deeply, so J2 never goes past about 100° and the slack region is never entered. For Baoding the problem could be <i>avoided</i> rather than modelled.</p>
+    <p class="paper-text">I still think it's a useful negative result. On a tendon-driven hand with no torque sensing, torque supervision doesn't exist, position supervision is badly conditioned on the light coupled links, and a learned scale can't be separated from the residual. Anything that needs deep finger flexion will run into this. The next things I'd try are a calibrated torque signal, or a formulation that doesn't divide by those tiny link inertias.</p>
+  </section>
+
+  <footer class="site-footer paper-foot">© 2026 Ayush Deshmukh · <a href="../index.html">All projects</a></footer>
+</main>
+
+<script src="../../assets/js/main.js"></script>
+</body>
+</html>

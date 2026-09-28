@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Projects — Ayush Deshmukh</title>
+<title>Projects &amp; Theses — Ayush Deshmukh</title>
 <meta name="description" content="Research projects by Ayush Deshmukh in robot learning and dexterous manipulation.">
 <link rel="canonical" href="https://theundercover01.github.io/ayushdeshmukh/projects/">
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -19,7 +19,6 @@
   <nav class="links">
     <a href="../index.html">About</a>
     <a href="../publications.html">Publications</a>
-    <a href="index.html" class="active">Projects</a>
     <a href="../blog/index.html">Blog</a>
     <a href="../cv.html">CV</a>
   </nav>
@@ -27,18 +26,40 @@
 </header>
 
 <main>
-  <h1 class="page-title">Projects</h1>
-  <p class="page-sub">One page per project, with videos, results and links.</p>
+  <h1 class="page-title">Projects &amp; Theses</h1>
+  <p class="page-sub">Robot projects and my two theses. Papers are on the <a href="../publications.html">publications page</a>.</p>
 
-  <div class="cards single">
-    <a class="card" href="no-eyes-no-problem/">
-        <div class="thumb"><img src="no-eyes-no-problem/img/fig1.jpg" alt="Blind Baoding ball rotation in simulation and on the Shadow Hand Lite" loading="lazy"></div>
-        <h3>No Eyes, No Problem</h3>
-        <p>Blind Baoding ball rotation on a real Shadow Hand, from touch and proprioception alone.</p>
-        <span class="tag">Under review</span>
-      </a>
+  <h2 class="label">Projects</h2>
+  <div class="cards">
+    <a class="card" href="actuator-nets/">
+      <div class="thumb"><img src="actuator-nets/img/handoff.jpg" alt="Coupled finger joint positions on the real hand versus the ideal handoff" loading="lazy"></div>
+      <h3>Tendon Slack &amp; Actuator Nets</h3>
+      <p>Finding tendon slack in the Shadow Hand Lite and trying three ways to learn it from hardware data.</p>
+      <span class="tag">MSc research</span>
+    </a>
+    <a class="card" href="tabular-rl-pickup-bot/">
+      <div class="thumb"><img src="tabular-rl-pickup-bot/img/bot.jpg" alt="CAD render of a custom pick-up robot" loading="lazy"></div>
+      <h3>Tabular RL on a Robot I Built</h3>
+      <p>Ten Sutton &amp; Barto algorithms on a custom robot in PyBullet.</p>
+      <span class="tag">Side project</span>
+    </a>
   </div>
 
+  <h2 class="label">Theses</h2>
+  <div class="cards">
+    <a class="card" href="../theses.html#msc">
+      <div class="thumb"><img src="../assets/img/theses/msc.jpg" alt="Baoding in simulation next to the same moment on the real Shadow Hand Lite" loading="lazy"></div>
+      <h3>Manipulation in the Dark</h3>
+      <p>MSc dissertation: blind sim-to-real transfer of a Baoding policy on the Shadow Hand Lite, with 55 rotations in a row on the real hand.</p>
+      <span class="tag">MSc · Edinburgh 2026</span>
+    </a>
+    <a class="card" href="../theses.html#btech">
+      <div class="thumb"><img src="../assets/img/theses/btech.jpg" alt="Illustration of a game controller producing a sequence of recommended games" loading="lazy"></div>
+      <h3>RL-Powered Generative Recommendations</h3>
+      <p>B.Tech major project with Siddharth Kelkar: sequential game recommendation with PPO and discriminators. It became the COMSNETS paper.</p>
+      <span class="tag">B.Tech · NITK 2025</span>
+    </a>
+  </div>
 
   <footer class="site-footer">© 2026 Ayush Deshmukh</footer>
 </main>

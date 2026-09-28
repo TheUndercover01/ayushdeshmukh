@@ -1,0 +1,132 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1600 900" font-family="Space Grotesk, Arial, sans-serif">
+  <defs>
+    <style>
+      @import url('https://fonts.googleapis.com/css2?family=Caveat:wght@600;700&amp;family=Space+Grotesk:wght@500;700;800&amp;family=JetBrains+Mono:wght@500&amp;display=swap');
+      .ink{stroke:#211d19;stroke-width:4;fill:none;stroke-linecap:round;stroke-linejoin:round}
+      .box{stroke:#211d19;stroke-width:4}
+      .hand{font-family:Caveat,cursive;fill:#211d19}
+      .lab{font-weight:800;fill:#211d19;letter-spacing:.5px}
+      .mono{font-family:'JetBrains Mono',monospace;fill:#726657}
+    </style>
+    <marker id="ar" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" fill="#211d19"/></marker>
+    <marker id="arw" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" fill="#d9480f"/></marker>
+    <pattern id="hatch" width="14" height="14" patternUnits="userSpaceOnUse" patternTransform="rotate(45)"><line x1="0" y1="0" x2="0" y2="14" stroke="#e7dcc8" stroke-width="5"/></pattern>
+  </defs>
+
+  <rect width="1600" height="900" fill="#f6f1e7"/>
+  <rect width="1600" height="900" fill="url(#hatch)" opacity=".55"/>
+
+  <text x="800" y="92" text-anchor="middle" class="hand" font-size="64" font-weight="700">Recommending games, one pick at a time</text>
+
+  <!-- ===== left: a game, three modalities ===== -->
+  <g transform="translate(70,170)">
+    <rect x="8" y="8" width="330" height="430" rx="6" fill="#211d19"/>
+    <rect width="330" height="430" rx="6" fill="#fffdf8" class="box"/>
+    <text x="24" y="44" class="lab" font-size="24">A STEAM GAME</text>
+    <!-- cover art -->
+    <rect x="24" y="64" width="282" height="140" fill="#b9cfc0" class="box"/>
+    <circle cx="100" cy="120" r="30" fill="#e8bd2a" stroke="#211d19" stroke-width="3"/>
+    <path d="M24 204 L120 150 L180 185 L240 130 L306 190 L306 204 Z" fill="#6f9a86" stroke="#211d19" stroke-width="3"/>
+    <text x="36" y="228" class="mono" font-size="17">cover art</text>
+    <!-- title -->
+    <rect x="24" y="244" width="282" height="42" fill="#fffdf8" class="box"/>
+    <text x="40" y="273" font-size="22" font-weight="700" fill="#211d19">Moonlit Orchard</text>
+    <text x="36" y="310" class="mono" font-size="17">title</text>
+    <!-- about text -->
+    <line x1="30" y1="336" x2="300" y2="336" class="ink" stroke-width="3"/>
+    <line x1="30" y1="360" x2="280" y2="360" class="ink" stroke-width="3"/>
+    <line x1="30" y1="384" x2="230" y2="384" class="ink" stroke-width="3"/>
+    <text x="36" y="416" class="mono" font-size="17">"About the game"</text>
+  </g>
+
+  <!-- encoders -->
+  <path d="M412 290 C 460 290, 460 300, 505 300" class="ink" marker-end="url(#ar)"/>
+  <path d="M412 440 C 460 440, 460 520, 505 520" class="ink" marker-end="url(#ar)"/>
+  <g transform="translate(510,250)">
+    <rect x="6" y="6" width="170" height="92" rx="46" fill="#211d19"/>
+    <rect width="170" height="92" rx="46" fill="#e8bd2a" class="box"/>
+    <text x="85" y="58" text-anchor="middle" class="lab" font-size="30">CLIP</text>
+  </g>
+  <g transform="translate(510,474)">
+    <rect x="6" y="6" width="170" height="92" rx="46" fill="#211d19"/>
+    <rect width="170" height="92" rx="46" fill="#f1c6b0" class="box"/>
+    <text x="85" y="58" text-anchor="middle" class="lab" font-size="30">BART</text>
+  </g>
+  <path d="M595 474 L595 350" class="ink" marker-end="url(#ar)"/>
+  <text x="608" y="420" class="hand" font-size="28">summarise</text>
+
+  <!-- embedding vector -->
+  <path d="M685 296 L735 296" class="ink" marker-end="url(#ar)"/>
+  <g transform="translate(742,240)">
+    <rect x="0" y="0" width="34" height="34" fill="#b9cfc0" class="box"/>
+    <rect x="0" y="34" width="34" height="34" fill="#e8bd2a" class="box"/>
+    <rect x="0" y="68" width="34" height="34" fill="#f1c6b0" class="box"/>
+    <text x="17" y="140" text-anchor="middle" class="mono" font-size="16">fused</text>
+  </g>
+
+  <!-- ===== centre: generator ===== -->
+  <path d="M784 290 L842 290" class="ink" marker-end="url(#ar)"/>
+  <g transform="translate(850,190)">
+    <rect x="8" y="8" width="300" height="210" rx="6" fill="#211d19"/>
+    <rect width="300" height="210" rx="6" fill="#fffdf8" class="box"/>
+    <text x="150" y="48" text-anchor="middle" class="lab" font-size="28">GENERATOR</text>
+    <text x="150" y="78" text-anchor="middle" class="mono" font-size="17">PPO policy</text>
+    <!-- mini transformer blocks -->
+    <rect x="34" y="100" width="100" height="36" fill="#b9cfc0" stroke="#211d19" stroke-width="3"/>
+    <text x="84" y="124" text-anchor="middle" font-size="15" font-weight="700" fill="#211d19">history</text>
+    <rect x="166" y="100" width="100" height="36" fill="#f1c6b0" stroke="#211d19" stroke-width="3"/>
+    <text x="216" y="124" text-anchor="middle" font-size="15" font-weight="700" fill="#211d19">picks so far</text>
+    <path d="M84 136 L150 168 L216 136" class="ink" stroke-width="3"/>
+    <rect x="80" y="160" width="140" height="34" fill="#e8bd2a" stroke="#211d19" stroke-width="3"/>
+    <text x="150" y="183" text-anchor="middle" font-size="15" font-weight="700" fill="#211d19">cross-attention</text>
+  </g>
+  <!-- player -->
+  <g transform="translate(900,470)">
+    <circle cx="40" cy="30" r="24" fill="#f1c6b0" class="box"/>
+    <path d="M4 100 C 4 60, 76 60, 76 100 Z" fill="#f1c6b0" class="box"/>
+    <text x="96" y="62" class="hand" font-size="30">the player</text>
+    <text x="96" y="92" class="mono" font-size="16">tags + history</text>
+  </g>
+  <path d="M940 466 L975 406" class="ink" marker-end="url(#ar)"/>
+
+  <!-- ===== sequence of 10 ===== -->
+  <text x="70" y="700" class="hand" font-size="34">a sequence of 10 recommendations →</text>
+  <g transform="translate(70,720)">
+    <g fill="#fffdf8" stroke="#211d19" stroke-width="3">
+      <rect x="0" y="0" width="80" height="80"/><rect x="96" y="0" width="80" height="80"/>
+      <rect x="192" y="0" width="80" height="80"/><rect x="288" y="0" width="80" height="80"/>
+      <rect x="384" y="0" width="80" height="80"/><rect x="480" y="0" width="80" height="80"/>
+      <rect x="576" y="0" width="80" height="80"/>
+    </g>
+    <g fill="#b9cfc0"><rect x="10" y="10" width="60" height="40"/><rect x="106" y="10" width="60" height="40" fill="#e8bd2a"/><rect x="202" y="10" width="60" height="40" fill="#f1c6b0"/><rect x="298" y="10" width="60" height="40"/><rect x="394" y="10" width="60" height="40" fill="#e8bd2a"/><rect x="490" y="10" width="60" height="40" fill="#f1c6b0"/><rect x="586" y="10" width="60" height="40"/></g>
+    <g font-family="JetBrains Mono, monospace" font-size="16" fill="#726657" text-anchor="middle"><text x="40" y="70">1</text><text x="136" y="70">2</text><text x="232" y="70">3</text><text x="328" y="70">4</text><text x="424" y="70">5</text><text x="520" y="70">6</text><text x="616" y="70">7</text></g>
+    <rect x="672" y="0" width="80" height="80" fill="none" stroke="#d9480f" stroke-width="4" stroke-dasharray="10 8"/>
+    <text x="712" y="52" text-anchor="middle" font-size="34" font-weight="800" fill="#d9480f">?</text>
+    <text x="790" y="52" class="mono" font-size="20">… 10</text>
+  </g>
+  <path d="M1000 400 C 1000 600, 900 690, 790 718" class="ink" marker-end="url(#ar)"/>
+  <text x="760" y="640" class="hand" font-size="28">next pick</text>
+
+  <!-- ===== right: dual discriminators ===== -->
+  <g transform="translate(1235,170)">
+    <rect x="8" y="8" width="300" height="150" rx="6" fill="#211d19"/>
+    <rect width="300" height="150" rx="6" fill="#fffdf8" class="box"/>
+    <text x="150" y="48" text-anchor="middle" class="lab" font-size="24">DISCRIMINATOR 1</text>
+    <text x="150" y="86" text-anchor="middle" class="hand" font-size="32">pretrained &amp; fixed</text>
+    <text x="150" y="122" text-anchor="middle" class="mono" font-size="16">user-preference evaluator</text>
+  </g>
+  <g transform="translate(1235,390)">
+    <rect x="8" y="8" width="300" height="150" rx="6" fill="#211d19"/>
+    <rect width="300" height="150" rx="6" fill="#fffdf8" class="box"/>
+    <text x="150" y="48" text-anchor="middle" class="lab" font-size="24">DISCRIMINATOR 2</text>
+    <text x="150" y="86" text-anchor="middle" class="hand" font-size="32">GAN-style, trainable</text>
+    <text x="150" y="122" text-anchor="middle" class="mono" font-size="16">rationality check</text>
+  </g>
+  <path d="M900 800 C 1250 820, 1300 700, 1330 552" class="ink" marker-end="url(#ar)"/>
+  <!-- reward back -->
+  <path d="M1235 250 C 1200 200, 1180 180, 1160 220" stroke="#d9480f" stroke-width="5" fill="none" marker-end="url(#arw)"/>
+  <path d="M1235 470 C 1190 460, 1180 380, 1160 360" stroke="#d9480f" stroke-width="5" fill="none" marker-end="url(#arw)"/>
+  <text x="1170" y="150" class="hand" font-size="34" fill="#d9480f" style="fill:#d9480f">reward</text>
+  <text x="1345" y="640" class="hand" font-size="30">does this list fit</text>
+  <text x="1345" y="676" class="hand" font-size="30">this player?</text>
+</svg>

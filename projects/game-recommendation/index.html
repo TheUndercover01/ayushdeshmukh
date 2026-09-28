@@ -1,0 +1,96 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Dual-Discriminator PPO for Game Recommendation — Ayush Deshmukh</title>
+<meta name="description" content="Recommending sequences of Steam games with PPO, a transformer generator and two discriminators over CLIP and BART embeddings of each game&#x27;s art, title and description.">
+<link rel="canonical" href="https://theundercover01.github.io/ayushdeshmukh/projects/game-recommendation/">
+<meta property="og:type" content="website">
+<meta property="og:title" content="Dual-Discriminator PPO for Game Recommendation — Ayush Deshmukh">
+<meta property="og:description" content="Recommending sequences of Steam games with PPO, a transformer generator and two discriminators over CLIP and BART embeddings of each game&#x27;s art, title and description.">
+<meta property="og:url" content="https://theundercover01.github.io/ayushdeshmukh/projects/game-recommendation/">
+<meta property="og:image" content="https://theundercover01.github.io/ayushdeshmukh/projects/game-recommendation/img/pipeline.jpg">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Caveat:wght@500;700&family=Instrument+Serif:ital@0;1&family=Source+Serif+4:ital,opsz,wght@0,8..60,400;0,8..60,600;1,8..60,400&family=Space+Grotesk:wght@400;500;700;800&family=JetBrains+Mono:wght@400;700&display=swap">
+<link rel="stylesheet" href="../../assets/css/style.css">
+<script>try{if(localStorage.getItem("theme")==="dark")document.documentElement.dataset.theme="dark"}catch(e){}</script>
+</head>
+<body>
+
+<header class="paper-bar">
+  <a class="paper-home" href="../../index.html"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 3 2 11.5h3V21h5.5v-6h3v6H19v-9.5h3z"/></svg>Ayush Deshmukh Home</a>
+  <button class="theme-toggle" type="button" aria-label="Switch to dark mode">☾ Dark mode</button>
+</header>
+
+<main class="paper">
+  <header class="paper-head">
+    <h1 class="paper-title">Dual-Discriminator PPO for Game Recommendation</h1>
+    <p class="paper-sub">Multimodal Reinforcement Learning for Game Recommendation · COMSNETS 2026</p>
+    <p class="paper-authors"><b>Ayush Deshmukh</b>*, Siddharth Kelkar*, <a href='https://infotech.nitk.ac.in/faculty/anand-kumar-m' target='_blank' rel='noopener'>Anand Kumar M</a><br><small>* Equal contribution</small></p>
+    <div class="paper-links">
+      <a href="https://doi.org/10.1109/COMSNETS67989.2026.11418281" target="_blank" rel="noopener">Paper (IEEE)</a>
+      <a href="https://github.com/TheUndercover01/Multi-Modal-Game-Recommendation-System-" target="_blank" rel="noopener">Code</a>
+      <a href="../../assets/papers/btech-thesis.pdf" target="_blank" rel="noopener">B.Tech thesis (PDF)</a>
+    </div>
+  </header>
+
+  <p class="tldr"><b>TL;DR</b> I built a recommender that treats a list of games as a <b>sequence of decisions</b>. A PPO policy picks games one at a time, guided by <b>two discriminators</b>, and sees each game through its <b>cover art, title and description</b>. On 88,310 Steam users it reaches <b>2.3× higher precision</b> than conventional baselines and <b>58% better cold-start</b> performance.</p>
+
+  <section>
+    <h2 class="paper-h">Why RL for recommendations?</h2>
+    <p class="paper-text">Most recommenders score each game on its own and show you the top ten. But a list is a sequence: what you suggest third should depend on the first two, and a good list keeps someone playing next month, not just clicking today. That trade-off between engagement now and satisfaction later is exactly what RL is designed for. So I made the whole list of ten one episode: the state is the player plus everything recommended so far, and each action is the next game.</p>
+    <figure class="paper-fig">
+      <img src="img/pipeline.jpg" alt="Illustration of the pipeline: a Steam game&#x27;s art, title and description are encoded by CLIP and BART, a PPO generator picks games one at a time for a player, and two discriminators send reward back." loading="lazy">
+      <figcaption><b>The whole loop.</b> Every game becomes a fused CLIP + BART embedding. The generator picks the next game given the player and the picks so far, and two discriminators judge the list and send reward back to it.</figcaption>
+    </figure>
+  </section>
+
+  <section>
+    <h2 class="paper-h">What I built</h2>
+    <ul class="paper-list">
+      <li><b>Multimodal game embeddings.</b> For every Steam game I embed the header image and the title with CLIP. The "About the game" text is usually long and noisy, so BART summarises it first and CLIP embeds the summary. The normalised embeddings are fused, so the model sees what a game <i>looks</i> like and what it's <i>about</i>, not just its ID.</li>
+      <li><b>A similarity-based PPO generator.</b> Two transformers encode the player's history and the games picked so far, and gated cross-attention connects them. The policy then chooses the next game by <b>similarity</b> in embedding space. That turns an impossible action space (tens of thousands of games) into something PPO can actually learn.</li>
+      <li><b>Two discriminators instead of hand-written rewards.</b> One is <b>pretrained and frozen</b>: it scores whether a list matches what the player likes, and it keeps training stable. The other is a <b>GAN-style discriminator trained alongside the policy</b> that learns to tell generated lists from real play histories. Together they reward lists that are both relevant and coherent.</li>
+    </ul>
+  </section>
+
+  <section>
+    <h2 class="paper-h">Results</h2>
+    <p class="paper-text">Evaluated on <b>88,310 Steam users</b>:</p>
+    <ul class="paper-list">
+      <li><b>2.3× higher precision</b> than conventional baselines at modelling how preferences change over time</li>
+      <li><b>58% better cold-start</b> performance: for players with little history, the model fills the gaps by synthesising a plausible history</li>
+      <li>The pretrained discriminator makes training <b>converge 1.8× faster</b> without making the recommendations less diverse</li>
+    </ul>
+  </section>
+
+  <section>
+    <h2 class="paper-h">Abstract</h2>
+    <p class="paper-text">Recommendation systems struggle to balance immediate engagement with long-term user satisfaction, especially in dynamic domains like gaming. We propose a Reinforcement Learning (RL) framework enhanced with Generative Adversarial Networks (GANs) to generate personalized game sequences that optimize both short-term relevance and sustained engagement. The proposed approach introduces three key components: (1) a similarity-based Proximal Policy Optimization algorithm leveraging normalized multimodal embeddings (text, image, metadata) for action selection; (2) dual discriminators - a fixed, pretrained model and a trainable GAN-style discriminator - that collaboratively guide policy learning; and (3) a CLIP+BART-driven multimodal fusion module to capture rich cross-modal game semantics. Evaluated on a dataset of 88,310 Steam users, our method outperforms conventional baselines, achieving 2.3× higher precision in modeling evolving preferences and 58% better cold-start performance through sparse-history synthesis. The pretrained discriminator improves the convergence speed by 1.8× while preserving sequence diversity. By aligning GAN-based feedback with RL objectives, our model adapts to changing user contexts while maintaining coherence in the progression of the game. This work advances adaptive recommendation by unifying multimodal understanding with dual-feedback optimization, offering robust performance in fast-evolving digital environments.</p>
+  </section>
+
+  <section>
+    <h2 class="paper-h">BibTeX</h2>
+    <div class="bibtex-box open">
+      <button class="copy-btn" type="button">Copy</button>
+      <pre>@inproceedings{deshmukh2026multimodal,
+  title     = {Multimodal Reinforcement Learning for Game Recommendation using
+               Dual-Discriminator {PPO} Framework},
+  author    = {Deshmukh, Ayush and Kelkar, Siddharth and M, Anand Kumar},
+  booktitle = {2026 18th International Conference on COMmunication Systems
+               \&amp; NETworks (COMSNETS)},
+  year      = {2026},
+  doi       = {10.1109/COMSNETS67989.2026.11418281}
+}</pre>
+    </div>
+  </section>
+
+  <footer class="site-footer paper-foot">© 2026 Ayush Deshmukh · <a href="../index.html">All projects</a></footer>
+</main>
+
+<script src="../../assets/js/main.js"></script>
+</body>
+</html>
