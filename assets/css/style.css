@@ -111,7 +111,7 @@ section{margin-bottom:70px;scroll-margin-top:90px}
 .news li:nth-child(even){transform:rotate(.5deg)}
 .news li::before{content:"";position:absolute;top:-7px;left:16px;width:34px;height:14px;
   background:color-mix(in oklch, var(--accent-hi) 55%, transparent);transform:rotate(-4deg)}
-.news .date{flex:none;width:3.6rem;font-family:Caveat,cursive;font-size:1.1rem;color:var(--accent-warm)}
+.news .date{flex:none;width:4.6rem;font-family:Caveat,cursive;font-size:1.1rem;color:var(--accent-warm)}
 
 /* ===== publications ===== */
 .pub{display:grid;grid-template-columns:3.9rem 1fr;gap:20px;padding:22px;margin-bottom:16px;background:var(--card);
