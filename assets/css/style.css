@@ -118,10 +118,10 @@ section{margin-bottom:70px;scroll-margin-top:90px}
   border:3px solid var(--fg);border-radius:4px;box-shadow:6px 6px 0 var(--shadow)}
 .pub .stampcirc{width:2.9rem;height:2.9rem;border-radius:50%;border:3px solid var(--fg);display:grid;place-items:center;
   transform:rotate(-6deg);flex:none}
-.pub.has-thumb{grid-template-columns:17rem 1fr;gap:26px;align-items:center;padding:18px}
+.pub.has-thumb{grid-template-columns:10rem 1fr;gap:22px;align-items:start;padding:20px}
 .pub.has-thumb .stampcirc{display:none}
-.pub.has-thumb .ptitle{margin-top:8px}
-.pub .pthumb{display:block;align-self:center;aspect-ratio:16/10;border:2px solid var(--fg);border-radius:2px;overflow:hidden;background:#fff}
+.pub.has-thumb .ptitle{margin-top:6px}
+.pub .pthumb{display:block;align-self:start;margin-top:4px;aspect-ratio:16/10;border:2px solid var(--fg);border-radius:2px;overflow:hidden;background:#fff}
 .pub .pthumb img{display:block;width:100%;height:100%;object-fit:cover}
 .pub .pthumb:hover{box-shadow:4px 4px 0 var(--shadow)}
 .pub .year{font-family:Caveat,cursive;font-size:1.55rem;font-weight:700;color:var(--accent-warm)}
@@ -344,7 +344,7 @@ footer.site-footer{color:var(--muted);font-size:.85em;padding-top:22px;border-to
 
 /* ===== responsive ===== */
 @media (max-width:680px){
-  .pub.has-thumb{grid-template-columns:1fr;gap:14px}
+  .pub.has-thumb{grid-template-columns:5.5rem 1fr;gap:14px;padding:16px}
   .card{grid-template-columns:1fr;grid-template-rows:none}
   .card > .thumb{grid-row:auto;margin-bottom:10px}
   .card > h3,.card > p,.card > .tag{grid-column:1}
