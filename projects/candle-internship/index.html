@@ -1,0 +1,83 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Cascaded Attention for Mpox Detection — Ayush Deshmukh</title>
+<meta name="description" content="My research internship at the CANDLE Research Lab, IIT Roorkee: a cascaded attention module on an EfficientViT backbone for Mpox skin-lesion classification, which I later extended on my own into a DAGM GCPR paper.">
+<link rel="canonical" href="https://theundercover01.github.io/ayushdeshmukh/projects/candle-internship/">
+<meta property="og:type" content="website">
+<meta property="og:title" content="Cascaded Attention for Mpox Detection — Ayush Deshmukh">
+<meta property="og:description" content="My research internship at the CANDLE Research Lab, IIT Roorkee: a cascaded attention module on an EfficientViT backbone for Mpox skin-lesion classification, which I later extended on my own into a DAGM GCPR paper.">
+<meta property="og:url" content="https://theundercover01.github.io/ayushdeshmukh/projects/candle-internship/">
+<meta property="og:image" content="https://theundercover01.github.io/ayushdeshmukh/projects/candle-internship/img/cover.jpg">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Caveat:wght@500;700&family=Instrument+Serif:ital@0;1&family=Source+Serif+4:ital,opsz,wght@0,8..60,400;0,8..60,600;1,8..60,400&family=Space+Grotesk:wght@400;500;700;800&family=JetBrains+Mono:wght@400;700&display=swap">
+<link rel="stylesheet" href="../../assets/css/style.css?v=4">
+<script>try{if(localStorage.getItem("theme")==="dark")document.documentElement.dataset.theme="dark"}catch(e){}</script>
+</head>
+<body>
+
+<header class="paper-bar">
+  <a class="paper-home" href="../../index.html"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 3 2 11.5h3V21h5.5v-6h3v6H19v-9.5h3z"/></svg>Ayush Deshmukh Home</a>
+  <button class="theme-toggle" type="button" aria-label="Switch to dark mode">☾ Dark mode</button>
+</header>
+
+<main class="paper">
+  <header class="paper-head">
+    <h1 class="paper-title">Cascaded Attention for Mpox Detection</h1>
+    <p class="paper-sub">Research internship · CANDLE Research Lab, IIT Roorkee</p>
+    <p class="paper-authors"><b>Ayush Deshmukh</b> · supervised by <a href='https://faculty.iitr.ac.in/~sparshfec/' target='_blank' rel='noopener'>Prof. Sparsh Mittal</a></p>
+    <div class="paper-links">
+      <a href="https://github.com/TheUndercover01/Cascaded-Attention-Module-for-Mpox-Classification" target="_blank" rel="noopener">Code</a>
+      <a href="https://sites.google.com/view/comparch-machinelearning-lab/home" target="_blank" rel="noopener">CANDLE Lab</a>
+      <a href="../mpox-caga/" target="_blank" rel="noopener">The solo paper</a>
+    </div>
+  </header>
+
+  <p class="tldr"><b>TL;DR</b> At the <a href="https://sites.google.com/view/comparch-machinelearning-lab/home" target="_blank" rel="noopener"><b>CANDLE Research Lab, IIT Roorkee</b></a>, working with <a href="https://faculty.iitr.ac.in/~sparshfec/" target="_blank" rel="noopener">Prof. Sparsh Mittal</a>, I built a <b>cascaded attention module</b> for an EfficientViT backbone to classify Mpox skin lesions. It reached <b>97.5%</b> on MCSI and <b>95.54%</b> on MSID with <b>28% fewer parameters</b>. Afterwards I kept going on my own, and the extended version became my <a href="../mpox-caga/">single-author DAGM GCPR 2025 paper</a>.</p>
+
+  <section>
+    <h2 class="paper-h">The problem</h2>
+    <p class="paper-text">Mpox lesions look a lot like chickenpox, measles and acne, and lab confirmation is slow. The datasets are also tiny: MCSI has only 400 images across four classes. The goal of the internship was a classifier that is accurate on that little data and cheap enough to run on modest hardware, rather than just stacking a bigger backbone.</p>
+  </section>
+
+  <section>
+    <h2 class="paper-h">What I built</h2>
+    <ul class="paper-list">
+      <li><b>A cascaded attention module.</b> A 3×3 convolution splits the features into separate heads. Each head builds its own queries, keys and values with small convolutions and runs attention over the spatial positions, and the outputs are concatenated and projected back with a residual connection and normalisation. Giving each head its own slice, instead of every head looking at the whole feature map, cuts the redundant computation in multi-head self-attention.</li>
+      <li><b>An EfficientViT backbone</b> with the module added, chosen because it is already built for low latency.</li>
+      <li><b>Class-weighted focal loss</b>, so the model can't do well just by getting the easy classes right.</li>
+      <li><b>Careful evaluation:</b> 10-fold stratified cross-validation on MCSI with balanced folds, plus MSID as a second, independent dataset, compared against six strong CNN and ViT baselines. AdamW, an exponential LR schedule and early stopping on validation accuracy.</li>
+    </ul>
+  </section>
+
+  <section>
+    <h2 class="paper-h">Results</h2>
+    <ul class="paper-list">
+      <li><b>97.5%</b> accuracy on MCSI (Acne, Normal, Chickenpox, Mpox)</li>
+      <li><b>95.54%</b> on MSID (Chickenpox, Measles, Mpox, Normal)</li>
+      <li><b>28% fewer parameters</b> than the baseline backbone</li>
+      <li>Better than six state-of-the-art models on both accuracy and efficiency</li>
+    </ul>
+  </section>
+
+  <section>
+    <h2 class="paper-h">Then I extended it solo</h2>
+    <p class="paper-text">After the internship I kept working on it on my own. The idea I added was to put <b>dilated convolutions inside each attention head</b>, at rates 1, 2 and 3, with each dilation feeding the next (Cascaded Atrous Attention), all inside the cascaded group attention. That gave the model a multi-scale view of each lesion without adding many parameters.</p>
+    <p class="paper-text">The extended model, <b>CAGA</b>, reached <b>98% on MCSI with 37.5% fewer parameters</b> than EfficientViT-L1, and it was the most accurate model on three datasets (MCSI, MSID and MSLD). I wrote it up as a <b>single-author paper</b>, published at <b>DAGM GCPR 2025</b>: <a href="../mpox-caga/">A Cascaded Dilated Convolution Approach for Mpox Lesion Classification</a>.</p>
+  </section>
+
+  <section>
+    <h2 class="paper-h">Thanks</h2>
+    <p class="paper-text">To Prof. Sparsh Mittal and the CANDLE Research Lab at IIT Roorkee for hosting me and for the infrastructure that made this possible.</p>
+  </section>
+
+  <footer class="site-footer paper-foot">© 2026 Ayush Deshmukh · <a href="../index.html">All projects</a></footer>
+</main>
+
+<script src="../../assets/js/main.js"></script>
+</body>
+</html>
