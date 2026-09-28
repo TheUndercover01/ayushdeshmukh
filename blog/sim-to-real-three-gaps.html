@@ -1,0 +1,90 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Three Gaps Between a Simulated Hand and a Real One — Ayush Deshmukh</title>
+<meta name="description" content="What it took to get a blind Baoding policy from simulation onto a real Shadow Hand Lite: splitting the sim-to-real gap into proprioception, touch and dynamics.">
+<link rel="canonical" href="https://theundercover01.github.io/ayushdeshmukh/blog/sim-to-real-three-gaps.html">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Three Gaps Between a Simulated Hand and a Real One">
+<meta property="og:image" content="https://theundercover01.github.io/ayushdeshmukh/projects/no-eyes-no-problem/img/fig1.jpg">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Caveat:wght@500;700&family=Instrument+Serif:ital@0;1&family=Source+Serif+4:ital,opsz,wght@0,8..60,400;0,8..60,600;1,8..60,400&family=Space+Grotesk:wght@400;500;700;800&family=JetBrains+Mono:wght@400;700&display=swap">
+<link rel="stylesheet" href="../assets/css/style.css">
+<script>try{if(localStorage.getItem("theme")==="dark")document.documentElement.dataset.theme="dark"}catch(e){}</script>
+</head>
+<body>
+
+<header class="nav">
+  <button class="nav-toggle" aria-label="Toggle menu" aria-expanded="false">☰ Menu</button>
+  <nav class="links">
+    <a href="../index.html">About</a>
+    <a href="../publications.html">Publications</a>
+    <a href="index.html" class="active">Blog</a>
+    <a href="../cv.html">CV</a>
+  </nav>
+  <button class="theme-toggle" type="button" aria-label="Switch to dark mode">☾ Dark mode</button>
+</header>
+
+<main class="narrow">
+  <article class="post">
+    <h1>Three gaps between a simulated hand and a real one</h1>
+    <span class="post-date">September 2026</span>
+
+    <p>For my MSc I spent a summer trying to get a robot hand to spin two Baoding balls <i>blind</i>. The policy only gets joint readings and 16 on/off touch sensors: no camera, no motion capture, no knowledge of where the balls are. It was trained entirely in simulation and never saw a single frame of real data. Then it had to work on a real Shadow Dexterous Hand Lite.</p>
+
+    <p>The first time I deployed it, a policy that did about seven rotations in simulation managed <b>half a rotation</b> on the real hand. By the end the same kind of policy did <b>55 rotations in a row</b> without dropping a ball. This post is about what happened in between.</p>
+
+    <figure class="paper-fig">
+      <img src="../projects/no-eyes-no-problem/img/fig1.jpg" alt="Baoding rotation in simulation (top) and on the physical Shadow Hand Lite (bottom) at matched time steps." loading="lazy">
+      <figcaption><b>Simulation vs. the real thing.</b> The same rotation in simulation (top) and on the physical hand (bottom).</figcaption>
+    </figure>
+
+    <h2 class="paper-h">"The sim-to-real gap" is too big to debug</h2>
+    <p>When a policy fails on hardware, "the sim-to-real gap" explains everything and tells you nothing. The thing that helped me most was splitting it into three smaller gaps, each defined so I could <i>measure</i> it on its own:</p>
+    <ul class="paper-list">
+      <li><b>Proprioception:</b> I send the same command. Does the joint move the same way?</li>
+      <li><b>Touch:</b> the same contact happens. Does the sensor say the same thing?</li>
+      <li><b>Dynamics:</b> the hand makes the same motion. Do the balls respond the same way?</li>
+    </ul>
+    <p>Then I closed them one at a time.</p>
+
+    <h2 class="paper-h">Gap 1: proprioception</h2>
+    <p>I started with system identification: fitting each motor's stiffness, damping and friction so the simulated joint follows the real one. That improved tracking by about 17% on the directly driven joints, and did nothing at all on the coupled fingers, where one motor drives two joints through a tendon.</p>
+    <p>That led me down a long detour. The real tendon goes <b>slack</b>, so the second joint starts moving earlier than the simulator assumes, and no PD gains can reproduce that. I built a hardware data pipeline and tried three different actuator networks to learn it. None of them worked, for reasons I found genuinely interesting. That story has <a href="../projects/actuator-nets/">its own project page</a>.</p>
+    <p>What saved me was a boring experiment. I replayed a simulated trajectory open-loop on the real hand, and it worked. The policy's strategy never bends the coupled fingers far enough to reach the slack region. Sometimes you don't have to model a problem, you just have to confirm the task never touches it.</p>
+
+    <h2 class="paper-h">Gap 2: touch</h2>
+    <p>The real touch sensors are force-sensitive resistors, and they aren't the clean binary switches the simulator gives you. They drift, some channels read contact when there isn't any, and occasionally one just gets <i>stuck</i>. Three things fixed most of it:</p>
+    <ul class="paper-list">
+      <li><b>Per-channel calibration</b> with a warm-up and hysteresis, so each sensor has its own threshold. After that, false contacts became rare.</li>
+      <li><b>Slowing the hand down.</b> Limiting how fast commands can change meant the balls rolled across each sensor more slowly, so each contact lasted long enough for the policy to react to it.</li>
+      <li><b>Stuck-at taxels in training.</b> At every episode reset I randomly freeze some touch channels in simulation, so the policy learns never to trust any single sensor.</li>
+    </ul>
+
+    <h2 class="paper-h">Gap 3: dynamics</h2>
+    <p>Friction randomisation is the standard trick, and on its own it gave me that half rotation. The fix came from an ablation that showed the policy was completely ignoring one of its inputs: the <b>position error</b>, the gap between where a joint was told to go and where it actually is.</p>
+    <p>That gap is secretly a touch sensor. When a ball pushes on a finger, the finger can't reach its target, and the error says so. But in simulation the policy had no reason to use it. On top of that, the signal lived on a completely different scale: about ±2.4 rad in simulation against ±0.02 rad on hardware.</p>
+    <p>Randomising the <b>ball mass</b> changed that. Heavier balls push back harder, and the only way to tell is the position error, so the policy started using it. With nothing else changed, the proprioception-only policy went from half a rotation to <b>six rotations before a drop</b>, with no touch sensing at all. As far as I know, that's the first continuous Baoding on a real hand with no touch, no vision and no privileged state.</p>
+    <p>The last piece was moving the command-rate limit into training as <b>slew-rate randomisation</b>, so the policy learns smooth motions the hardware can actually follow, instead of meeting that constraint for the first time on the robot.</p>
+
+    <h2 class="paper-h">How it added up</h2>
+    <ul class="paper-list">
+      <li>Friction randomisation, proprioception only: <b>½ rotation</b></li>
+      <li>+ ball-mass randomisation: <b>6 rotations</b></li>
+      <li>+ touch: <b>2–5</b>, but inconsistent</li>
+      <li>+ calibration and rate limiting: <b>5–12</b> across 8 runs</li>
+      <li>+ mass, slew and stuck-taxel randomisation: <b>55 rotations</b> in one run, no drop, up to about 6 per 10 seconds with a lighter slew limit</li>
+    </ul>
+    <p>I can't cleanly say how much each change contributed, because several went in together. And a second Shadow Hand Lite, with matching joint motion, still couldn't do the task, which I never fully explained. But the three-gap framing is what turned "it doesn't work on the robot" into a list of specific things I could fix.</p>
+    <p>This work carried on into <a href="../projects/no-eyes-no-problem/">No Eyes, No Problem</a>, where the same setup reaches 225 consecutive half-rotations.</p>
+  </article>
+
+  <footer class="site-footer">© 2026 Ayush Deshmukh</footer>
+</main>
+
+<script src="../assets/js/main.js"></script>
+</body>
+</html>

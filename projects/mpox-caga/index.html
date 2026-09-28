@@ -1,0 +1,133 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Cascaded Atrous Group Attention for Mpox — Ayush Deshmukh</title>
+<meta name="description" content="CAGA: a lightweight vision transformer module for classifying Mpox skin lesions, reaching 98% accuracy on MCSI with 37.5% fewer parameters than EfficientViT-L1.">
+<link rel="canonical" href="https://theundercover01.github.io/ayushdeshmukh/projects/mpox-caga/">
+<meta property="og:type" content="website">
+<meta property="og:title" content="Cascaded Atrous Group Attention for Mpox — Ayush Deshmukh">
+<meta property="og:description" content="CAGA: a lightweight vision transformer module for classifying Mpox skin lesions, reaching 98% accuracy on MCSI with 37.5% fewer parameters than EfficientViT-L1.">
+<meta property="og:url" content="https://theundercover01.github.io/ayushdeshmukh/projects/mpox-caga/">
+<meta property="og:image" content="https://theundercover01.github.io/ayushdeshmukh/projects/mpox-caga/img/thumb.jpg">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Caveat:wght@500;700&family=Instrument+Serif:ital@0;1&family=Source+Serif+4:ital,opsz,wght@0,8..60,400;0,8..60,600;1,8..60,400&family=Space+Grotesk:wght@400;500;700;800&family=JetBrains+Mono:wght@400;700&display=swap">
+<link rel="stylesheet" href="../../assets/css/style.css">
+<script>try{if(localStorage.getItem("theme")==="dark")document.documentElement.dataset.theme="dark"}catch(e){}</script>
+</head>
+<body>
+
+<header class="paper-bar">
+  <a class="paper-home" href="../../index.html"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 3 2 11.5h3V21h5.5v-6h3v6H19v-9.5h3z"/></svg>Ayush Deshmukh Home</a>
+  <button class="theme-toggle" type="button" aria-label="Switch to dark mode">☾ Dark mode</button>
+</header>
+
+<main class="paper">
+  <header class="paper-head">
+    <h1 class="paper-title">Cascaded Atrous Group Attention for Mpox</h1>
+    <p class="paper-sub">A Cascaded Dilated Convolution Approach for Mpox Lesion Classification · DAGM GCPR 2025</p>
+    <p class="paper-authors"><b>Ayush Deshmukh</b></p>
+    <div class="paper-links">
+      <a href="https://arxiv.org/abs/2412.10106" target="_blank" rel="noopener">arXiv</a>
+      <a href="https://arxiv.org/pdf/2412.10106" target="_blank" rel="noopener">PDF</a>
+      <a href="https://github.com/TheUndercover01/A-Cascaded-Dilated-Convolution-Approach-for-Mpox-Lesion-Classification" target="_blank" rel="noopener">Code</a>
+      <a href="https://github.com/TheUndercover01/Cascaded-Attention-Module-for-Mpox-Classification" target="_blank" rel="noopener">Earlier version</a>
+    </div>
+  </header>
+
+  <p class="tldr"><b>TL;DR</b> I designed a small attention module (<b>CAGA</b>) and added it to EfficientViT-L1. The result classifies Mpox skin lesions at <b>98% accuracy</b> on MCSI with <b>37.5% fewer parameters</b> than the original backbone, and it is the most accurate model on all three datasets I tested.</p>
+
+  <section>
+    <h2 class="paper-h">The problem</h2>
+    <p class="paper-text">Mpox lesions look a lot like chickenpox, measles and even acne, and lab tests are slow. Deep learning can help, but when I read the existing Mpox papers two things kept bothering me. Most were tested on a single dataset, and most compared attention models against a handful of CNNs. So I set two goals: a model that is accurate <i>and</i> small, and an evaluation that is actually fair, with three datasets, 10-fold cross-validation and strong CNN, ViT and hybrid baselines.</p>
+    <figure class="paper-fig">
+      <img src="img/fig1.jpg" alt="Accuracy versus parameters and FLOPs for CAGA and six baseline models on three datasets." loading="lazy">
+      <figcaption><b>Accuracy vs. size.</b> EfficientViT-CAGA (★) is the most accurate model on MCSI, MSID and MSLD, while using fewer parameters (left) and FLOPs (right) than most of the alternatives.</figcaption>
+    </figure>
+  </section>
+
+  <section>
+    <h2 class="paper-h">What I built</h2>
+    <figure class="paper-fig">
+      <img src="img/fig2.jpg" alt="Architecture: CAGA inside the EfficientViT network, and the cascaded group attention with atrous attention per head." loading="lazy">
+      <figcaption><b>CAGA inside EfficientViT.</b> Where the network normally uses attention, I swap in CAGA (left). Inside it, every attention head runs Cascaded Atrous Attention, and each head's output is passed on to the next head (right).</figcaption>
+    </figure>
+    <ul class="paper-list">
+      <li><b>Cascaded Atrous Attention (CAA).</b> Each head runs dilated convolutions at rates 1, 2 and 3 and computes self-attention on each of them. The attention from one dilation is projected and added into the next, so small-scale detail builds up into wider context, like zooming out step by step.</li>
+      <li><b>Cascaded Group Attention (CGA).</b> Standard multi-head attention wastes compute because the heads end up learning the same thing. Here each head gets its own split of the channels and also receives the previous head's output.</li>
+      <li><b>CAGA = CAA inside CGA</b>, dropped into an <b>EfficientViT-L1</b> backbone and trained with class-weighted focal loss.</li>
+    </ul>
+    <figure class="paper-fig">
+      <img src="img/fig3.jpg" alt="Diagram of cascaded atrous attention across three dilation rates." loading="lazy">
+      <figcaption><b>Cascaded Atrous Attention.</b> Attention at each dilation rate feeds the next, and all three are merged back at the original resolution.</figcaption>
+    </figure>
+  </section>
+
+  <section>
+    <h2 class="paper-h">Results</h2>
+    <p class="paper-text">Accuracy on MCSI is the mean of 10-fold cross-validation. Parameters are for the MCSI model.</p>
+    <div class="results-wrap">
+      <table class="results">
+        <thead><tr><th scope="col">Model</th><th scope="col">Params</th><th scope="col">MCSI acc.</th><th scope="col">MSLD acc.</th></tr></thead>
+        <tbody>
+        <tr><th scope="row">ResNet-101</th><td>47.4M</td><td>0.8925 ± 0.049</td><td>0.9593</td></tr>
+        <tr><th scope="row">MobileNetV3-Large</th><td>7.6M</td><td>0.9375 ± 0.054</td><td>0.9781</td></tr>
+        <tr><th scope="row">DeiT3-Medium</th><td>41.5M</td><td>0.9575 ± 0.033</td><td>0.9938</td></tr>
+        <tr><th scope="row">ViT-Base</th><td>88.7M</td><td>0.9575 ± 0.035</td><td>0.9938</td></tr>
+        <tr><th scope="row">CoAtNet-1</th><td>41.7M</td><td>0.9675 ± 0.037</td><td>0.9906</td></tr>
+        <tr><th scope="row">EfficientViT-L1</th><td>58.9M</td><td>0.9725 ± 0.018</td><td>0.9875</td></tr>
+        <tr class="ours"><th scope="row">EfficientViT-CAGA (mine)</th><td>36.8M</td><td>0.9800 ± 0.023</td><td>0.9969</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <ul class="paper-list">
+      <li>Only <b>4.86 GFLOPs</b>, which is 3.5× less than ViT-Base</li>
+      <li><b>37.5% fewer parameters</b> than the EfficientViT-L1 it's built on, and better on every metric</li>
+      <li>On MSLD it's the only model with <b>100% accuracy on the Mpox class</b></li>
+      <li>On MSID its per-class accuracy is the most balanced (0.8% std, compared with 7.7% for CoAtNet-1), so it doesn't quietly overfit the easy classes</li>
+      <li>Ablation: removing either the cascade inside CAA or the group attention costs accuracy. The full CAGA is best.</li>
+    </ul>
+  </section>
+
+  <section>
+    <h2 class="paper-h">Is it looking at the right thing?</h2>
+    <figure class="paper-fig">
+      <img src="img/gradcam.jpg" alt="Skin lesion images next to Grad-CAM heatmaps for Mpox and other classes." loading="lazy">
+      <figcaption><b>Grad-CAM on MSLD.</b> The top row shows Mpox and the bottom row other conditions. The model's attention lands on the lesions, not on the skin or background around them.</figcaption>
+    </figure>
+  </section>
+
+  <section>
+    <h2 class="paper-h">How it started</h2>
+    <p class="paper-text">This began at the CANDLE Research Lab at IIT Roorkee, working with Prof. Sparsh Mittal. The first version used only cascaded group attention and got 97.5% on MCSI. Adding the dilated-convolution cascade inside each head is what turned it into this paper.</p>
+  </section>
+
+  <section>
+    <h2 class="paper-h">Abstract</h2>
+    <p class="paper-text">The global outbreak of the Mpox virus, classified as a Public Health Emergency of International Concern (PHEIC) by the World Health Organization, presents significant diagnostic challenges due to its visual similarity to other skin lesion diseases. Traditional diagnostic methods for Mpox, which rely on clinical symptoms and laboratory tests, are slow and labor intensive. Deep learning-based approaches for skin lesion classification offer a promising alternative. However, developing a model that balances efficiency with accuracy is crucial to ensure reliable and timely diagnosis without compromising performance. This study introduces the Cascaded Atrous Group Attention (CAGA) module to address these challenges, combining the Cascaded Atrous Attention and the Cascaded Group Attention mechanisms. The Cascaded Atrous Attention module utilizes dilated convolutions and cascades the outputs to enhance multi-scale representation. This is integrated into the Cascaded Group Attention mechanism, which reduces redundancy in Multi-Head Self-Attention. By integrating the Cascaded Atrous Group Attention module with EfficientViT-L1 as the backbone architecture, this approach achieves state-of-the-art performance, reaching an accuracy of 98% on the Mpox Close Skin Image (MCSI) dataset while reducing model parameters by 37.5% compared to the original EfficientViT-L1. The model's robustness is demonstrated through extensive validation on two additional benchmark datasets, where it consistently outperforms existing approaches.</p>
+  </section>
+
+  <section>
+    <h2 class="paper-h">BibTeX</h2>
+    <div class="bibtex-box open">
+      <button class="copy-btn" type="button">Copy</button>
+      <pre>@inproceedings{deshmukh2025cascaded,
+  title     = {A Cascaded Dilated Convolution Approach for Mpox Lesion
+               Classification},
+  author    = {Deshmukh, Ayush},
+  booktitle = {DAGM German Conference on Pattern Recognition},
+  pages     = {18--27},
+  year      = {2025}
+}</pre>
+    </div>
+  </section>
+
+  <footer class="site-footer paper-foot">© 2026 Ayush Deshmukh · <a href="../index.html">All projects</a></footer>
+</main>
+
+<script src="../../assets/js/main.js"></script>
+</body>
+</html>

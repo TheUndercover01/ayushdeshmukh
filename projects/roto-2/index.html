@@ -1,0 +1,97 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>roto 2.0 — Ayush Deshmukh</title>
+<meta name="description" content="roto 2.0: a GPU-parallelised benchmark for blind, tactile-based reinforcement learning across four robot hands.">
+<link rel="canonical" href="https://theundercover01.github.io/ayushdeshmukh/projects/roto-2/">
+<meta property="og:type" content="website">
+<meta property="og:title" content="roto 2.0 — Ayush Deshmukh">
+<meta property="og:description" content="roto 2.0: a GPU-parallelised benchmark for blind, tactile-based reinforcement learning across four robot hands.">
+<meta property="og:url" content="https://theundercover01.github.io/ayushdeshmukh/projects/roto-2/">
+<meta property="og:image" content="https://theundercover01.github.io/ayushdeshmukh/projects/roto-2/img/hands.jpg">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Caveat:wght@500;700&family=Instrument+Serif:ital@0;1&family=Source+Serif+4:ital,opsz,wght@0,8..60,400;0,8..60,600;1,8..60,400&family=Space+Grotesk:wght@400;500;700;800&family=JetBrains+Mono:wght@400;700&display=swap">
+<link rel="stylesheet" href="../../assets/css/style.css">
+<script>try{if(localStorage.getItem("theme")==="dark")document.documentElement.dataset.theme="dark"}catch(e){}</script>
+</head>
+<body>
+
+<header class="paper-bar">
+  <a class="paper-home" href="../../index.html"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 3 2 11.5h3V21h5.5v-6h3v6H19v-9.5h3z"/></svg>Ayush Deshmukh Home</a>
+  <button class="theme-toggle" type="button" aria-label="Switch to dark mode">☾ Dark mode</button>
+</header>
+
+<main class="paper">
+  <header class="paper-head">
+    <h1 class="paper-title">roto 2.0</h1>
+    <p class="paper-sub">The Robot Tactile Olympiad · ViTac Workshop, ICRA 2026</p>
+    <p class="paper-authors"><a href='https://elle-miller.github.io/' target='_blank' rel='noopener'>Elle Miller</a>, Jayaram Reddy, <b>Ayush Deshmukh</b>, Trevor McInroe, David Abel, Oisin Mac Aodha, <a href='https://homepages.inf.ed.ac.uk/svijayak/' target='_blank' rel='noopener'>Sethu Vijayakumar</a></p>
+    <div class="paper-links">
+      <a href="https://arxiv.org/abs/2605.21429" target="_blank" rel="noopener">arXiv</a>
+      <a href="https://elle-miller.github.io/roto/" target="_blank" rel="noopener">Website</a>
+      <a href="https://github.com/TheUndercover01/Roto-on-ShadowLite" target="_blank" rel="noopener">Code (Shadow Lite)</a>
+      <a href="https://github.com/TheUndercover01/Baoding-config-roto-shadowlite" target="_blank" rel="noopener">Baoding config</a>
+    </div>
+  </header>
+
+  <p class="tldr"><b>TL;DR</b> A GPU-parallel benchmark for <b>blind</b> dexterous manipulation (proprioception and touch only, no object state) across four robot hands. Our blind agents reach <b>13 Baoding ball rotations in 10 seconds</b>.</p>
+
+  <figure class="paper-fig">
+      <img src="img/hands.jpg" alt="The four robot hands in roto 2.0: ORCA Hand, Shadow Hand Lite, Allegro Hand and Shadow Dexterous Hand." loading="lazy">
+      <figcaption><b>Four hands, one benchmark.</b> From left to right: ORCA Hand, Shadow Hand Lite, Allegro Hand and the Shadow Dexterous Hand, all doing blind tactile tasks like Baoding and ball bouncing.</figcaption>
+    </figure>
+
+  <section>
+    <h2 class="paper-h">Why this exists</h2>
+    <p class="paper-text">Tactile RL research is scattered. Everyone has their own hand, their own simulator setup and their own tuning, and most papers keep coming back to the same in-hand orientation tasks. That makes it really hard to tell whether a new idea actually helps. roto is our attempt to fix that: one set of environments, several hands, and baselines that have actually been tuned properly, so people can spend their time on the algorithm instead of on hyperparameter sweeps.</p>
+  </section>
+
+  <section>
+    <h2 class="paper-h">What's in it</h2>
+    <ul class="paper-list">
+      <li><b>Blind by design.</b> Agents see proprioception and touch. No object poses, no privileged state, no teacher–student distillation.</li>
+      <li><b>Four morphologies</b>, from 16 to 24 degrees of freedom, all joint-position controlled in Isaac Lab and simulated in parallel on the GPU.</li>
+      <li><b>Tasks</b> that cover different kinds of contact: sparse (Find), intermittent (Bounce) and sustained (Baoding).</li>
+      <li><b>Tuned baselines</b>, including RL-only and RL with self-supervised auxiliary objectives, with proper train/eval splits and integrated hyperparameter search.</li>
+    </ul>
+  </section>
+
+  <section>
+    <h2 class="paper-h">My part</h2>
+    <p class="paper-text">I brought the <b>Shadow Dexterous Hand Lite</b> into roto: the robot configuration, a sensor-aligned embodiment with its tendon coupling, and the Baoding task configs for it. That same setup is what I later took onto the real hand in <a href="../no-eyes-no-problem/">No Eyes, No Problem</a>.</p>
+    <figure class="paper-fig">
+      <img src="img/setup.jpg" alt="Diagram of the roto setup: the multimodal_rl agent library and the roto environment library in an RL loop." loading="lazy">
+      <figcaption><b>Code layout.</b> The agent lives in <code>multimodal_rl</code> and the environments in <code>roto</code>, so you can plug your own RL library in.</figcaption>
+    </figure>
+  </section>
+
+  <section>
+    <h2 class="paper-h">Abstract</h2>
+    <p class="paper-text">Tactile-based reinforcement learning (RL) is currently hindered by fragmented research and a focus on over-saturated orientation tasks. We introduce v2 of the Robot Tactile Olympiad (roto 2.0), a GPU-parallelised benchmark designed to standardise tactile-based RL across four distinct robotic morphologies (16-DOF to 24-DOF). Unlike prior benchmarks, roto focuses on end-to-end "blind" manipulation, utilising only proprioception and tactile sensing without state information or distillation. We demonstrate a significant performance leap, with our blind agents achieving 13 Baoding ball rotations in 10 seconds, an order of magnitude faster than current state-of-the-art speeds. By open-sourcing our environments and robustly tuned baselines, we reduce the barrier to entry and enable researchers to prioritise fundamental algorithmic challenges over tedious RL tuning.</p>
+  </section>
+
+  <section>
+    <h2 class="paper-h">BibTeX</h2>
+    <div class="bibtex-box open">
+      <button class="copy-btn" type="button">Copy</button>
+      <pre>@misc{miller2026roto,
+  title  = {roto 2.0: The Robot Tactile Olympiad},
+  author = {Miller, Elle and Reddy, Jayaram and Deshmukh, Ayush and McInroe, Trevor
+            and Abel, David and Mac Aodha, Oisin and Vijayakumar, Sethu},
+  year   = {2026},
+  eprint = {2605.21429},
+  archivePrefix = {arXiv}
+}</pre>
+    </div>
+  </section>
+
+  <footer class="site-footer paper-foot">© 2026 Ayush Deshmukh · <a href="../index.html">All projects</a></footer>
+</main>
+
+<script src="../../assets/js/main.js"></script>
+</body>
+</html>

@@ -1,0 +1,77 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Tabular RL on a Robot I Built — Ayush Deshmukh</title>
+<meta name="description" content="Monte Carlo, temporal-difference and n-step bootstrapping algorithms implemented from scratch on a custom pick-up robot simulated in PyBullet.">
+<link rel="canonical" href="https://theundercover01.github.io/ayushdeshmukh/projects/tabular-rl-pickup-bot/">
+<meta property="og:type" content="website">
+<meta property="og:title" content="Tabular RL on a Robot I Built — Ayush Deshmukh">
+<meta property="og:description" content="Monte Carlo, temporal-difference and n-step bootstrapping algorithms implemented from scratch on a custom pick-up robot simulated in PyBullet.">
+<meta property="og:url" content="https://theundercover01.github.io/ayushdeshmukh/projects/tabular-rl-pickup-bot/">
+<meta property="og:image" content="https://theundercover01.github.io/ayushdeshmukh/projects/tabular-rl-pickup-bot/img/bot.jpg">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Caveat:wght@500;700&family=Instrument+Serif:ital@0;1&family=Source+Serif+4:ital,opsz,wght@0,8..60,400;0,8..60,600;1,8..60,400&family=Space+Grotesk:wght@400;500;700;800&family=JetBrains+Mono:wght@400;700&display=swap">
+<link rel="stylesheet" href="../../assets/css/style.css">
+<script>try{if(localStorage.getItem("theme")==="dark")document.documentElement.dataset.theme="dark"}catch(e){}</script>
+</head>
+<body>
+
+<header class="paper-bar">
+  <a class="paper-home" href="../../index.html"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 3 2 11.5h3V21h5.5v-6h3v6H19v-9.5h3z"/></svg>Ayush Deshmukh Home</a>
+  <button class="theme-toggle" type="button" aria-label="Switch to dark mode">☾ Dark mode</button>
+</header>
+
+<main class="paper">
+  <header class="paper-head">
+    <h1 class="paper-title">Tabular RL on a Robot I Built</h1>
+    <p class="paper-sub">Sutton & Barto, but on a custom robot in PyBullet instead of a grid world</p>
+    <div class="paper-links">
+      <a href="https://github.com/TheUndercover01/TabularRL-Main" target="_blank" rel="noopener">Main repo</a>
+      <a href="https://github.com/TheUndercover01/MonteCarlo" target="_blank" rel="noopener">Monte Carlo</a>
+      <a href="https://github.com/TheUndercover01/Temporal-Difference" target="_blank" rel="noopener">Temporal Difference</a>
+      <a href="https://github.com/TheUndercover01/n-Step-Bootstrapping" target="_blank" rel="noopener">n-step</a>
+      <a href="https://github.com/TheUndercover01/K-Armed-Bandits" target="_blank" rel="noopener">Bandits</a>
+    </div>
+  </header>
+
+  <p class="tldr"><b>TL;DR</b> I designed a small pick-up robot in Onshape, simulated it in PyBullet and solved it with <b>ten classic RL algorithms</b> from Sutton &amp; Barto, from Monte Carlo up to n-step Q(σ).</p>
+
+  <section>
+    <h2 class="paper-h">Why</h2>
+    <p class="paper-text">Working through <i>Reinforcement Learning: An Introduction</i>, I got tired of grid worlds. I wanted the algorithms to control something physical, so I built a robot for them. Two robot designs failed before this one worked, and I ran a lot of PyBullet experiments before the environment behaved.</p>
+  </section>
+
+  <section>
+    <h2 class="paper-h">The robot</h2>
+    <figure class="paper-fig">
+      <img src="img/bot.jpg" alt="CAD render of the pick-up robot: a rotating stand, a vertical slider arm and a two-part gripper." loading="lazy">
+      <figcaption><b>The pick-up bot</b>, designed in Onshape: a stand that rotates a full 360°, a slider that moves the arm ±210 mm, and two gripper jaws.</figcaption>
+    </figure>
+    <p class="paper-text">The state is a discretised tuple (stand rotation, slider height, gripper 1, gripper 2), which gives 24 reachable configurations. The goal is to find the most efficient sequence of moves to a target state.</p>
+  </section>
+
+  <section>
+    <h2 class="paper-h">Algorithms</h2>
+    <ul class="paper-list">
+      <li><b>Monte Carlo:</b> on-policy control without exploring starts, and off-policy control with importance sampling</li>
+      <li><b>Temporal difference:</b> SARSA, Q-learning, Expected SARSA and Double Q-learning</li>
+      <li><b>n-step bootstrapping:</b> n-step SARSA, n-step off-policy learning, n-step tree backup and n-step Q(σ)</li>
+      <li>Plus <b>k-armed bandits</b> as the warm-up</li>
+    </ul>
+  </section>
+
+  <section>
+    <h2 class="paper-h">One thing that tripped me up</h2>
+    <p class="paper-text">PyBullet position targets are relative to where each joint <i>started</i>, not where it is now. So "move down 0.21" means something different depending on where the arm already is. Until I shifted every command by the joint's original pose, the robot kept overshooting, and the whole environment design depended on getting that right.</p>
+  </section>
+
+  <footer class="site-footer paper-foot">© 2026 Ayush Deshmukh · <a href="../index.html">All projects</a></footer>
+</main>
+
+<script src="../../assets/js/main.js"></script>
+</body>
+</html>

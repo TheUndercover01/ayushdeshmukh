@@ -1,0 +1,75 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Theses — Ayush Deshmukh</title>
+<meta name="description" content="Ayush Deshmukh's MSc dissertation (University of Edinburgh) and B.Tech thesis (NITK Surathkal).">
+<link rel="canonical" href="https://theundercover01.github.io/ayushdeshmukh/theses.html">
+<meta property="og:type" content="website">
+<meta property="og:title" content="Theses — Ayush Deshmukh">
+<meta property="og:description" content="Publications by Ayush Deshmukh on robot learning, tactile manipulation, reinforcement learning and computer vision, with code and BibTeX.">
+<meta property="og:url" content="https://theundercover01.github.io/ayushdeshmukh/theses.html">
+<meta property="og:site_name" content="Ayush Deshmukh">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:site" content="@AayushDesh">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Caveat:wght@500;700&family=Instrument+Serif:ital@0;1&family=Source+Serif+4:ital,opsz,wght@0,8..60,400;0,8..60,600;1,8..60,400&family=Space+Grotesk:wght@400;500;700;800&family=JetBrains+Mono:wght@400;700&display=swap">
+<link rel="stylesheet" href="assets/css/style.css">
+<script>try{if(localStorage.getItem("theme")==="dark")document.documentElement.dataset.theme="dark"}catch(e){}</script>
+</head>
+<body>
+
+<header class="nav">
+  <button class="nav-toggle" aria-label="Toggle menu" aria-expanded="false">☰ Menu</button>
+  <nav class="links">
+    <a href="index.html">About</a>
+    <a href="publications.html">Publications</a>
+    <a href="blog/index.html">Blog</a>
+    <a href="cv.html">CV</a>
+  </nav>
+  <button class="theme-toggle" type="button" aria-label="Switch to dark mode">☾ Dark mode</button>
+</header>
+
+<main>
+  <h1 class="page-title">Theses</h1>
+  <p class="page-sub">The two long write-ups behind my degrees, as submitted.</p>
+
+  <article class="pub" id="msc">
+    <div class="stampcirc"><span class="year">'26</span></div>
+    <div>
+      <span class="venue">MSc dissertation · University of Edinburgh</span>
+      <h3 class="ptitle">Manipulation in the Dark: Blind Sim-to-Real Transfer of a Baoding Policy on the Shadow Hand Lite</h3>
+      <p class="authors"><b>Ayush Deshmukh</b> — supervised by <a href="https://elle-miller.github.io/" target="_blank" rel="noopener">Elle Miller</a> and <a href="https://homepages.inf.ed.ac.uk/svijayak/" target="_blank" rel="noopener">Prof. Sethu Vijayakumar</a>, <a href="https://informatics.ed.ac.uk/slmc" target="_blank" rel="noopener">Statistical Learning and Motor Control Group</a>, School of Informatics, 2026</p>
+      <p class="paper-text">I took a blind Baoding policy (joint readings and binary touch only) from simulation onto the real Shadow Dexterous Hand Lite with no hardware training data. I split the sim-to-real gap into proprioception, tactile and dynamics parts and closed each one, and the final policy did 55 full 180° rotations in one run without a drop, up to six per 10 seconds. The dissertation also covers the tendon-slack investigation and three attempts at learning an actuator network.</p>
+      <div class="plinks">
+        <a href="assets/papers/msc-dissertation.pdf" target="_blank" rel="noopener">PDF</a>
+        <a href="projects/actuator-nets/">Actuator nets</a>
+        <a href="blog/sim-to-real-three-gaps.html">Blog: the three gaps</a>
+        <a href="projects/no-eyes-no-problem/">Follow-up paper</a>
+      </div>
+    </div>
+  </article>
+
+  <article class="pub" id="btech">
+    <div class="stampcirc"><span class="year">'25</span></div>
+    <div>
+      <span class="venue">B.Tech major project · NIT Karnataka, Surathkal</span>
+      <h3 class="ptitle">Reinforcement Learning Powered Generative Models for User-Centric Recommendations</h3>
+      <p class="authors"><b>Ayush Deshmukh</b>, Siddharth Kelkar — supervised by <a href="https://infotech.nitk.ac.in/faculty/anand-kumar-m" target="_blank" rel="noopener">Dr. Anand Kumar M</a>, Department of Information Technology, April 2025</p>
+      <p class="paper-text">Recommending sequences of games with RL: a generator proposes game sequences, a user-preference evaluator scores them, and PPO trains the generator on that feedback. Games are represented with CLIP and BART embeddings of their art, titles and descriptions. Experiments showed that the dual-discriminator setup, full metadata and multimodal content each beat their simpler versions. This became the COMSNETS 2026 paper.</p>
+      <div class="plinks">
+        <a href="assets/papers/btech-thesis.pdf" target="_blank" rel="noopener">PDF</a>
+        <a href="projects/game-recommendation/">Project</a>
+        <a href="https://doi.org/10.1109/COMSNETS67989.2026.11418281" target="_blank" rel="noopener">COMSNETS paper</a>
+      </div>
+    </div>
+  </article>
+
+  <footer class="site-footer">© 2026 Ayush Deshmukh</footer>
+</main>
+
+<script src="assets/js/main.js"></script>
+</body>
+</html>
