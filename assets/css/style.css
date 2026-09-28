@@ -241,6 +241,12 @@ main.paper{max-width:52rem}
 .ckpt-pair figure{margin:0}
 .ckpt-pair figcaption{font-family:"Space Grotesk",sans-serif;font-weight:700;font-size:.7rem;text-transform:uppercase;letter-spacing:.06em;margin-bottom:.35rem}
 .ckpt-pair .video-slot{border-width:2px;box-shadow:none}
+.video-slot.portrait{aspect-ratio:9/16}
+.vid-row{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
+.vid-row figure{margin:0}
+.vid-row figcaption{margin-top:.5rem;text-align:center;font-family:Caveat,cursive;font-size:1.1rem;color:var(--fg)}
+@media (max-width:680px){.vid-row{grid-template-columns:repeat(2,1fr)}}
+@media (max-width:420px){.vid-row{grid-template-columns:1fr}}
 .video-slot.na span{font-size:1.05rem;text-align:center;padding:0 1rem}
 .results-wrap{overflow-x:auto;border:3px solid var(--fg);border-radius:4px;box-shadow:6px 6px 0 var(--shadow);background:var(--card)}
 .results{width:100%;border-collapse:collapse;font-size:.68rem;min-width:40rem}
