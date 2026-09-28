@@ -242,6 +242,10 @@ main.paper{max-width:52rem}
 .ckpt-pair figcaption{font-family:"Space Grotesk",sans-serif;font-weight:700;font-size:.7rem;text-transform:uppercase;letter-spacing:.06em;margin-bottom:.35rem}
 .ckpt-pair .video-slot{border-width:2px;box-shadow:none}
 .video-slot.portrait{aspect-ratio:9/16}
+.refs{margin:0;padding-left:1.4rem;font-size:.88rem;color:var(--muted);line-height:1.55}
+.refs li{margin-bottom:.5rem}
+.refs a{color:var(--fg)}
+.paper sup a{text-decoration:none;font-size:.8em;color:var(--accent-warm)}
 .vid-row{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
 .vid-row figure{margin:0}
 .vid-row figcaption{margin-top:.5rem;text-align:center;font-family:Caveat,cursive;font-size:1.1rem;color:var(--fg)}
