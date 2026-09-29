@@ -462,3 +462,14 @@ footer.site-footer{color:var(--muted);font-size:.85em;padding-top:22px;border-to
   .ckpt-stats dd{font-size:1.25rem}
   .ckpt-stats dd small{display:block}
 }
+
+/* CAM internship page: light/dark figure pairs, inline architecture SVG, plain results table */
+.paper-fig img.theme-dark{display:none}
+[data-theme="dark"] .paper-fig img.theme-light{display:none}
+[data-theme="dark"] .paper-fig img.theme-dark{display:block}
+.paper-fig svg.cam-arch{display:block;width:100%;max-width:34rem;height:auto;margin:0 auto;background:var(--card);border:3px solid var(--fg);border-radius:4px;box-shadow:6px 6px 0 var(--shadow)}
+.results.plain{min-width:34rem}
+.results.plain td:nth-child(4),.results.plain thead tr:last-child th:nth-child(3){border-left:0}
+.fig-note{margin:.8rem 0 2.2rem;color:var(--muted);font-size:.85rem;line-height:1.5}
+.fig-note b{color:var(--fg)}
+.paper-list+.paper-fig{margin-top:1.8rem}

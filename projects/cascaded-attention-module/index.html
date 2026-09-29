@@ -15,7 +15,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Caveat:wght@500;700&family=Instrument+Serif:ital@0;1&family=Source+Serif+4:ital,opsz,wght@0,8..60,400;0,8..60,600;1,8..60,400&family=Space+Grotesk:wght@400;500;700;800&family=JetBrains+Mono:wght@400;700&display=swap">
-<link rel="stylesheet" href="../../assets/css/style.css?v=7">
+<link rel="stylesheet" href="../../assets/css/style.css?v=8">
 <script>try{if(localStorage.getItem("theme")==="dark")document.documentElement.dataset.theme="dark"}catch(e){}</script>
 </head>
 <body>
@@ -37,7 +37,7 @@
     </div>
   </header>
 
-  <p class="tldr"><b>TL;DR</b> At the <a href="https://sites.google.com/view/comparch-machinelearning-lab/home" target="_blank" rel="noopener"><b>CANDLE Research Lab, IIT Roorkee</b></a>, working with <a href="https://faculty.iitr.ac.in/~sparshfec/" target="_blank" rel="noopener">Prof. Sparsh Mittal</a>, I built a <b>cascaded attention module</b> for an EfficientViT backbone to classify Mpox skin lesions. It reached <b>97.5%</b> on MCSI and <b>95.54%</b> on MSID with <b>28% fewer parameters</b>. Afterwards I kept going on my own, and the extended version became my <a href="../mpox-caga/">single-author DAGM GCPR 2025 paper</a>.</p>
+  <p class="tldr"><b>TL;DR</b> At the <a href="https://sites.google.com/view/comparch-machinelearning-lab/home" target="_blank" rel="noopener"><b>CANDLE Research Lab, IIT Roorkee</b></a>, working with <a href="https://faculty.iitr.ac.in/~sparshfec/" target="_blank" rel="noopener">Prof. Sparsh Mittal</a>, I built a <b>cascaded attention module</b> for an EfficientViT backbone to classify Mpox skin lesions. It reached <b>97.5%</b> accuracy on MCSI, above all six baselines I compared against, with <b>13% fewer parameters</b> than EfficientViT-L1. I later extended it on my own into a DAGM GCPR 2025 paper.</p>
 
   <section>
     <h2 class="paper-h">The problem</h2>
@@ -47,27 +47,188 @@
   <section>
     <h2 class="paper-h">What I built</h2>
     <ul class="paper-list">
-      <li><b>A cascaded attention module.</b> A 3×3 convolution splits the features into separate heads. Each head builds its own queries, keys and values with small convolutions and runs attention over the spatial positions, and the outputs are concatenated and projected back with a residual connection and normalisation. Giving each head its own slice, instead of every head looking at the whole feature map, cuts the redundant computation in multi-head self-attention.</li>
+      <li><b>A cascaded attention module</b> that replaces the self-attention in blocks 1–6 of the fourth stage of EfficientViT-L1. Each head works on its own slice of the channels instead of every head looking at the whole feature map, which cuts the redundant computation in multi-head self-attention. The diagram below shows the data flow.</li>
       <li><b>An EfficientViT backbone</b> with the module added, chosen because it is already built for low latency.</li>
-      <li><b>Class-weighted focal loss</b>, so the model can't do well just by getting the easy classes right.</li>
-      <li><b>Careful evaluation:</b> 10-fold stratified cross-validation on MCSI with balanced folds, plus MSID as a second, independent dataset, compared against six strong CNN and ViT baselines. AdamW, an exponential LR schedule and early stopping on validation accuracy.</li>
+      <li><b>Class-weighted focal loss</b> (γ = 2), so the model can't do well just by getting the easy classes right.</li>
+      <li><b>Careful evaluation:</b> 10-fold cross-validation on MCSI with class-balanced folds, compared against six CNN and ViT baselines. AdamW (learning rate 9.6e-5, weight decay 0.01), an exponential LR schedule (γ = 0.95) and early stopping on validation accuracy (patience 9).</li>
     </ul>
+
+    <figure class="paper-fig">
+<svg class="cam-arch" viewBox="-4 0 644 916" role="img" aria-labelledby="cam-arch-t cam-arch-d" xmlns="http://www.w3.org/2000/svg">
+<title id="cam-arch-t">Architecture of the cascaded attention module</title>
+<desc id="cam-arch-d">Input features go through a 3 by 3 convolution and are split into three heads. In each head two branches build Q, K and V with a 3 by 3 and a 1 by 1 convolution and run attention over the spatial positions. Branch outputs are concatenated per head, all heads are concatenated, projected back with a 1 by 1 convolution, added to the input and batch-normalised.</desc>
+<style>.cam-arch .t{font:700 17px "Space Grotesk",sans-serif}.cam-arch .m{font:400 15px "JetBrains Mono",monospace}.cam-arch .c{font:700 17px Caveat,cursive}.cam-arch .t .m{font-size:15px;font-weight:400}</style>
+<rect x="228" y="14" width="220" height="38" rx="3" fill="var(--fg)"/>
+<rect x="228" y="14" width="220" height="38" rx="3" fill="var(--fg)"/>
+<rect x="224" y="10" width="220" height="38" rx="3" fill="var(--card)" stroke="var(--fg)" stroke-width="2.5"/>
+<text x="334.0" y="34.0" text-anchor="middle" class="m" fill="var(--fg)">input  x : B × C × H × W</text>
+<line x1="334" y1="48" x2="334" y2="67" stroke="var(--fg)" stroke-width="2.5"/>
+<path d="M328 65 L334 74 L340 65 Z" fill="var(--fg)"/>
+<rect x="188" y="78" width="300" height="38" rx="3" fill="var(--fg)"/>
+<rect x="184" y="74" width="300" height="38" rx="3" fill="var(--card)" stroke="var(--fg)" stroke-width="2.5"/>
+<text x="334" y="98" text-anchor="middle" class="t" fill="var(--fg)">3×3 conv <tspan class="m">  C → 3 × 16</tspan></text>
+<line x1="334" y1="112" x2="184" y2="143" stroke="var(--fg)" stroke-width="2.5"/>
+<path d="M178 141 L184 150 L190 141 Z" fill="var(--fg)"/>
+<rect x="120" y="154" width="136" height="30" rx="3" fill="var(--fg)"/>
+<rect x="116" y="150" width="136" height="30" rx="3" fill="var(--card)" stroke="var(--fg)" stroke-width="2.5"/>
+<text x="184" y="170" text-anchor="middle" class="m" fill="var(--fg)">head 1 · 16 ch</text>
+<line x1="184" y1="180" x2="184" y2="199" stroke="var(--fg)" stroke-width="2.5"/>
+<path d="M178 197 L184 206 L190 197 Z" fill="var(--fg)"/>
+<line x1="334" y1="112" x2="334" y2="143" stroke="var(--fg)" stroke-width="2.5"/>
+<path d="M328 141 L334 150 L340 141 Z" fill="var(--fg)"/>
+<rect x="270" y="154" width="136" height="30" rx="3" fill="var(--fg)"/>
+<rect x="266" y="150" width="136" height="30" rx="3" fill="var(--card)" stroke="var(--fg)" stroke-width="2.5"/>
+<text x="334" y="170" text-anchor="middle" class="m" fill="var(--fg)">head 2 · 16 ch</text>
+<line x1="334" y1="180" x2="334" y2="199" stroke="var(--fg)" stroke-width="2.5"/>
+<path d="M328 197 L334 206 L340 197 Z" fill="var(--fg)"/>
+<line x1="334" y1="112" x2="484" y2="143" stroke="var(--fg)" stroke-width="2.5"/>
+<path d="M478 141 L484 150 L490 141 Z" fill="var(--fg)"/>
+<rect x="420" y="154" width="136" height="30" rx="3" fill="var(--fg)"/>
+<rect x="416" y="150" width="136" height="30" rx="3" fill="var(--card)" stroke="var(--fg)" stroke-width="2.5"/>
+<text x="484" y="170" text-anchor="middle" class="m" fill="var(--fg)">head 3 · 16 ch</text>
+<line x1="484" y1="180" x2="484" y2="199" stroke="var(--fg)" stroke-width="2.5"/>
+<path d="M478 197 L484 206 L490 197 Z" fill="var(--fg)"/>
+<rect x="60" y="222" width="580" height="360" rx="4" fill="var(--bg)" stroke="var(--fg)" stroke-width="2.5"/>
+<rect x="52" y="214" width="580" height="360" rx="4" fill="var(--bg)" stroke="var(--fg)" stroke-width="2.5"/>
+<rect x="44" y="206" width="580" height="360" rx="4" fill="var(--card)" stroke="var(--fg)" stroke-width="2.5"/>
+<text x="60" y="230" class="t" fill="var(--fg)">Inside every head</text>
+<text x="608" y="230" text-anchor="end" class="c" fill="var(--accent-warm)">same 2 branches, same weights, ×3 heads</text>
+<text x="58" y="256" class="m" fill="var(--muted)">branch 1</text>
+<rect x="62" y="266" width="260" height="34" rx="3" fill="var(--fg)"/>
+<rect x="58" y="262" width="260" height="34" rx="3" fill="var(--card)" stroke="var(--fg)" stroke-width="2.5"/>
+<text x="188.0" y="284" text-anchor="middle" class="m" fill="var(--fg)">3×3 conv  16 → 16</text>
+<line x1="188.0" y1="296" x2="188.0" y2="305" stroke="var(--fg)" stroke-width="2.5"/>
+<path d="M182.0 303 L188.0 312 L194.0 303 Z" fill="var(--fg)"/>
+<rect x="62" y="316" width="260" height="34" rx="3" fill="var(--fg)"/>
+<rect x="58" y="312" width="260" height="34" rx="3" fill="var(--card)" stroke="var(--fg)" stroke-width="2.5"/>
+<text x="188.0" y="334" text-anchor="middle" class="m" fill="var(--fg)">1×1 conv  16 → 3 × 8</text>
+<line x1="188.0" y1="346" x2="188.0" y2="355" stroke="var(--fg)" stroke-width="2.5"/>
+<path d="M182.0 353 L188.0 362 L194.0 353 Z" fill="var(--fg)"/>
+<rect x="63" y="365" width="76" height="28" rx="3" fill="var(--fg)"/>
+<rect x="60" y="362" width="76" height="28" rx="3" fill="var(--accent-hi)" stroke="var(--fg)" stroke-width="2.5"/>
+<text x="98.0" y="381.0" text-anchor="middle" class="t" fill="#211d19">Q</text>
+<rect x="151" y="365" width="76" height="28" rx="3" fill="var(--fg)"/>
+<rect x="148" y="362" width="76" height="28" rx="3" fill="var(--accent-hi)" stroke="var(--fg)" stroke-width="2.5"/>
+<text x="186.0" y="381.0" text-anchor="middle" class="t" fill="#211d19">K</text>
+<rect x="239" y="365" width="76" height="28" rx="3" fill="var(--fg)"/>
+<rect x="236" y="362" width="76" height="28" rx="3" fill="var(--accent-hi)" stroke="var(--fg)" stroke-width="2.5"/>
+<text x="274.0" y="381.0" text-anchor="middle" class="t" fill="#211d19">V</text>
+<line x1="188.0" y1="390" x2="188.0" y2="401" stroke="var(--fg)" stroke-width="2.5"/>
+<path d="M182.0 399 L188.0 408 L194.0 399 Z" fill="var(--fg)"/>
+<rect x="62" y="412" width="260" height="56" rx="3" fill="var(--fg)"/>
+<rect x="58" y="408" width="260" height="56" rx="3" fill="var(--accent-hi)" stroke="var(--fg)" stroke-width="2.5"/>
+<text x="188.0" y="433.0" text-anchor="middle" class="t" fill="#211d19">attention</text>
+<text x="188.0" y="451.0" text-anchor="middle" class="m" fill="#211d19">softmax(Qᵀ·K / √8) · V</text>
+<line x1="188.0" y1="464" x2="188.0" y2="479" stroke="var(--fg)" stroke-width="2.5"/>
+<path d="M182.0 477 L188.0 486 L194.0 477 Z" fill="var(--fg)"/>
+<text x="188.0" y="482" text-anchor="middle" class="m" fill="var(--muted)" opacity="0"> </text>
+<text x="196.0" y="484" class="c" fill="var(--muted)">8 ch</text>
+<text x="346" y="256" class="m" fill="var(--muted)">branch 2</text>
+<rect x="350" y="266" width="260" height="34" rx="3" fill="var(--fg)"/>
+<rect x="346" y="262" width="260" height="34" rx="3" fill="var(--card)" stroke="var(--fg)" stroke-width="2.5"/>
+<text x="476.0" y="284" text-anchor="middle" class="m" fill="var(--fg)">3×3 conv  16 → 16</text>
+<line x1="476.0" y1="296" x2="476.0" y2="305" stroke="var(--fg)" stroke-width="2.5"/>
+<path d="M470.0 303 L476.0 312 L482.0 303 Z" fill="var(--fg)"/>
+<rect x="350" y="316" width="260" height="34" rx="3" fill="var(--fg)"/>
+<rect x="346" y="312" width="260" height="34" rx="3" fill="var(--card)" stroke="var(--fg)" stroke-width="2.5"/>
+<text x="476.0" y="334" text-anchor="middle" class="m" fill="var(--fg)">1×1 conv  16 → 3 × 8</text>
+<line x1="476.0" y1="346" x2="476.0" y2="355" stroke="var(--fg)" stroke-width="2.5"/>
+<path d="M470.0 353 L476.0 362 L482.0 353 Z" fill="var(--fg)"/>
+<rect x="351" y="365" width="76" height="28" rx="3" fill="var(--fg)"/>
+<rect x="348" y="362" width="76" height="28" rx="3" fill="var(--accent-hi)" stroke="var(--fg)" stroke-width="2.5"/>
+<text x="386.0" y="381.0" text-anchor="middle" class="t" fill="#211d19">Q</text>
+<rect x="439" y="365" width="76" height="28" rx="3" fill="var(--fg)"/>
+<rect x="436" y="362" width="76" height="28" rx="3" fill="var(--accent-hi)" stroke="var(--fg)" stroke-width="2.5"/>
+<text x="474.0" y="381.0" text-anchor="middle" class="t" fill="#211d19">K</text>
+<rect x="527" y="365" width="76" height="28" rx="3" fill="var(--fg)"/>
+<rect x="524" y="362" width="76" height="28" rx="3" fill="var(--accent-hi)" stroke="var(--fg)" stroke-width="2.5"/>
+<text x="562.0" y="381.0" text-anchor="middle" class="t" fill="#211d19">V</text>
+<line x1="476.0" y1="390" x2="476.0" y2="401" stroke="var(--fg)" stroke-width="2.5"/>
+<path d="M470.0 399 L476.0 408 L482.0 399 Z" fill="var(--fg)"/>
+<rect x="350" y="412" width="260" height="56" rx="3" fill="var(--fg)"/>
+<rect x="346" y="408" width="260" height="56" rx="3" fill="var(--accent-hi)" stroke="var(--fg)" stroke-width="2.5"/>
+<text x="476.0" y="433.0" text-anchor="middle" class="t" fill="#211d19">attention</text>
+<text x="476.0" y="451.0" text-anchor="middle" class="m" fill="#211d19">softmax(Qᵀ·K / √8) · V</text>
+<line x1="476.0" y1="464" x2="476.0" y2="479" stroke="var(--fg)" stroke-width="2.5"/>
+<path d="M470.0 477 L476.0 486 L482.0 477 Z" fill="var(--fg)"/>
+<text x="476.0" y="482" text-anchor="middle" class="m" fill="var(--muted)" opacity="0"> </text>
+<text x="484.0" y="484" class="c" fill="var(--muted)">8 ch</text>
+<path d="M188 488 V498 H334 M476 488 V498 H334" fill="none" stroke="var(--fg)" stroke-width="2.5"/>
+<line x1="334" y1="498" x2="334" y2="509" stroke="var(--fg)" stroke-width="2.5"/>
+<path d="M328 507 L334 516 L340 507 Z" fill="var(--fg)"/>
+<rect x="208" y="520" width="260" height="34" rx="3" fill="var(--fg)"/>
+<rect x="204" y="516" width="260" height="34" rx="3" fill="var(--card)" stroke="var(--fg)" stroke-width="2.5"/>
+<text x="334" y="538" text-anchor="middle" class="m" fill="var(--fg)">concat 2 branches → 16 ch</text>
+<line x1="334" y1="582" x2="334" y2="601" stroke="var(--fg)" stroke-width="2.5"/>
+<path d="M328 599 L334 608 L340 599 Z" fill="var(--fg)"/>
+<rect x="188" y="612" width="300" height="38" rx="3" fill="var(--fg)"/>
+<rect x="184" y="608" width="300" height="38" rx="3" fill="var(--card)" stroke="var(--fg)" stroke-width="2.5"/>
+<text x="334" y="632" text-anchor="middle" class="m" fill="var(--fg)">concat 3 heads → 48 ch</text>
+<line x1="334" y1="646" x2="334" y2="665" stroke="var(--fg)" stroke-width="2.5"/>
+<path d="M328 663 L334 672 L340 663 Z" fill="var(--fg)"/>
+<rect x="188" y="676" width="300" height="38" rx="3" fill="var(--fg)"/>
+<rect x="184" y="672" width="300" height="38" rx="3" fill="var(--card)" stroke="var(--fg)" stroke-width="2.5"/>
+<text x="334" y="696" text-anchor="middle" class="m" fill="var(--fg)">1×1 conv  48 → C</text>
+<line x1="334" y1="710" x2="334" y2="725" stroke="var(--fg)" stroke-width="2.5"/>
+<path d="M328 723 L334 732 L340 723 Z" fill="var(--fg)"/>
+<circle cx="334" cy="756" r="17" fill="var(--accent-warm)" stroke="var(--fg)" stroke-width="2.5"/><text x="334" y="763" text-anchor="middle" class="t" fill="#211d19" style="font-size:22px">+</text>
+<path d="M224 29 H8 V756 H310" fill="none" stroke="var(--accent-warm)" stroke-width="3" stroke-dasharray="7 5"/>
+<path d="M303 750 L316 756 L303 762 Z" fill="var(--accent-warm)"/>
+<text x="26" y="400" class="c" fill="var(--accent-warm)" style="font-size:15px" transform="rotate(-90 26 400)" text-anchor="middle">residual (skip) connection</text>
+<line x1="334" y1="773" x2="334" y2="793" stroke="var(--fg)" stroke-width="2.5"/>
+<path d="M328 791 L334 800 L340 791 Z" fill="var(--fg)"/>
+<rect x="188" y="804" width="300" height="38" rx="3" fill="var(--fg)"/>
+<rect x="184" y="800" width="300" height="38" rx="3" fill="var(--card)" stroke="var(--fg)" stroke-width="2.5"/>
+<text x="334" y="824" text-anchor="middle" class="m" fill="var(--fg)">BatchNorm2d  (affine = False)</text>
+<line x1="334" y1="838" x2="334" y2="857" stroke="var(--fg)" stroke-width="2.5"/>
+<path d="M328 855 L334 864 L340 855 Z" fill="var(--fg)"/>
+<rect x="228" y="868" width="220" height="38" rx="3" fill="var(--fg)"/>
+<rect x="224" y="864" width="220" height="38" rx="3" fill="var(--card)" stroke="var(--fg)" stroke-width="2.5"/>
+<text x="334" y="888" text-anchor="middle" class="m" fill="var(--fg)">output : B × C × H × W</text>
+</svg>
+      <figcaption><b>The cascaded attention module.</b> A 3×3 convolution expands the input to 3 × 16 channels and splits it into three heads. Each head runs two Q/K/V attention branches (a 3×3 then a 1×1 convolution, Q, K and V of 8 channels each, softmax attention over the H×W positions) and concatenates them. The two branches use the same weights in all three heads. Heads are concatenated, projected back to C channels, added to the input and batch-normalised. Drawn from <code>model.py</code> (<code>CascadedAttentionModule</code>) in the CAM repo; <code>utils.py</code> swaps it into the backbone.</figcaption>
+    </figure>
   </section>
 
   <section>
     <h2 class="paper-h">Results</h2>
     <ul class="paper-list">
-      <li><b>97.5%</b> accuracy on MCSI (Acne, Normal, Chickenpox, Mpox)</li>
-      <li><b>95.54%</b> on MSID (Chickenpox, Measles, Mpox, Normal)</li>
-      <li><b>28% fewer parameters</b> than the baseline backbone</li>
-      <li>Better than six state-of-the-art models on both accuracy and efficiency</li>
+      <li><b>97.5%</b> accuracy on MCSI (Acne, Normal, Chickenpox, Mpox), above all six baselines. The best baseline, EfficientViT-L1, scores 97.25%.</li>
+      <li><b>13% fewer parameters</b> than EfficientViT-L1: 45.8M against 52.7M.</li>
     </ul>
+
+    <div class="results-wrap">
+      <table class="results plain">
+        <thead><tr><th scope="col">Model</th><th scope="col">Accuracy %<small>mean ± std, 10 folds</small></th><th scope="col">Precision</th><th scope="col">Recall</th><th scope="col">F1</th><th scope="col">Params</th></tr></thead>
+        <tbody>
+        <tr class="ours"><th scope="row">EfficientViT-L1 + CAM (ours)</th><td>97.5</td><td>—</td><td>—</td><td>—</td><td>45.8M</td></tr>
+        <tr><th scope="row">EfficientViT-L1</th><td>97.25 ± 1.84</td><td>0.9728</td><td>0.9744</td><td>0.9715</td><td>52.7M</td></tr>
+        <tr><th scope="row">CoAtNet-1</th><td>96.75 ± 3.74</td><td>0.9711</td><td>0.9672</td><td>0.9674</td><td>41.7M</td></tr>
+        <tr><th scope="row">DeiT3-M</th><td>95.75 ± 3.34</td><td>0.9608</td><td>0.9577</td><td>0.9559</td><td>38.8M</td></tr>
+        <tr><th scope="row">ViT-B/16</th><td>95.75 ± 3.55</td><td>0.9578</td><td>0.9562</td><td>0.9542</td><td>86.6M</td></tr>
+        <tr><th scope="row">MobileNetV3-L</th><td>93.75 ± 5.43</td><td>0.9434</td><td>0.9474</td><td>0.9392</td><td>5.5M</td></tr>
+        <tr><th scope="row">ResNet101</th><td>89.25 ± 4.87</td><td>0.8908</td><td>0.8919</td><td>0.8845</td><td>44.5M</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p class="fig-note"><b>MCSI, 10-fold cross-validation.</b> Baseline rows are the fold means in the per-model result CSVs of my later solo repo (<code>MCSI/Scores and Hyperparams/*/results_*.csv</code>), evaluated on the same folds. Precision, recall and F1 are macro averages. The 97.5% for the CAM row is the accuracy I reported at the end of the internship; the CAM repo has no saved per-fold or per-metric scores, so its other cells are left empty rather than filled in. Params are counted with timm's stock classifier head and random weights; the CAM row is EfficientViT-L1 with <code>CascadedAttentionModule</code> in stage-3 blocks 1–6, using <code>model.py</code> and <code>utils.py</code> from the CAM repo.</p>
+
+    <figure class="paper-fig">
+      <img class="theme-light" src="img/scatter-light.svg" alt="Scatter plot of MCSI accuracy against parameter count. EfficientViT-L1 with the cascaded attention module is at 97.5% and 45.8 million parameters, above EfficientViT-L1 at 97.25% and 52.7 million, and above the other five baselines." loading="lazy">
+      <img class="theme-dark" src="img/scatter-dark.svg" alt="" aria-hidden="true" loading="lazy">
+      <figcaption><b>Accuracy against size.</b> The module moves EfficientViT-L1 up and to the left. It is the most accurate model but not the smallest: CoAtNet-1, DeiT3-medium, ResNet101 and MobileNetV3 have fewer parameters. Accuracy: CSVs as in the table (CAM: 97.5% as reported). Params: timm counts as above.</figcaption>
+    </figure>
+
+    <figure class="paper-fig">
+      <img class="theme-light" src="img/folds-light.svg" alt="Per-fold test accuracy of the six baselines on MCSI, ten folds each, with mean and standard deviation." loading="lazy">
+      <img class="theme-dark" src="img/folds-dark.svg" alt="" aria-hidden="true" loading="lazy">
+      <figcaption><b>Fold-to-fold spread of the baselines.</b> Each dot is one 40-image test fold; diamonds are mean ± sample standard deviation. Fold standard deviations are 1.8–5.4 points, so a 0.25-point gap such as 97.5% against 97.25% is well inside the noise. Per-fold scores for the CAM model itself are not saved in the CAM repo, so it is not shown. Source: the same result CSVs, column <code>Accuracy</code>.</figcaption>
+    </figure>
   </section>
 
   <section>
     <h2 class="paper-h">Then I extended it solo</h2>
-    <p class="paper-text">After the internship I kept working on it on my own. The idea I added was to put <b>dilated convolutions inside each attention head</b>, at rates 1, 2 and 3, with each dilation feeding the next (Cascaded Atrous Attention), all inside the cascaded group attention. That gave the model a multi-scale view of each lesion without adding many parameters.</p>
-    <p class="paper-text">The extended model, <b>CAGA</b>, reached <b>98% on MCSI with 37.5% fewer parameters</b> than EfficientViT-L1, and it was the most accurate model on three datasets (MCSI, MSID and MSLD). I wrote it up as a <b>single-author paper</b>, published at <b>DAGM GCPR 2025</b>: <a href="../mpox-caga/">A Cascaded Dilated Convolution Approach for Mpox Lesion Classification</a>.</p>
+    <p class="paper-text">After the internship I kept going on my own and added dilated convolutions inside each attention head. That extension became a single-author paper at <b>DAGM GCPR 2025</b>: <a href="../mpox-caga/">A Cascaded Dilated Convolution Approach for Mpox Lesion Classification</a>.</p>
   </section>
 
   <section>
