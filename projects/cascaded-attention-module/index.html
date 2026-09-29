@@ -220,9 +220,9 @@
     </figure>
 
     <figure class="paper-fig">
-      <img class="theme-light" src="img/folds-light.svg" alt="Per-fold test accuracy of the six baselines on MCSI, ten folds each, with mean and standard deviation." loading="lazy">
+      <img class="theme-light" src="img/folds-light.svg" alt="Per-fold test accuracy of the six baselines on MCSI, ten folds each, with mean and standard deviation, plus the CAM model as mean 97.5 and standard deviation 2.04." loading="lazy">
       <img class="theme-dark" src="img/folds-dark.svg" alt="" aria-hidden="true" loading="lazy">
-      <figcaption><b>Fold-to-fold spread of the baselines.</b> Each dot is one 40-image test fold; diamonds are mean ± sample standard deviation. Fold standard deviations are 1.8–5.4 points, so a 0.25-point gap such as 97.5% against 97.25% is well inside the noise. Per-fold scores for the CAM model itself are not saved in the CAM repo, so it is not shown. Source: the same result CSVs, column <code>Accuracy</code>.</figcaption>
+      <figcaption><b>Fold-to-fold spread.</b> Each dot is one 40-image test fold; diamonds are mean ± sample standard deviation. Fold standard deviations are 1.8–5.4 points, so a 0.25-point gap such as 97.5% against 97.25% is well inside the noise. The top row, CAM, shows only its mean ± standard deviation from my internship runs, with no dots because I don't have its individual fold scores. Baselines: the same result CSVs, column <code>Accuracy</code>.</figcaption>
     </figure>
   </section>
 
