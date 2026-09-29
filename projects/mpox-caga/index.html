@@ -15,7 +15,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Caveat:wght@500;700&family=Instrument+Serif:ital@0;1&family=Source+Serif+4:ital,opsz,wght@0,8..60,400;0,8..60,600;1,8..60,400&family=Space+Grotesk:wght@400;500;700;800&family=JetBrains+Mono:wght@400;700&display=swap">
-<link rel="stylesheet" href="../../assets/css/style.css?v=7">
+<link rel="stylesheet" href="../../assets/css/style.css?v=9">
 <script>try{if(localStorage.getItem("theme")==="dark")document.documentElement.dataset.theme="dark"}catch(e){}</script>
 </head>
 <body>
@@ -100,6 +100,66 @@
       <li>On MSID its per-class accuracy is the most balanced (0.8% std, compared with 7.7% for CoAtNet-1), so it doesn't quietly overfit the easy classes</li>
       <li>Ablation: removing either the cascade inside CAA or the group attention costs accuracy. The full CAGA is best.</li>
     </ul>
+
+    <h3 class="ds-h" id="full-results">Full results on all three datasets</h3>
+    <p class="paper-text">The complete tables from the paper (Tables I, II and IV). <b>Bold</b> is the best value in a column and <u>underline</u> the second best; for parameters the smallest counts as best.</p>
+
+    <h4 class="ds-h" id="ds-mcsi">MCSI <small>mean over 10-fold cross-validation, ± std underneath</small></h4>
+    <div class="results-wrap">
+      <table class="results datasets" aria-describedby="ds-mcsi">
+        <thead>
+          <tr><th rowspan="2" scope="col">Model</th><th rowspan="2" scope="col" class="gs">Params</th><th colspan="4" scope="colgroup" class="gs g1">Overall</th><th colspan="4" scope="colgroup" class="gs">Classwise accuracy</th></tr>
+          <tr><th scope="col" class="gs">Accuracy</th><th scope="col">Precision</th><th scope="col">Recall</th><th scope="col">F1</th><th scope="col" class="gs">Mpox</th><th scope="col">Normal</th><th scope="col">Chickenpox</th><th scope="col">Acne</th></tr>
+        </thead>
+        <tbody>
+        <tr><th scope="row">ResNet-101</th><td class="gs">47.4M</td><td class="gs">0.8925<small>± 0.049</small></td><td>0.8908<small>± 0.056</small></td><td>0.891<small>± 0.059</small></td><td>0.884<small>± 0.060</small></td><td class="gs">0.8667<small>± 0.116</small></td><td>0.8326<small>± 0.131</small></td><td>0.8639<small>± 0.126</small></td><td><b>1.0</b><small>± 0.0</small></td></tr>
+        <tr><th scope="row">MobileNetV3-Large</th><td class="gs"><b>7.6M</b></td><td class="gs">0.9375<small>± 0.054</small></td><td>0.9433<small>± 0.052</small></td><td>0.9473<small>± 0.050</small></td><td>0.9391<small>± 0.053</small></td><td class="gs">0.9063<small>± 0.122</small></td><td>0.9205<small>± 0.130</small></td><td><u>0.9468</u><small>± 0.093</small></td><td><b>1.0</b><small>± 0.0</small></td></tr>
+        <tr><th scope="row">DeiT3-Medium</th><td class="gs">41.5M</td><td class="gs">0.9575<small>± 0.033</small></td><td>0.960<small>± 0.031</small></td><td>0.958<small>± 0.033</small></td><td>0.956<small>± 0.035</small></td><td class="gs">0.9538<small>± 0.065</small></td><td>0.9707<small>± 0.064</small></td><td>0.9188<small>± 0.120</small></td><td><b>1.0</b><small>± 0.0</small></td></tr>
+        <tr><th scope="row">ViT-Base</th><td class="gs">88.7M</td><td class="gs">0.9575<small>± 0.035</small></td><td>0.9578<small>± 0.033</small></td><td>0.9562<small>± 0.036</small></td><td>0.9542<small>± 0.036</small></td><td class="gs">0.9180<small>± 0.081</small></td><td><b>0.9923</b><small>± 0.024</small></td><td>0.9207<small>± 0.118</small></td><td><b>1.0</b><small>± 0.0</small></td></tr>
+        <tr><th scope="row">EfficientViT-L1</th><td class="gs">58.9M</td><td class="gs"><u>0.9725</u><small>± 0.018</small></td><td><u>0.9727</u><small>± 0.017</small></td><td><u>0.9744</u><small>± 0.020</small></td><td><u>0.9714</u><small>± 0.019</small></td><td class="gs">0.9517<small>± 0.066</small></td><td>0.9718<small>± 0.062</small></td><td><b>0.9675</b><small>± 0.0707</small></td><td><b>1.0</b><small>± 0.0</small></td></tr>
+        <tr><th scope="row">CoAtNet-1</th><td class="gs">41.7M</td><td class="gs">0.9675<small>± 0.037</small></td><td>0.971<small>± 0.035</small></td><td>0.9671<small>± 0.037</small></td><td>0.967<small>± 0.037</small></td><td class="gs"><b>0.9700</b><small>± 0.051</small></td><td><u>0.9818</u><small>± 0.057</small></td><td>0.9325<small>± 0.101</small></td><td><b>1.0</b><small>± 0.0</small></td></tr>
+        <tr class="ours"><th scope="row">EfficientViT-CAGA (mine)</th><td class="gs"><u>36.8M</u></td><td class="gs"><b>0.98</b><small>± 0.0229</small></td><td><b>0.9789</b><small>± 0.025</small></td><td><b>0.9795</b><small>± 0.026</small></td><td><b>0.9781</b><small>± 0.025</small></td><td class="gs"><u>0.9690</u><small>± 0.065</small></td><td>0.9789<small>± 0.045</small></td><td><b>0.9675</b><small>± 0.071</small></td><td><b>1.0</b><small>± 0.0</small></td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h4 class="ds-h" id="ds-msid">MSID <small>one 80/20 train–test split, so no ±</small></h4>
+    <div class="results-wrap">
+      <table class="results datasets" aria-describedby="ds-msid">
+        <thead>
+          <tr><th rowspan="2" scope="col">Model</th><th rowspan="2" scope="col" class="gs">Params</th><th colspan="4" scope="colgroup" class="gs g1">Overall</th><th colspan="4" scope="colgroup" class="gs">Classwise accuracy</th></tr>
+          <tr><th scope="col" class="gs">Accuracy</th><th scope="col">Precision</th><th scope="col">Recall</th><th scope="col">F1</th><th scope="col" class="gs">Chickenpox</th><th scope="col">Measles</th><th scope="col">Mpox</th><th scope="col">Normal</th></tr>
+        </thead>
+        <tbody>
+        <tr><th scope="row">ResNet-101</th><td class="gs">43.5M</td><td class="gs">0.8961</td><td>0.8633</td><td>0.8782</td><td>0.8686</td><td class="gs">0.762</td><td>0.8333</td><td>0.875</td><td><u>0.9831</u></td></tr>
+        <tr><th scope="row">MobileNetV3-Large</th><td class="gs"><b>5.5M</b></td><td class="gs"><u>0.9481</u></td><td><u>0.94</u></td><td>0.927</td><td><u>0.9327</u></td><td class="gs"><u>0.9047</u></td><td><b>0.9444</b></td><td>0.9107</td><td><b>1.0</b></td></tr>
+        <tr><th scope="row">DeiT3-Medium</th><td class="gs">38.8M</td><td class="gs"><u>0.9481</u></td><td>0.9159</td><td>0.9308</td><td>0.9229</td><td class="gs">0.8095</td><td><u>0.8889</u></td><td><b>0.9821</b></td><td><u>0.9831</u></td></tr>
+        <tr><th scope="row">ViT-Base</th><td class="gs">86.5M</td><td class="gs">0.9286</td><td>0.9097</td><td>0.9154</td><td>0.9113</td><td class="gs">0.8571</td><td><u>0.8889</u></td><td>0.893</td><td><b>1.0</b></td></tr>
+        <tr><th scope="row">EfficientViT-L1</th><td class="gs">58.9M</td><td class="gs"><u>0.9481</u></td><td>0.9082</td><td>0.9273</td><td>0.9165</td><td class="gs">0.761</td><td><u>0.8889</u></td><td><b>0.9821</b></td><td><b>1.0</b></td></tr>
+        <tr><th scope="row">CoAtNet-1</th><td class="gs">41.7M</td><td class="gs"><b>0.9545</b></td><td>0.9201</td><td><b>0.9454</b></td><td>0.9317</td><td class="gs">0.8095</td><td><u>0.8889</u></td><td><b>0.9821</b></td><td><b>1.0</b></td></tr>
+        <tr class="ours"><th scope="row">EfficientViT-CAGA (mine)</th><td class="gs"><u>37.8M</u></td><td class="gs"><b>0.9545</b></td><td><b>0.9523</b></td><td><u>0.9376</u></td><td><b>0.9446</b></td><td class="gs"><b>0.9524</b></td><td><b>0.9444</b></td><td><u>0.9464</u></td><td>0.9661</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h4 class="ds-h" id="ds-msld">MSLD <small>one evaluation, so no ±</small></h4>
+    <div class="results-wrap">
+      <table class="results datasets" aria-describedby="ds-msld">
+        <thead>
+          <tr><th rowspan="2" scope="col">Model</th><th rowspan="2" scope="col" class="gs">Params</th><th colspan="4" scope="colgroup" class="gs g1">Overall</th><th colspan="2" scope="colgroup" class="gs">Classwise accuracy</th></tr>
+          <tr><th scope="col" class="gs">Accuracy</th><th scope="col">Precision</th><th scope="col">Recall</th><th scope="col">F1</th><th scope="col" class="gs">Mpox</th><th scope="col">Others</th></tr>
+        </thead>
+        <tbody>
+        <tr><th scope="row">ResNet-101</th><td class="gs">47.1M</td><td class="gs">0.9593</td><td>0.9592</td><td>0.9586</td><td>0.9589</td><td class="gs">0.956</td><td>0.960</td></tr>
+        <tr><th scope="row">MobileNetV3-Large</th><td class="gs"><b>6.8M</b></td><td class="gs">0.9781</td><td>0.9782</td><td>0.9776</td><td>0.9779</td><td class="gs">0.979</td><td><u>0.9974</u></td></tr>
+        <tr><th scope="row">DeiT3-Medium</th><td class="gs">38.8M</td><td class="gs"><u>0.9938</u></td><td><u>0.9937</u></td><td>0.9937</td><td>0.9937</td><td class="gs"><u>0.993</u></td><td>0.994</td></tr>
+        <tr><th scope="row">ViT-Base</th><td class="gs">86.5M</td><td class="gs"><u>0.9938</u></td><td>0.993</td><td><u>0.994</u></td><td><u>0.994</u></td><td class="gs">0.986</td><td><b>1.0</b></td></tr>
+        <tr><th scope="row">EfficientViT-L1</th><td class="gs">42M</td><td class="gs">0.9875</td><td>0.987</td><td>0.988</td><td>0.987</td><td class="gs">0.979</td><td>0.994</td></tr>
+        <tr><th scope="row">CoAtNet-1</th><td class="gs">41.7M</td><td class="gs">0.9906</td><td>0.99</td><td>0.99</td><td>0.99</td><td class="gs">0.986</td><td>0.994</td></tr>
+        <tr class="ours"><th scope="row">EfficientViT-CAGA (mine)</th><td class="gs"><u>36.8M</u></td><td class="gs"><b>0.9969</b></td><td><b>0.997</b></td><td><b>0.997</b></td><td><b>0.997</b></td><td class="gs"><b>1.0</b></td><td>0.994</td></tr>
+        </tbody>
+      </table>
+    </div>
   </section>
 
   <section>

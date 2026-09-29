@@ -473,3 +473,19 @@ footer.site-footer{color:var(--muted);font-size:.85em;padding-top:22px;border-to
 .fig-note{margin:.8rem 0 2.2rem;color:var(--muted);font-size:.85rem;line-height:1.5}
 .fig-note b{color:var(--fg)}
 .paper-list+.paper-fig{margin-top:1.8rem}
+
+/* Mpox paper page: per-dataset results tables (grouped header, best bold / second best underlined) */
+.ds-h{margin:2.2rem 0 .7rem;font-family:"Space Grotesk",sans-serif;font-weight:800;font-size:1.05rem;text-transform:uppercase;letter-spacing:.03em}
+h3.ds-h{font-size:1.15rem;margin-top:2.6rem}
+.ds-h small{font-family:Caveat,cursive;font-size:1.2rem;font-weight:700;text-transform:none;letter-spacing:0;color:var(--accent-warm);margin-left:.5rem}
+.paper-text u{text-underline-offset:3px;text-decoration-thickness:1.5px}
+.results.datasets{min-width:44rem}
+.results.datasets td:nth-child(4),.results.datasets thead tr:last-child th:nth-child(3){border-left:0}
+.results.datasets td.gs{border-left:3px solid var(--fg)}
+.results.datasets thead th.gs{border-left:3px solid var(--bg)}
+.results.datasets thead th.g1{background:color-mix(in oklch, var(--fg) 80%, #2a6)}
+.results.datasets td b{font-weight:800}
+.results.datasets td u{text-decoration:underline;text-decoration-thickness:1.5px;text-underline-offset:3px}
+.results.datasets tr.ours th{font-weight:800}
+.results.datasets tr.ours td{font-weight:400}
+.results.datasets td small{margin-top:.1rem}
