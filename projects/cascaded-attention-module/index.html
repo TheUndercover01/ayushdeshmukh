@@ -37,7 +37,7 @@
     </div>
   </header>
 
-  <p class="tldr"><b>TL;DR</b> At the <a href="https://sites.google.com/view/comparch-machinelearning-lab/home" target="_blank" rel="noopener"><b>CANDLE Research Lab, IIT Roorkee</b></a>, working with <a href="https://faculty.iitr.ac.in/~sparshfec/" target="_blank" rel="noopener">Prof. Sparsh Mittal</a>, I built a <b>cascaded attention module</b> for an EfficientViT backbone to classify Mpox skin lesions. It reached <b>97.5%</b> accuracy on MCSI, above all six baselines I compared against, with <b>13% fewer parameters</b> than EfficientViT-L1. I later extended it on my own into a DAGM GCPR 2025 paper.</p>
+  <p class="tldr"><b>TL;DR</b> At the <a href="https://sites.google.com/view/comparch-machinelearning-lab/home" target="_blank" rel="noopener"><b>CANDLE Research Lab, IIT Roorkee</b></a>, working with <a href="https://faculty.iitr.ac.in/~sparshfec/" target="_blank" rel="noopener">Prof. Sparsh Mittal</a>, I built a <b>cascaded attention module</b> for an EfficientViT backbone to classify Mpox skin lesions. It reached <b>97.5%</b> accuracy on MCSI, above all six baselines I compared against, with <b>13% fewer parameters</b> than EfficientViT-L1 and <b>5.5× fewer FLOPs</b> in the attention modules it replaces. I later extended it on my own into a DAGM GCPR 2025 paper.</p>
 
   <section>
     <h2 class="paper-h">The problem</h2>
@@ -195,6 +195,7 @@
     <ul class="paper-list">
       <li><b>97.5%</b> accuracy on MCSI (Acne, Normal, Chickenpox, Mpox), above all six baselines. The best baseline, EfficientViT-L1, scores 97.25%.</li>
       <li><b>13% fewer parameters</b> than EfficientViT-L1: 45.8M against 52.7M.</li>
+      <li><b>5.5× fewer FLOPs in the attention modules</b> it replaces: 0.86 → 0.16 GFLOPs per image at 224×224. Across the whole network that is a 7% saving (10.5 → 9.8 GFLOPs), since the attention modules are a small part of the total.</li>
     </ul>
 
     <div class="results-wrap">
@@ -211,7 +212,7 @@
         </tbody>
       </table>
     </div>
-    <p class="fig-note"><b>MCSI, 10-fold cross-validation.</b> Baseline rows are the fold means in the per-model result CSVs of my later solo repo (<code>MCSI/Scores and Hyperparams/*/results_*.csv</code>), evaluated on the same folds. Precision, recall and F1 are macro averages. The CAM row is from my own internship runs (mean and sample standard deviation over 10 trials). The CAM repo does not include saved scores, so these cells cannot be reproduced from it. Params are counted with timm's stock classifier head and random weights; the CAM row is EfficientViT-L1 with <code>CascadedAttentionModule</code> in stage-3 blocks 1–6, using <code>model.py</code> and <code>utils.py</code> from the CAM repo.</p>
+    <p class="fig-note"><b>MCSI, 10-fold cross-validation.</b> Baseline rows are the fold means in the per-model result CSVs of my later solo repo (<code>MCSI/Scores and Hyperparams/*/results_*.csv</code>), evaluated on the same folds. Precision, recall and F1 are macro averages. The CAM row is from my own internship runs (mean and sample standard deviation over 10 trials). The CAM repo does not include saved scores, so these cells cannot be reproduced from it. FLOPs are counted with PyTorch's <code>FlopCounterMode</code> (convolutions and matrix multiplies, two FLOPs per multiply-add) on a 224×224 image, for the six swapped modules only and for the full network. Params are counted with timm's stock classifier head and random weights; the CAM row is EfficientViT-L1 with <code>CascadedAttentionModule</code> in stage-3 blocks 1–6, using <code>model.py</code> and <code>utils.py</code> from the CAM repo.</p>
 
     <figure class="paper-fig">
       <img class="theme-light" src="img/scatter-light.svg" alt="Scatter plot of MCSI accuracy against parameter count. EfficientViT-L1 with the cascaded attention module is at 97.5% and 45.8 million parameters, above EfficientViT-L1 at 97.25% and 52.7 million, and above the other five baselines." loading="lazy">
