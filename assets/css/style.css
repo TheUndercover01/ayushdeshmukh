@@ -88,6 +88,8 @@ main.narrow{max-width:36rem}
 .hlinks a:nth-child(odd){transform:rotate(-1deg)}
 .hlinks a:nth-child(even){transform:rotate(1deg)}
 .hlinks a:hover{background:var(--accent-hi);transform:translate(-1px,-1px) rotate(0);box-shadow:4px 4px 0 var(--shadow)}
+/* Email drops onto its own row, under Scholar (the negative margin cancels the extra row gap; phones just wrap) */
+.hl-break{flex-basis:100%;height:0;margin-top:-12px}
 
 /* ===== section labels ===== */
 h1.page-title{font-size:2.6rem;font-weight:400;font-family:"Instrument Serif",Georgia,serif;margin:0 0 8px}
@@ -334,14 +336,22 @@ footer.site-footer{color:var(--muted);font-size:.85em;padding-top:22px;border-to
 .hero .name{padding-right:4.5rem}
 .hero .role{max-width:calc(100% - 4.5rem)}
 
-/* peekers hide behind the top edge of a card; clip-path cuts only the bottom edge,
-   so the speech bubble and sparks can still spill out above and to the sides */
-/* wide screens: the robot stands in the right margin so the name and role get the full width */
+.name-wrap{margin:0 0 1.5rem}
+.hero .name{margin-bottom:0}
+/* wide screens: the robot stands right after the name, feet on the same line, instead of in the far corner.
+   Its speech bubble opens to the right so it never covers the name. */
 @media (min-width:1200px){
-  .robot-home{right:-4.5rem}
+  .name-wrap{position:relative;width:fit-content;max-width:100%}
+  .robot-home{top:auto;right:auto;left:100%;bottom:-.6rem;margin-left:1rem}
+  .robot-home .bubble{right:auto;left:74%;bottom:86%;max-width:10rem}
+  .robot-home .bubble::after{right:auto;left:16px}
+  .robot-home .bubble::before{right:auto;left:17px}
   .hero .name{padding-right:0}
   .hero .role{max-width:none;white-space:nowrap}
 }
+
+/* peekers hide behind the top edge of a card; clip-path cuts only the bottom edge,
+   so the speech bubble and sparks can still spill out above and to the sides */
 .has-peek{position:relative}
 .peek-window{position:absolute;bottom:100%;right:22px;width:2.8rem;height:4.85rem;z-index:4;pointer-events:none;
   clip-path:inset(-400px -400px 0 -400px)}
@@ -371,6 +381,7 @@ footer.site-footer{color:var(--muted);font-size:.85em;padding-top:22px;border-to
   nav.links.open{display:flex}
   header.nav{padding:12px 18px;justify-content:flex-end}
   .hero{flex-direction:column;align-items:flex-start}
+  .hl-break{display:none}
   .robot-home{top:0}
   .hero .name{padding-right:0}
   .hero .role{max-width:none}
