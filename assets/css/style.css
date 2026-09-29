@@ -489,3 +489,9 @@ h3.ds-h{font-size:1.15rem;margin-top:2.6rem}
 .results.datasets tr.ours th{font-weight:800}
 .results.datasets tr.ours td{font-weight:400}
 .results.datasets td small{margin-top:.1rem}
+
+/* Projects & Theses cards: a separate "Thesis" badge on the right of the tag row */
+.card-tags{display:flex;justify-content:space-between;align-items:center;gap:.6rem;margin-top:8px}
+.card-tags .tag{margin-top:0}
+.tag-thesis{flex:none;font-family:"Space Grotesk",sans-serif;font-weight:800;font-size:.62rem;text-transform:uppercase;
+  letter-spacing:.08em;background:var(--fg);color:var(--bg);padding:2px 8px;border-radius:2px;transform:rotate(-2deg)}
