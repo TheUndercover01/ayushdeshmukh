@@ -6,7 +6,7 @@
   <rdf:RDF xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:cc="http://creativecommons.org/ns#" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#">
    <cc:Work>
     <dc:type rdf:resource="http://purl.org/dc/dcmitype/StillImage"/>
-    <dc:date>2026-09-29T16:20:48.952965</dc:date>
+    <dc:date>2026-09-29T16:26:29.313628</dc:date>
     <dc:format>image/svg+xml</dc:format>
     <dc:creator>
      <cc:Agent>
@@ -235,8 +235,8 @@ z
      </g>
     </g>
     <g id="text_4">
-     <!-- Test accuracy per fold (%), 40 images per fold -->
-     <g style="fill: #211d19" transform="translate(30.663768 317.042) scale(0.115 -0.115)">
+     <!-- Test accuracy per fold / trial (%) -->
+     <g style="fill: #211d19" transform="translate(69.14744 317.042) scale(0.115 -0.115)">
       <defs>
        <path id="SpaceGrotesk-Light-17" d="M 1677 0 
 L 1677 4109 
@@ -595,6 +595,30 @@ Q 806 934 1139 595
 Q 1472 256 1997 256 
 z
 " transform="scale(0.015625)"/>
+       <path id="SpaceGrotesk-Light-48" d="M 38 -1280 
+L 1920 4480 
+L 2310 4480 
+L 429 -1280 
+L 38 -1280 
+z
+" transform="scale(0.015625)"/>
+       <path id="SpaceGrotesk-Light-26" d="M 563 0 
+L 563 3110 
+L 947 3110 
+L 947 0 
+L 563 0 
+z
+M 755 3648 
+Q 614 3648 518 3744 
+Q 422 3840 422 3981 
+Q 422 4128 518 4221 
+Q 614 4314 755 4314 
+Q 902 4314 995 4221 
+Q 1088 4128 1088 3981 
+Q 1088 3840 995 3744 
+Q 902 3648 755 3648 
+z
+" transform="scale(0.015625)"/>
        <path id="SpaceGrotesk-Light-46" d="M 2310 -1472 
 Q 1728 -1472 1302 -1270 
 Q 877 -1069 643 -624 
@@ -684,158 +708,6 @@ Q 1498 -1069 1072 -1270
 Q 646 -1472 64 -1472 
 z
 " transform="scale(0.015625)"/>
-       <path id="SpaceGrotesk-Light-55" d="M 474 -742 
-L 474 -474 
-L 627 -474 
-Q 832 -474 832 -269 
-L 832 -64 
-L 749 -64 
-Q 595 -64 489 35 
-Q 384 134 384 288 
-Q 384 442 489 541 
-Q 595 640 749 640 
-Q 902 640 1008 534 
-Q 1114 429 1114 275 
-L 1114 -256 
-Q 1114 -742 634 -742 
-L 474 -742 
-z
-" transform="scale(0.015625)"/>
-       <path id="SpaceGrotesk-Light-3c" d="M 2611 0 
-L 2611 922 
-L 218 922 
-L 218 1395 
-L 2240 4480 
-L 3008 4480 
-L 3008 1280 
-L 3789 1280 
-L 3789 922 
-L 3008 922 
-L 3008 0 
-L 2611 0 
-z
-M 634 1280 
-L 2611 1280 
-L 2611 4250 
-L 2534 4250 
-L 634 1344 
-L 634 1280 
-z
-" transform="scale(0.015625)"/>
-       <path id="SpaceGrotesk-Light-38" d="M 2042 -90 
-Q 1286 -90 848 368 
-Q 410 826 410 1728 
-L 410 2752 
-Q 410 3654 848 4112 
-Q 1286 4570 2042 4570 
-Q 2797 4570 3235 4112 
-Q 3674 3654 3674 2752 
-L 3674 1728 
-Q 3674 826 3235 368 
-Q 2797 -90 2042 -90 
-z
-M 2042 269 
-Q 2656 269 2966 649 
-Q 3277 1030 3277 1702 
-L 3277 2778 
-Q 3277 3450 2966 3830 
-Q 2656 4211 2042 4211 
-Q 1427 4211 1116 3830 
-Q 806 3450 806 2778 
-L 806 1702 
-Q 806 1030 1116 649 
-Q 1427 269 2042 269 
-z
-" transform="scale(0.015625)"/>
-       <path id="SpaceGrotesk-Light-26" d="M 563 0 
-L 563 3110 
-L 947 3110 
-L 947 0 
-L 563 0 
-z
-M 755 3648 
-Q 614 3648 518 3744 
-Q 422 3840 422 3981 
-Q 422 4128 518 4221 
-Q 614 4314 755 4314 
-Q 902 4314 995 4221 
-Q 1088 4128 1088 3981 
-Q 1088 3840 995 3744 
-Q 902 3648 755 3648 
-z
-" transform="scale(0.015625)"/>
-       <path id="SpaceGrotesk-Light-2a" d="M 563 0 
-L 563 3110 
-L 934 3110 
-L 934 2701 
-L 1011 2701 
-Q 1107 2874 1318 3024 
-Q 1530 3174 1920 3174 
-Q 2298 3174 2531 3001 
-Q 2765 2829 2867 2586 
-L 2944 2586 
-Q 3053 2829 3283 3001 
-Q 3514 3174 3930 3174 
-Q 4250 3174 4486 3043 
-Q 4723 2912 4857 2678 
-Q 4992 2445 4992 2131 
-L 4992 0 
-L 4608 0 
-L 4608 2093 
-Q 4608 2426 4406 2627 
-Q 4205 2829 3840 2829 
-Q 3469 2829 3219 2589 
-Q 2970 2349 2970 1888 
-L 2970 0 
-L 2586 0 
-L 2586 2093 
-Q 2586 2426 2384 2627 
-Q 2182 2829 1818 2829 
-Q 1446 2829 1196 2589 
-Q 947 2349 947 1888 
-L 947 0 
-L 563 0 
-z
-" transform="scale(0.015625)"/>
-       <path id="SpaceGrotesk-Light-24" d="M 410 1542 
-L 410 1619 
-Q 410 2112 611 2464 
-Q 813 2816 1152 3008 
-Q 1491 3200 1907 3200 
-Q 2419 3200 2704 2998 
-Q 2989 2797 3123 2541 
-L 3200 2541 
-L 3200 3110 
-L 3558 3110 
-L 3558 -794 
-Q 3558 -1024 3436 -1152 
-Q 3315 -1280 3066 -1280 
-L 941 -1280 
-L 941 -934 
-L 2989 -934 
-Q 3187 -934 3187 -742 
-L 3187 595 
-L 3110 595 
-Q 3027 442 2876 294 
-Q 2726 147 2489 54 
-Q 2253 -38 1907 -38 
-Q 1491 -38 1148 154 
-Q 806 346 608 701 
-Q 410 1056 410 1542 
-z
-M 1997 307 
-Q 2528 307 2857 640 
-Q 3187 973 3187 1555 
-L 3187 1606 
-Q 3187 2195 2857 2524 
-Q 2528 2854 1997 2854 
-Q 1472 2854 1139 2524 
-Q 806 2195 806 1606 
-L 806 1555 
-Q 806 973 1139 640 
-Q 1472 307 1997 307 
-z
-" transform="scale(0.015625)"/>
       </defs>
       <use xlink:href="#SpaceGrotesk-Light-17"/>
       <use xlink:href="#SpaceGrotesk-Light-22" transform="translate(48.5 0)"/>
@@ -860,29 +732,17 @@ z
       <use xlink:href="#SpaceGrotesk-Light-29" transform="translate(998.375 0)"/>
       <use xlink:href="#SpaceGrotesk-Light-21" transform="translate(1021.96875 0)"/>
       <use xlink:href="#SpaceGrotesk-Light-3" transform="translate(1086.5625 0)"/>
-      <use xlink:href="#SpaceGrotesk-Light-46" transform="translate(1112.359375 0)"/>
-      <use xlink:href="#SpaceGrotesk-Light-132" transform="translate(1149.453125 0)"/>
-      <use xlink:href="#SpaceGrotesk-Light-47" transform="translate(1227.25 0)"/>
-      <use xlink:href="#SpaceGrotesk-Light-55" transform="translate(1264.34375 0)"/>
-      <use xlink:href="#SpaceGrotesk-Light-3" transform="translate(1284.34375 0)"/>
-      <use xlink:href="#SpaceGrotesk-Light-3c" transform="translate(1310.140625 0)"/>
-      <use xlink:href="#SpaceGrotesk-Light-38" transform="translate(1372.140625 0)"/>
-      <use xlink:href="#SpaceGrotesk-Light-3" transform="translate(1435.9375 0)"/>
-      <use xlink:href="#SpaceGrotesk-Light-26" transform="translate(1461.734375 0)"/>
-      <use xlink:href="#SpaceGrotesk-Light-2a" transform="translate(1485.328125 0)"/>
-      <use xlink:href="#SpaceGrotesk-Light-1e" transform="translate(1571.53125 0)"/>
-      <use xlink:href="#SpaceGrotesk-Light-24" transform="translate(1627.4375 0)"/>
-      <use xlink:href="#SpaceGrotesk-Light-22" transform="translate(1691.84375 0)"/>
-      <use xlink:href="#SpaceGrotesk-Light-30" transform="translate(1751.640625 0)"/>
-      <use xlink:href="#SpaceGrotesk-Light-3" transform="translate(1804.4375 0)"/>
-      <use xlink:href="#SpaceGrotesk-Light-2d" transform="translate(1830.234375 0)"/>
-      <use xlink:href="#SpaceGrotesk-Light-22" transform="translate(1894.828125 0)"/>
-      <use xlink:href="#SpaceGrotesk-Light-2f" transform="translate(1954.625 0)"/>
-      <use xlink:href="#SpaceGrotesk-Light-3" transform="translate(1991.53125 0)"/>
-      <use xlink:href="#SpaceGrotesk-Light-23" transform="translate(2017.328125 0)"/>
-      <use xlink:href="#SpaceGrotesk-Light-2c" transform="translate(2059.03125 0)"/>
-      <use xlink:href="#SpaceGrotesk-Light-29" transform="translate(2121.03125 0)"/>
-      <use xlink:href="#SpaceGrotesk-Light-21" transform="translate(2144.625 0)"/>
+      <use xlink:href="#SpaceGrotesk-Light-48" transform="translate(1112.359375 0)"/>
+      <use xlink:href="#SpaceGrotesk-Light-3" transform="translate(1148.65625 0)"/>
+      <use xlink:href="#SpaceGrotesk-Light-31" transform="translate(1174.453125 0)"/>
+      <use xlink:href="#SpaceGrotesk-Light-2f" transform="translate(1220.65625 0)"/>
+      <use xlink:href="#SpaceGrotesk-Light-26" transform="translate(1257.5625 0)"/>
+      <use xlink:href="#SpaceGrotesk-Light-1e" transform="translate(1281.15625 0)"/>
+      <use xlink:href="#SpaceGrotesk-Light-29" transform="translate(1338.5625 0)"/>
+      <use xlink:href="#SpaceGrotesk-Light-3" transform="translate(1362.15625 0)"/>
+      <use xlink:href="#SpaceGrotesk-Light-46" transform="translate(1387.953125 0)"/>
+      <use xlink:href="#SpaceGrotesk-Light-132" transform="translate(1425.046875 0)"/>
+      <use xlink:href="#SpaceGrotesk-Light-47" transform="translate(1502.84375 0)"/>
      </g>
     </g>
    </g>
@@ -963,6 +823,31 @@ L 1261 4480
 L 2035 4480 
 L 2035 0 
 L 1638 0 
+z
+" transform="scale(0.015625)"/>
+        <path id="SpaceGrotesk-Light-38" d="M 2042 -90 
+Q 1286 -90 848 368 
+Q 410 826 410 1728 
+L 410 2752 
+Q 410 3654 848 4112 
+Q 1286 4570 2042 4570 
+Q 2797 4570 3235 4112 
+Q 3674 3654 3674 2752 
+L 3674 1728 
+Q 3674 826 3235 368 
+Q 2797 -90 2042 -90 
+z
+M 2042 269 
+Q 2656 269 2966 649 
+Q 3277 1030 3277 1702 
+L 3277 2778 
+Q 3277 3450 2966 3830 
+Q 2656 4211 2042 4211 
+Q 1427 4211 1116 3830 
+Q 806 3450 806 2778 
+L 806 1702 
+Q 806 1030 1116 649 
+Q 1427 269 2042 269 
 z
 " transform="scale(0.015625)"/>
        </defs>
@@ -1234,13 +1119,6 @@ Q 3443 3667 3190 3888
 Q 2938 4109 2496 4109 
 L 1357 4109 
 L 1357 2445 
-z
-" transform="scale(0.015625)"/>
-        <path id="SpaceGrotesk-Light-48" d="M 38 -1280 
-L 1920 4480 
-L 2310 4480 
-L 429 -1280 
-L 38 -1280 
 z
 " transform="scale(0.015625)"/>
         <path id="SpaceGrotesk-Light-3e" d="M 1978 -90 
@@ -1877,30 +1755,17 @@ z
     </g>
    </g>
    <g id="PathCollection_6">
-    <defs>
-     <path id="m26f8a0cd30" d="M 0 2.915476 
-C 0.773193 2.915476 1.514823 2.608283 2.061553 2.061553 
-C 2.608283 1.514823 2.915476 0.773193 2.915476 0 
-C 2.915476 -0.773193 2.608283 -1.514823 2.061553 -2.061553 
-C 1.514823 -2.608283 0.773193 -2.915476 0 -2.915476 
-C -0.773193 -2.915476 -1.514823 -2.608283 -2.061553 -2.061553 
-C -2.608283 -1.514823 -2.915476 -0.773193 -2.915476 0 
-C -2.915476 0.773193 -2.608283 1.514823 -2.061553 2.061553 
-C -1.514823 2.608283 -0.773193 2.915476 0 2.915476 
-z
-" style="stroke: #211d19; stroke-opacity: 0.9; stroke-width: 0.7"/>
-    </defs>
     <g clip-path="url(#p8f9c068ef6)">
-     <use xlink:href="#m26f8a0cd30" x="184.490278" y="73.734452" style="fill: #e8bd2a; fill-opacity: 0.9; stroke: #211d19; stroke-opacity: 0.9; stroke-width: 0.7"/>
-     <use xlink:href="#m26f8a0cd30" x="198.446752" y="66.921026" style="fill: #e8bd2a; fill-opacity: 0.9; stroke: #211d19; stroke-opacity: 0.9; stroke-width: 0.7"/>
-     <use xlink:href="#m26f8a0cd30" x="198.446752" y="73.894868" style="fill: #e8bd2a; fill-opacity: 0.9; stroke: #211d19; stroke-opacity: 0.9; stroke-width: 0.7"/>
-     <use xlink:href="#m26f8a0cd30" x="184.490278" y="66.418178" style="fill: #e8bd2a; fill-opacity: 0.9; stroke: #211d19; stroke-opacity: 0.9; stroke-width: 0.7"/>
-     <use xlink:href="#m26f8a0cd30" x="212.403227" y="70.936379" style="fill: #e8bd2a; fill-opacity: 0.9; stroke: #211d19; stroke-opacity: 0.9; stroke-width: 0.7"/>
-     <use xlink:href="#m26f8a0cd30" x="212.403227" y="69.641069" style="fill: #e8bd2a; fill-opacity: 0.9; stroke: #211d19; stroke-opacity: 0.9; stroke-width: 0.7"/>
-     <use xlink:href="#m26f8a0cd30" x="198.446752" y="68.021952" style="fill: #e8bd2a; fill-opacity: 0.9; stroke: #211d19; stroke-opacity: 0.9; stroke-width: 0.7"/>
-     <use xlink:href="#m26f8a0cd30" x="198.446752" y="70.621231" style="fill: #e8bd2a; fill-opacity: 0.9; stroke: #211d19; stroke-opacity: 0.9; stroke-width: 0.7"/>
-     <use xlink:href="#m26f8a0cd30" x="184.490278" y="72.948783" style="fill: #e8bd2a; fill-opacity: 0.9; stroke: #211d19; stroke-opacity: 0.9; stroke-width: 0.7"/>
-     <use xlink:href="#m26f8a0cd30" x="198.446752" y="74.094395" style="fill: #e8bd2a; fill-opacity: 0.9; stroke: #211d19; stroke-opacity: 0.9; stroke-width: 0.7"/>
+     <use xlink:href="#m3c84c94d89" x="184.490278" y="73.734452" style="fill: #726657; fill-opacity: 0.9; stroke: #211d19; stroke-opacity: 0.9; stroke-width: 0.7"/>
+     <use xlink:href="#m3c84c94d89" x="198.446752" y="66.921026" style="fill: #726657; fill-opacity: 0.9; stroke: #211d19; stroke-opacity: 0.9; stroke-width: 0.7"/>
+     <use xlink:href="#m3c84c94d89" x="198.446752" y="73.894868" style="fill: #726657; fill-opacity: 0.9; stroke: #211d19; stroke-opacity: 0.9; stroke-width: 0.7"/>
+     <use xlink:href="#m3c84c94d89" x="184.490278" y="66.418178" style="fill: #726657; fill-opacity: 0.9; stroke: #211d19; stroke-opacity: 0.9; stroke-width: 0.7"/>
+     <use xlink:href="#m3c84c94d89" x="212.403227" y="70.936379" style="fill: #726657; fill-opacity: 0.9; stroke: #211d19; stroke-opacity: 0.9; stroke-width: 0.7"/>
+     <use xlink:href="#m3c84c94d89" x="212.403227" y="69.641069" style="fill: #726657; fill-opacity: 0.9; stroke: #211d19; stroke-opacity: 0.9; stroke-width: 0.7"/>
+     <use xlink:href="#m3c84c94d89" x="198.446752" y="68.021952" style="fill: #726657; fill-opacity: 0.9; stroke: #211d19; stroke-opacity: 0.9; stroke-width: 0.7"/>
+     <use xlink:href="#m3c84c94d89" x="198.446752" y="70.621231" style="fill: #726657; fill-opacity: 0.9; stroke: #211d19; stroke-opacity: 0.9; stroke-width: 0.7"/>
+     <use xlink:href="#m3c84c94d89" x="184.490278" y="72.948783" style="fill: #726657; fill-opacity: 0.9; stroke: #211d19; stroke-opacity: 0.9; stroke-width: 0.7"/>
+     <use xlink:href="#m3c84c94d89" x="198.446752" y="74.094395" style="fill: #726657; fill-opacity: 0.9; stroke: #211d19; stroke-opacity: 0.9; stroke-width: 0.7"/>
     </g>
    </g>
    <g id="text_17">
@@ -1920,8 +1785,35 @@ z
      <use xlink:href="#JetBrainsMono-Regular-21c" transform="translate(660 0)"/>
     </g>
    </g>
+   <g id="PathCollection_7">
+    <defs>
+     <path id="m26f8a0cd30" d="M 0 2.915476 
+C 0.773193 2.915476 1.514823 2.608283 2.061553 2.061553 
+C 2.608283 1.514823 2.915476 0.773193 2.915476 0 
+C 2.915476 -0.773193 2.608283 -1.514823 2.061553 -2.061553 
+C 1.514823 -2.608283 0.773193 -2.915476 0 -2.915476 
+C -0.773193 -2.915476 -1.514823 -2.608283 -2.061553 -2.061553 
+C -2.608283 -1.514823 -2.915476 -0.773193 -2.915476 0 
+C -2.915476 0.773193 -2.608283 1.514823 -2.061553 2.061553 
+C -1.514823 2.608283 -0.773193 2.915476 0 2.915476 
+z
+" style="stroke: #211d19; stroke-opacity: 0.9; stroke-width: 0.7"/>
+    </defs>
+    <g clip-path="url(#p8f9c068ef6)">
+     <use xlink:href="#m26f8a0cd30" x="190.072868" y="31.496133" style="fill: #e8bd2a; fill-opacity: 0.9; stroke: #211d19; stroke-opacity: 0.9; stroke-width: 0.7"/>
+     <use xlink:href="#m26f8a0cd30" x="192.864162" y="33.430707" style="fill: #e8bd2a; fill-opacity: 0.9; stroke: #211d19; stroke-opacity: 0.9; stroke-width: 0.7"/>
+     <use xlink:href="#m26f8a0cd30" x="195.655457" y="29.886965" style="fill: #e8bd2a; fill-opacity: 0.9; stroke: #211d19; stroke-opacity: 0.9; stroke-width: 0.7"/>
+     <use xlink:href="#m26f8a0cd30" x="198.446752" y="38.226516" style="fill: #e8bd2a; fill-opacity: 0.9; stroke: #211d19; stroke-opacity: 0.9; stroke-width: 0.7"/>
+     <use xlink:href="#m26f8a0cd30" x="199.005011" y="30.070185" style="fill: #e8bd2a; fill-opacity: 0.9; stroke: #211d19; stroke-opacity: 0.9; stroke-width: 0.7"/>
+     <use xlink:href="#m26f8a0cd30" x="200.121529" y="32.616349" style="fill: #e8bd2a; fill-opacity: 0.9; stroke: #211d19; stroke-opacity: 0.9; stroke-width: 0.7"/>
+     <use xlink:href="#m26f8a0cd30" x="201.238047" y="35.430983" style="fill: #e8bd2a; fill-opacity: 0.9; stroke: #211d19; stroke-opacity: 0.9; stroke-width: 0.7"/>
+     <use xlink:href="#m26f8a0cd30" x="201.796306" y="38.066358" style="fill: #e8bd2a; fill-opacity: 0.9; stroke: #211d19; stroke-opacity: 0.9; stroke-width: 0.7"/>
+     <use xlink:href="#m26f8a0cd30" x="202.633695" y="28.152653" style="fill: #e8bd2a; fill-opacity: 0.9; stroke: #211d19; stroke-opacity: 0.9; stroke-width: 0.7"/>
+     <use xlink:href="#m26f8a0cd30" x="202.633695" y="38.485096" style="fill: #e8bd2a; fill-opacity: 0.9; stroke: #211d19; stroke-opacity: 0.9; stroke-width: 0.7"/>
+    </g>
+   </g>
    <g id="text_18">
-    <!-- 97.50 ± 2.04 -->
+    <!-- 97.50 ± 0.77 -->
     <g style="fill: #d9480f" transform="translate(231.384032 36.9055) scale(0.1 -0.1)">
      <use xlink:href="#JetBrainsMono-Regular-221"/>
      <use xlink:href="#JetBrainsMono-Regular-21f" transform="translate(60 0)"/>
@@ -1931,10 +1823,10 @@ z
      <use xlink:href="#JetBrainsMono-Regular-2a8" transform="translate(300 0)"/>
      <use xlink:href="#JetBrainsMono-Regular-2cd" transform="translate(360 0)"/>
      <use xlink:href="#JetBrainsMono-Regular-2a8" transform="translate(420 0)"/>
-     <use xlink:href="#JetBrainsMono-Regular-21a" transform="translate(480 0)"/>
+     <use xlink:href="#JetBrainsMono-Regular-218" transform="translate(480 0)"/>
      <use xlink:href="#JetBrainsMono-Regular-23b" transform="translate(540 0)"/>
-     <use xlink:href="#JetBrainsMono-Regular-218" transform="translate(600 0)"/>
-     <use xlink:href="#JetBrainsMono-Regular-21c" transform="translate(660 0)"/>
+     <use xlink:href="#JetBrainsMono-Regular-21f" transform="translate(600 0)"/>
+     <use xlink:href="#JetBrainsMono-Regular-21f" transform="translate(660 0)"/>
     </g>
    </g>
    <g id="LineCollection_1">
@@ -2033,8 +1925,8 @@ L 207.349096 70.814667
     </g>
    </g>
    <g id="LineCollection_7">
-    <path d="M 187.058269 33.3055 
-L 209.835236 33.3055 
+    <path d="M 194.148601 33.3055 
+L 202.744903 33.3055 
 " clip-path="url(#p8f9c068ef6)" style="fill: none; stroke: #d9480f; stroke-width: 3"/>
    </g>
    <g id="line2d_33">
@@ -2044,12 +1936,12 @@ L 0 -5
 " style="stroke: #d9480f"/>
     </defs>
     <g clip-path="url(#p8f9c068ef6)">
-     <use xlink:href="#m30114c60b3" x="187.058269" y="33.3055" style="fill: #d9480f; stroke: #d9480f"/>
+     <use xlink:href="#m30114c60b3" x="194.148601" y="33.3055" style="fill: #d9480f; stroke: #d9480f"/>
     </g>
    </g>
    <g id="line2d_34">
     <g clip-path="url(#p8f9c068ef6)">
-     <use xlink:href="#m30114c60b3" x="209.835236" y="33.3055" style="fill: #d9480f; stroke: #d9480f"/>
+     <use xlink:href="#m30114c60b3" x="202.744903" y="33.3055" style="fill: #d9480f; stroke: #d9480f"/>
     </g>
    </g>
    <g id="line2d_35">
