@@ -201,7 +201,7 @@
       <table class="results plain">
         <thead><tr><th scope="col">Model</th><th scope="col">Accuracy %<small>mean ± std, 10 folds</small></th><th scope="col">Precision</th><th scope="col">Recall</th><th scope="col">F1</th><th scope="col">Params</th></tr></thead>
         <tbody>
-        <tr class="ours"><th scope="row">EfficientViT-L1 + CAM (ours)</th><td>97.5</td><td>—</td><td>—</td><td>—</td><td>45.8M</td></tr>
+        <tr class="ours"><th scope="row">EfficientViT-L1 + CAM (ours)</th><td>97.5 ± 2.04</td><td>0.9789</td><td>0.9711</td><td>0.9742</td><td>45.8M</td></tr>
         <tr><th scope="row">EfficientViT-L1</th><td>97.25 ± 1.84</td><td>0.9728</td><td>0.9744</td><td>0.9715</td><td>52.7M</td></tr>
         <tr><th scope="row">CoAtNet-1</th><td>96.75 ± 3.74</td><td>0.9711</td><td>0.9672</td><td>0.9674</td><td>41.7M</td></tr>
         <tr><th scope="row">DeiT3-M</th><td>95.75 ± 3.34</td><td>0.9608</td><td>0.9577</td><td>0.9559</td><td>38.8M</td></tr>
@@ -211,7 +211,7 @@
         </tbody>
       </table>
     </div>
-    <p class="fig-note"><b>MCSI, 10-fold cross-validation.</b> Baseline rows are the fold means in the per-model result CSVs of my later solo repo (<code>MCSI/Scores and Hyperparams/*/results_*.csv</code>), evaluated on the same folds. Precision, recall and F1 are macro averages. The 97.5% for the CAM row is the accuracy I reported at the end of the internship; the CAM repo has no saved per-fold or per-metric scores, so its other cells are left empty rather than filled in. Params are counted with timm's stock classifier head and random weights; the CAM row is EfficientViT-L1 with <code>CascadedAttentionModule</code> in stage-3 blocks 1–6, using <code>model.py</code> and <code>utils.py</code> from the CAM repo.</p>
+    <p class="fig-note"><b>MCSI, 10-fold cross-validation.</b> Baseline rows are the fold means in the per-model result CSVs of my later solo repo (<code>MCSI/Scores and Hyperparams/*/results_*.csv</code>), evaluated on the same folds. Precision, recall and F1 are macro averages. The CAM row is from my own internship runs (10-fold mean; the standard deviation is across folds). The CAM repo does not include saved scores, so these cells cannot be reproduced from it. Params are counted with timm's stock classifier head and random weights; the CAM row is EfficientViT-L1 with <code>CascadedAttentionModule</code> in stage-3 blocks 1–6, using <code>model.py</code> and <code>utils.py</code> from the CAM repo.</p>
 
     <figure class="paper-fig">
       <img class="theme-light" src="img/scatter-light.svg" alt="Scatter plot of MCSI accuracy against parameter count. EfficientViT-L1 with the cascaded attention module is at 97.5% and 45.8 million parameters, above EfficientViT-L1 at 97.25% and 52.7 million, and above the other five baselines." loading="lazy">
