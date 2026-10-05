@@ -31,7 +31,6 @@
     <p class="paper-sub">Trying to learn the Shadow Hand Lite's coupled finger joints from hardware data</p>
     <p class="paper-authors"><b>Ayush Deshmukh</b> · part of my MSc at the University of Edinburgh, supervised by <a href='https://elle-miller.github.io/' target='_blank' rel='noopener'>Elle Miller</a> and <a href='https://homepages.inf.ed.ac.uk/svijayak/' target='_blank' rel='noopener'>Prof. Sethu Vijayakumar</a> (<a href='https://informatics.ed.ac.uk/slmc' target='_blank' rel='noopener'>SLMC</a>)</p>
     <div class="paper-links">
-      <a href="../../assets/papers/msc-dissertation.pdf" target="_blank" rel="noopener">MSc dissertation (PDF)</a>
       <a href="https://github.com/TheUndercover01/Neural-Dynamics" target="_blank" rel="noopener">Pipeline code</a>
       <a href="../../blog/sim-to-real-three-gaps.html" target="_blank" rel="noopener">Blog: the three gaps</a>
     </div>
@@ -63,7 +62,7 @@
     <p class="paper-text">So I measured the coupling directly with slow back-and-forth sweeps, one finger at a time, three cycles each. On every finger, <b>J1 started moving before the nominal 100° handoff</b>. The early motion differed from finger to finger, both joints were often moving at the same time, and it got worse at higher speeds.</p>
     <p class="paper-text">That pattern is <b>tendon slack</b>: the tendon is loose, so the motor can move without immediately pulling the next joint, and once it goes taut the dependent joint starts early. I sent a clip to Shadow Robotics and they agreed that slack was the likely cause.</p>
     <p class="paper-text">This matters because no set of PD gains can reproduce it. The error is state-dependent and bounded, and it sits <i>on top of</i> the controller. That is exactly the kind of thing a learned residual, or <b>actuator network</b>, is supposed to capture.</p>
-    <p class="paper-text">All the details, including the full pipeline, the model specifications and the gains I identified, are in my <a href="../../assets/papers/msc-dissertation.pdf" target="_blank" rel="noopener">MSc dissertation</a> (chapters 6–7 and the appendices).</p>
+    <p class="paper-text">All the details, including the full pipeline, the model specifications and the gains I identified, are in my MSc dissertation (chapters 6–7 and the appendices).</p>
   </section>
 
   <section>
