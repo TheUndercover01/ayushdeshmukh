@@ -1,0 +1,306 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>I Never Showed It the Task — Composing Human Motion Skills with RL</title>
+<meta name="description" content="I filmed only atomic skills with a phone. A simulated Franka Panda is asked to do combined tasks it never saw demonstrated. Does a VLA fine-tuned on the clips compose them, or does RL over a motion vocabulary built from them?">
+<meta name="robots" content="noindex">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Caveat:wght@500;700&family=Instrument+Serif:ital@0;1&family=Source+Serif+4:ital,opsz,wght@0,8..60,400;0,8..60,600;1,8..60,400&family=Space+Grotesk:wght@400;500;700;800&family=JetBrains+Mono:wght@400;700&display=swap">
+<link rel="stylesheet" href="../../assets/css/style.css?v=7">
+<script>try{if(localStorage.getItem("theme")==="dark")document.documentElement.dataset.theme="dark"}catch(e){}</script>
+<style>
+  /* page-local additions: sim clips are front | wrist side by side (2:1), the vocabulary clip is two rows (1:1) */
+  .video-slot.wide{aspect-ratio:2/1}
+  .video-slot.square{aspect-ratio:1/1}
+  .video-slot.wide video,.video-slot.square video{object-fit:contain}
+  .cam-legend{display:flex;justify-content:space-between;font-family:"Space Grotesk",sans-serif;font-weight:700;font-size:.66rem;
+    text-transform:uppercase;letter-spacing:.06em;color:var(--muted);margin:.35rem .2rem 0}
+  .prompt{font-family:"JetBrains Mono",monospace;font-size:.8rem;background:color-mix(in oklch, var(--fg) 7%, transparent);
+    padding:.1rem .35rem;border-radius:3px;white-space:nowrap}
+  .cube{display:inline-block;width:.7em;height:.7em;border:1.5px solid var(--fg);border-radius:2px;vertical-align:-.05em;margin-right:.2em}
+  .cube.red{background:#e0312f}.cube.blue{background:#2f5fe0}.cube.target{background:#3fbf6a;border-radius:50%}
+  .status{font-family:"Space Grotesk",sans-serif;font-weight:800;font-size:.7rem;text-transform:uppercase;letter-spacing:.05em;
+    padding:.12rem .45rem;border:2px solid var(--fg);border-radius:3px;white-space:nowrap}
+  .status.done{background:color-mix(in oklch, #3fbf6a 45%, transparent)}
+  .status.run{background:color-mix(in oklch, var(--accent-hi) 60%, transparent)}
+  .status.todo{background:transparent;color:var(--muted)}
+  .pipeline{font-family:"JetBrains Mono",monospace;font-size:.72rem;line-height:1.45;overflow-x:auto;margin:0 0 1.6rem;padding:1rem;
+    background:var(--card);border:3px solid var(--fg);border-radius:4px;box-shadow:6px 6px 0 var(--shadow)}
+  .stand-in{font-family:Caveat,cursive;font-size:1.15rem;color:var(--accent-warm)}
+
+  /* presentation mode: one section per screen, arrow keys to move, N for speaker notes */
+  /* same look as the theme toggle, but its own class: main.js binds the first .theme-toggle */
+  .present-btn{background:var(--card);color:var(--fg);border:2px solid var(--fg);border-radius:3px;padding:5px 14px;
+    font-family:"Space Grotesk",sans-serif;font-weight:700;font-size:.95rem;line-height:1.4;white-space:nowrap;cursor:pointer;box-shadow:2px 2px 0 var(--shadow)}
+  .present-btn:hover{background:var(--accent-hi);color:#211d19}
+  .notes{display:none}
+  html.presenting{scroll-snap-type:y mandatory}
+  html.presenting .paper-toc{display:none}
+  html.presenting .slide{min-height:100vh;scroll-snap-align:start;display:flex;flex-direction:column;justify-content:center;
+    padding-block:4.5rem 2rem;box-sizing:border-box}
+  html.presenting.show-notes .notes{display:block;position:fixed;right:1rem;bottom:1rem;z-index:50;max-width:24rem;
+    background:var(--card);border:3px solid var(--fg);border-radius:4px;box-shadow:6px 6px 0 var(--shadow);padding:.7rem .9rem;
+    font-size:.85rem;line-height:1.45}
+  html.presenting.show-notes .slide:not(.current) .notes{display:none}
+  .notes b:first-child{display:block;font-family:"Space Grotesk",sans-serif;font-size:.7rem;text-transform:uppercase;letter-spacing:.06em;margin-bottom:.3rem;color:var(--accent-warm)}
+  .present-hint{display:none;position:fixed;left:1rem;bottom:1rem;z-index:50;font-family:"Space Grotesk",sans-serif;font-size:.7rem;
+    color:var(--muted);background:var(--card);border:2px solid var(--fg);border-radius:3px;padding:.25rem .5rem}
+  html.presenting .present-hint{display:block}
+  @media (prefers-reduced-motion: reduce){html.presenting{scroll-behavior:auto}}
+</style>
+</head>
+<body>
+
+<header class="paper-bar">
+  <a class="paper-home" href="../../index.html"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 3 2 11.5h3V21h5.5v-6h3v6H19v-9.5h3z"/></svg>Ayush Deshmukh Home</a>
+  <span style="display:flex;gap:.5rem">
+    <button class="present-btn" type="button" id="present-btn" aria-label="Start presentation mode">▶ Present</button>
+    <button class="theme-toggle" type="button" aria-label="Switch to dark mode">☾ Dark mode</button>
+  </span>
+</header>
+<p class="present-hint">← → or Space to move · N notes · Esc to exit</p>
+
+<main class="paper">
+  <header class="paper-head slide" id="top">
+    <h1 class="paper-title">I Never Showed It the Task</h1>
+    <p class="paper-sub">Composing human motion skills into unseen manipulation tasks with RL and a small VLA</p>
+    <p class="paper-authors">Ayush Deshmukh</p>
+    <p class="paper-affil">Robot learning challenge for Humanoid · work in progress, October 2026</p>
+    <div class="paper-links">
+      <a class="todo" href="#">Code (private until 8 Oct)</a>
+      <a href="#tasks">Videos</a>
+    </div>
+    <p class="tldr"><b>TL;DR</b> I filmed myself doing only four atomic skills with a phone: <i>reach</i>, <i>push</i>, <i>pick-lift</i> and <i>place-down</i>. A Franka Panda in Isaac Lab is then asked, in language, to do three combined tasks that were never demonstrated as a whole. The question: given exactly the same clips, does a VLA fine-tuned on them compose the skills by itself, or does it take <b>RL over a motion vocabulary built from the clips</b>, distilled back into a small VLA? Every model is scored on the same 100 fixed start states per task.</p>
+    <aside class="notes"><b>Speaker notes</b>Who I am, what the challenge asked: use data I collected myself, drive a robot in sim, show VLA / world-model thinking. My angle: I never show the robot the task it is asked to do.</aside>
+  </header>
+
+  <nav class="paper-toc" aria-label="On this page">
+    <p class="toc-h">On this page</p>
+    <ol>
+      <li><a href="#tasks">The tasks</a></li>
+      <li><a href="#question">Two ways to compose</a></li>
+      <li><a href="#vocabulary">Motion vocabulary</a></li>
+      <li class="ours"><a href="#models">Models compared</a></li>
+      <li><a href="#results">Results so far</a></li>
+      <li><a href="#didnt-work">What didn't work</a></li>
+      <li class="toc-sep"><a href="#status">Status</a></li>
+      <li><a href="#prior">Prior work</a></li>
+    </ol>
+  </nav>
+
+  <section class="demo slide" id="hero" aria-label="Overview">
+    <div class="demo-stats even">
+      <div class="demo-stat lead"><span class="num">0</span><span class="lbl">demos of any combined task</span></div>
+      <div class="demo-stat"><span class="num" data-count="4">4</span><span class="lbl">atomic skills filmed</span></div>
+      <div class="demo-stat"><span class="num" data-count="3">3</span><span class="lbl">unseen tasks</span></div>
+      <div class="demo-stat"><span class="num" data-count="100">100</span><span class="lbl">fixed test layouts per task</span></div>
+    </div>
+    <figure class="paper-fig">
+      <div class="video-slot wide demo-video">
+        <video src="videos/06_scripted_c3.mp4" data-autoplay muted loop controls playsinline preload="metadata"></video>
+        <span class="demo-badge">C3 · scripted expert · privileged state</span>
+      </div>
+      <div class="cam-legend"><span>Front camera</span><span>Wrist camera</span></div>
+      <figcaption><b>The longest task, C3.</b> <span class="prompt">push the blue cube onto the green target, then stack the red cube on it</span>. Shown here is the scripted expert, which reads exact cube positions from the simulator. It is a test oracle for the scene and the scoring, not the method. The learned models only see the two camera views, their own gripper state and the prompt.</figcaption>
+    </figure>
+    <aside class="notes"><b>Speaker notes</b>This is the scene. Two cameras, front and wrist: that is all the VLA models get. The scripted expert cheats and reads positions: it proves the task is solvable and checks the scoring (90/100 on C3).</aside>
+  </section>
+
+  <section class="slide" id="tasks">
+    <h2 class="paper-h">The tasks</h2>
+    <p class="paper-text">The robot gets a language prompt and two camera views. My clips only ever show one skill at a time; none of them shows these combinations. Each task is scored on the same 100 start layouts, sampled once with a fixed seed inside the workspace the arm can actually reach (measured in simulation: about 0.3–0.78 m from the base with a vertical gripper).</p>
+    <div class="ckpt-list">
+      <article class="ckpt-row" id="c1">
+        <h3>C1 <em>pick and place</em></h3>
+        <p class="ckpt-desc"><span class="prompt">pick up the red cube and place it on the green target</span> needs reach → pick-lift → place-down. Success: the <span class="cube red"></span>red cube rests within 3 cm of the <span class="cube target"></span>target with the gripper open, for 0.5 s.</p>
+        <div class="ckpt-pair">
+          <figure><figcaption>Scripted expert · C1 · 100/100</figcaption><div class="video-slot wide"><video src="videos/04_scripted_c1.mp4" data-autoplay muted loop controls playsinline preload="metadata"></video></div></figure>
+          <figure><figcaption>Atomic task: lift · 100/100</figcaption><div class="video-slot wide"><video src="videos/02_scripted_lift.mp4" data-autoplay muted loop controls playsinline preload="metadata"></video></div></figure>
+        </div>
+      </article>
+      <article class="ckpt-row" id="c2">
+        <h3>C2 <em>stack</em></h3>
+        <p class="ckpt-desc"><span class="prompt">stack the red cube on the blue cube</span> uses the same chain as C1, with 2.5 cm precision on top of the <span class="cube blue"></span>blue cube.</p>
+        <div class="ckpt-pair">
+          <figure><figcaption>Scripted expert · C2 · 100/100</figcaption><div class="video-slot wide"><video src="videos/05_scripted_c2.mp4" data-autoplay muted loop controls playsinline preload="metadata"></video></div></figure>
+          <figure><figcaption>Atomic task: push · 100/100</figcaption><div class="video-slot wide"><video src="videos/03_scripted_push.mp4" data-autoplay muted loop controls playsinline preload="metadata"></video></div></figure>
+        </div>
+      </article>
+      <article class="ckpt-row" id="c3">
+        <h3>C3 <em>push, then stack</em></h3>
+        <p class="ckpt-desc"><span class="prompt">push the blue cube onto the green target, then stack the red cube on it</span> chains push → reach → pick-lift → place-down. It is the longest chain and the clearest test of whether skill hand-offs are learned. The scripted expert succeeds on 90/100 (shown at the top).</p>
+      </article>
+    </div>
+    <aside class="notes"><b>Speaker notes</b>Three combined tasks, plus lift and push as atomic sanity checks. All are scored on the same 100 fixed layouts. Workspace came from measuring the arm's reach, not from guessing.</aside>
+  </section>
+
+  <section class="slide" id="question">
+    <h2 class="paper-h">Two ways to compose</h2>
+    <p class="paper-text">Both approaches start from exactly the same clips.</p>
+    <ul class="paper-list">
+      <li><b>Standard (B1).</b> Replay each clip in simulation with cameras on, label it with its atomic instruction (<span class="prompt">pick up the red cube</span>), fine-tune SmolVLA on it, then prompt it with the combined task. Can a VLA chain skills it only saw one at a time?</li>
+      <li><b>Ours.</b> Turn the clips into a <b>motion vocabulary</b>: each skill plus a small latent for direction, height and distance. Train <b>RL</b> whose action is <i>pick a skill and its latent</i>; the combined task appears only in the reward. Then <b>distil</b> the RL experts into SmolVLA, so one small VLA follows the combined prompts from images.</li>
+    </ul>
+<pre class="pipeline">phone clips ─► hand tracking ─► retarget to the gripper ─► clips (table frame, 10 Hz)
+                                                              │
+                     ┌────────────────────────────────────────┴───────────────────────────┐
+                     ▼                                                                    ▼
+   B1: replay in sim with cameras                                 motion vocabulary (skill + 3-D latent)
+       → fine-tune SmolVLA on atomic prompts                                │
+                                                     RL: action = skill + latent, reward = combined task
+                                                                            │
+                                                     rollouts with cameras → distil into SmolVLA
+                                                     (image + prompt → skill + latent)</pre>
+    <p class="paper-text">The hypotheses, each of which may turn out false. <b>H1</b>: B1 does not compose by itself. <b>H2</b>: given a planner, B1 still fails at the hand-offs between skills, not at planning. <b>H3</b>: RL in the vocabulary learns those hand-offs, so Ours beats B1 with a planner, most clearly on C3. <b>H4</b>: with the same RL budget, the vocabulary learns faster and moves more smoothly than raw actions, possibly at some cost in precision on C2.</p>
+    <aside class="notes"><b>Speaker notes</b>The novelty isn't a new algorithm. It's the controlled question: same clips, two routes. The combined task exists only in the reward.</aside>
+  </section>
+
+  <section class="slide" id="vocabulary">
+    <h2 class="paper-h">The motion vocabulary</h2>
+    <p class="paper-text">Each clip is resampled to 10 waypoints of gripper motion (position, yaw, open/close) relative to where the motion starts. A skill-conditioned VAE learns a 3-D latent per skill. For RL, one action is <i>skill + latent</i>, which decodes into a ~2 s motion tracked by the arm's controller. The RL agent chooses from human-shaped motions instead of tiny raw nudges.</p>
+    <figure class="paper-fig">
+      <div class="video-slot square"><video src="videos/08_vocab_action.mp4" data-autoplay muted loop controls playsinline preload="metadata"></video></div>
+      <div class="cam-legend"><span>Front camera</span><span>Wrist camera</span></div>
+      <figcaption><b>Decoding the vocabulary.</b> Top: reach → pick-lift → place-down → reach with latent z = 0, i.e. each skill's average motion. Bottom: the same skills with random latents, which give different but still smooth motions. Choosing the latent that lands the gripper on <i>this</i> cube is what RL has to learn. This vocabulary is a <span class="stand-in">stand-in</span>, built from scripted motions until my phone clips are processed.</figcaption>
+    </figure>
+    <aside class="notes"><b>Speaker notes</b>Show z = 0 vs random z. With z = 0 the pick-lift closes on air: the average reach doesn't land on this cube. That's the RL problem.</aside>
+  </section>
+
+  <section class="slide" id="models">
+    <h2 class="paper-h">Models compared</h2>
+    <p class="paper-text">Every SmolVLA model sees only the front and wrist images, its own gripper state and the prompt. Only the RL experts and the scripted expert read exact cube positions; they are teachers and the upper reference.</p>
+    <div class="results-wrap">
+      <table class="results">
+        <thead><tr><th scope="col">Model</th><th scope="col">Trained on</th><th scope="col">Answers</th></tr></thead>
+        <tbody>
+          <tr><th scope="row">B0</th><td>nothing (smolvla_base)</td><td>the floor</td></tr>
+          <tr><th scope="row">B1</th><td>my clips, atomic prompts</td><td>does a VLA compose by itself?</td></tr>
+          <tr><th scope="row">B1 + planner</th><td>same; the prompt is split into atomic instructions</td><td>planning or execution?</td></tr>
+          <tr><th scope="row">B2</th><td>rollouts of raw-action RL experts</td><td>what does the vocabulary add?</td></tr>
+          <tr class="ours"><th scope="row">Ours</th><td>rollouts of vocabulary RL experts</td><td>main method</td></tr>
+          <tr><th scope="row">RL experts</th><td>reward only, privileged state</td><td>how much distillation loses</td></tr>
+          <tr><th scope="row">Oracle</th><td>scripted demos of the full tasks</td><td>ceiling with full demos (context only)</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p class="table-notes">B2, Ours and Oracle get the same number of distillation episodes (500 per task) and the same fine-tuning budget. Raw and vocabulary RL use the identical reward, and their learning curves are compared in simulated time.</p>
+    <aside class="notes"><b>Speaker notes</b>B2 is the key control: same RL, same reward, raw actions instead of my motions. The privileged teachers never reach the VLA students.</aside>
+  </section>
+
+  <section class="slide" id="results">
+    <h2 class="paper-h">Results so far</h2>
+    <p class="paper-text">Success out of 100 fixed start states. B1 here is trained on <span class="stand-in">stand-in clips</span>: scripted single-skill motions in the same format as my phone clips. It will be rerun unchanged on the real clips, so these numbers show that the pipeline works, not the final answer.</p>
+    <div class="results-wrap">
+      <table class="results">
+        <thead><tr><th scope="col">Model</th><th scope="col">push</th><th scope="col">lift</th><th scope="col">C1</th><th scope="col">C2</th><th scope="col">C3</th></tr></thead>
+        <tbody>
+          <tr><th scope="row">Scripted expert <small>privileged</small></th><td>100</td><td>100</td><td>100</td><td>100</td><td>90</td></tr>
+          <tr><th scope="row">B0 smolvla_base</th><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td></tr>
+          <tr><th scope="row">B1 <small>stand-in clips</small></th><td>16</td><td>0</td><td>0</td><td>0</td><td>0</td></tr>
+          <tr><th scope="row">B1 + planner <small>stand-in clips</small></th><td>3</td><td>29</td><td>0</td><td>0</td><td>0</td></tr>
+          <tr class="ours"><th scope="row">Ours</th><td colspan="5">training</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p class="paper-text">Even lift needs two clips chained: reach, then pick up. B1 alone reaches the cube in 24 of 100 episodes and never grasps it. Told <span class="prompt">reach the red cube</span> and then <span class="prompt">pick up the red cube</span>, it lifts in 29. Nothing composes into C1–C3, and the failures sit at grasp and transport, the hand-offs between skills.</p>
+    <figure class="paper-fig">
+      <div class="video-slot wide"><video src="videos/09_b0_c1.mp4" data-autoplay muted loop controls playsinline preload="metadata"></video></div>
+      <figcaption><b>B0 on C1.</b> The untrained SmolVLA moves the arm, but not toward the cube: 0/100 on every task.</figcaption>
+    </figure>
+    <aside class="notes"><b>Speaker notes</b>Lift going 0 → 29 with a plan is H1/H2 in miniature. Be clear these are stand-in clips.</aside>
+  </section>
+
+  <section class="slide" id="didnt-work">
+    <h2 class="paper-h">What didn't work</h2>
+    <div class="ckpt-list">
+      <article class="ckpt-row">
+        <h3>The policy that never lets go</h3>
+        <p class="ckpt-desc">The reward I started with only counted the cube as held while it was 2 cm up, so lowering it onto the target lost reward: PPO carried the cube over the goal and hovered. The next version paid grasp (gap &lt; 65 mm) and success (gap &gt; 65 mm) side by side, and the policy held the gripper at exactly 65 mm, flickering between the two. A third version only gave carry credit while grasping, and the vocabulary agent learned to lift the cube and hold it in the air forever. Each fix was checked by profiling the reward along the scripted expert, where it must rise at every phase.</p>
+        <div class="ckpt-pair">
+          <figure><figcaption>Raw-action RL · holds the cube on the target</figcaption><div class="video-slot wide"><video src="videos/07_raw_rl_c1_it900.mp4" data-autoplay muted loop controls playsinline preload="metadata"></video></div></figure>
+          <figure><figcaption>Vocabulary RL · lifts and never places</figcaption><div class="video-slot wide"><video src="videos/10_vocab_rl_c1_wip.mp4" data-autoplay muted loop controls playsinline preload="metadata"></video></div></figure>
+        </div>
+      </article>
+      <article class="ckpt-row">
+        <h3>A task the arm cannot do</h3>
+        <p class="ckpt-desc">C3 was first "the cube starts beyond grasp reach; push it closer, then pick it up". Measuring the arm showed this is impossible with a vertical gripper: to push a cube towards you, you must reach behind it, which is further away still. Tilting the hand gains only about 5 cm. C3 became "push blue onto the target, then stack red on it".</p>
+        <div class="ckpt-pair">
+          <figure><figcaption>Reach probe · 0.20 m (top) vs 0.45 m</figcaption><div class="video-slot wide"><video src="videos/01_reach_probe.mp4" data-autoplay muted loop controls playsinline preload="metadata"></video></div></figure>
+          <figure><figcaption>Also fixed along the way</figcaption><div class="video-slot wide na"><span>a wrist joint capped at 0.15 rad/s by the stock gains · pushes that spun the cube · a lift that chased its own cube</span></div></figure>
+        </div>
+      </article>
+    </div>
+    <aside class="notes"><b>Speaker notes</b>Each bug was found by watching the policy, not the return curve. The return looked fine every time.</aside>
+  </section>
+
+  <section class="slide" id="status">
+    <h2 class="paper-h">Status</h2>
+    <div class="results-wrap">
+      <table class="results">
+        <thead><tr><th scope="col">Piece</th><th scope="col">State</th></tr></thead>
+        <tbody>
+          <tr><th scope="row">Isaac Lab tasks, eval harness, scripted expert</th><td><span class="status done">done</span></td></tr>
+          <tr><th scope="row">Motion vocabulary and vocabulary action</th><td><span class="status done">done on stand-ins</span></td></tr>
+          <tr><th scope="row">B0, B1, B1 + planner</th><td><span class="status done">done on stand-ins</span></td></tr>
+          <tr><th scope="row">RL experts, raw and vocabulary</th><td><span class="status run">training</span></td></tr>
+          <tr><th scope="row">Distillation: B2, Ours, Oracle</th><td><span class="status run">recording data</span></td></tr>
+          <tr><th scope="row">My phone clips → real vocabulary and real B1</th><td><span class="status todo">next</span></td></tr>
+        </tbody>
+      </table>
+    </div>
+    <aside class="notes"><b>Speaker notes</b>Everything runs end to end on stand-ins, so the phone clips are a data swap, not new code.</aside>
+  </section>
+
+  <section class="slide" id="prior">
+    <h2 class="paper-h">Prior work</h2>
+    <ol class="refs">
+      <li>Learning from Play, Lynch et al. 2019.</li>
+      <li>SPiRL, skill priors for RL; Residual Skill Policies (arXiv 2211.02231).</li>
+      <li>LAPA (2410.11758), CLAP (2601.04061), Motion-Focused Latent Action (2606.18955), VQ-VLA (ICCV 2025): latent actions from video.</li>
+      <li>Exp2VLA (2607.03146), VLA-OPD (2603.26666): distilling experts into VLAs.</li>
+      <li>SimpleVLA-RL (2509.09674), SmolVLA-RL: RL for VLAs.</li>
+    </ol>
+    <p class="paper-text">The method pieces are known. The contribution is the question and a controlled comparison on the same human data.</p>
+  </section>
+
+  <footer class="site-footer paper-foot">© 2026</footer>
+</main>
+
+<script src="../../assets/js/main.js"></script>
+<script>
+  // presentation mode: each .slide fills the screen; arrows/space move, N toggles notes, Esc exits
+  (() => {
+    const root = document.documentElement, btn = document.getElementById('present-btn');
+    const slides = [...document.querySelectorAll('.slide')];
+    const current = () => {
+      let best = 0, bestD = Infinity;
+      slides.forEach((s, i) => { const d = Math.abs(s.getBoundingClientRect().top); if (d < bestD) { bestD = d; best = i; } });
+      return best;
+    };
+    const mark = () => { const i = current(); slides.forEach((s, j) => s.classList.toggle('current', j === i)); };
+    const go = i => { slides[Math.max(0, Math.min(slides.length - 1, i))].scrollIntoView({behavior: 'smooth'}); };
+    const setMode = on => {
+      root.classList.toggle('presenting', on);
+      btn.textContent = on ? '■ Exit' : '▶ Present';
+      btn.setAttribute('aria-label', on ? 'Exit presentation mode' : 'Start presentation mode');
+      if (on) { root.requestFullscreen?.().catch(() => {}); go(current()); }
+      else if (document.fullscreenElement) document.exitFullscreen?.().catch(() => {});
+      mark();
+    };
+    btn.addEventListener('click', () => setMode(!root.classList.contains('presenting')));
+    document.addEventListener('scroll', mark, {passive: true});
+    document.addEventListener('keydown', e => {
+      if (!root.classList.contains('presenting')) return;
+      if (['ArrowRight', 'ArrowDown', 'PageDown', ' '].includes(e.key)) { e.preventDefault(); go(current() + 1); }
+      else if (['ArrowLeft', 'ArrowUp', 'PageUp'].includes(e.key)) { e.preventDefault(); go(current() - 1); }
+      else if (e.key === 'n' || e.key === 'N') root.classList.toggle('show-notes');
+      else if (e.key === 'Escape') setMode(false);
+    });
+    mark();
+  })();
+</script>
+</body>
+</html>
