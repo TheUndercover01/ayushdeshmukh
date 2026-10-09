@@ -76,6 +76,14 @@
   .note{margin:1.2rem 0;padding:.85rem 1rem .85rem 1.1rem;border:2px solid var(--fg);border-left-width:7px;border-radius:4px;background:var(--card);font-size:.92rem;line-height:1.55}
   .note b:first-child{display:block;font:700 .9rem/1.3 "Space Grotesk",sans-serif;margin-bottom:.25rem}
   .note.why{border-left-color:var(--accent-bold)} .note.problem{border-left-color:var(--accent-warm)}
+  .fails{display:grid;grid-template-columns:repeat(auto-fill,minmax(14rem,1fr));gap:.8rem;margin-top:1.4rem}
+  .fail{background:var(--card);border:2px solid var(--fg);border-radius:4px;padding:.7rem .8rem;display:flex;flex-direction:column}
+  .fail b{font:700 .84rem/1.25 "Space Grotesk",sans-serif}
+  .fail p{margin:.3rem 0 .5rem;font-size:.8rem;line-height:1.45;color:var(--fg)}
+  .fail span{margin-top:auto;font:700 .7rem/1.3 "JetBrains Mono",monospace;color:var(--accent-warm)}
+  .qa h3{margin:1.4rem 0 .4rem;font:700 1.25rem/1.25 "Caveat",cursive;font-size:1.45rem;color:var(--accent-warm)}
+  .qa h3:first-child{margin-top:.4rem}
+  .qa p{margin:0;font-size:1rem;line-height:1.65}
 </style>
 </head>
 <body>
@@ -110,7 +118,7 @@
       <li><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="5"/><circle cx="12" cy="12" r="1.3"/></svg>
         <b>Infer the reward</b><span>Track the object in each clip. Where it goes, and how, becomes the reward.</span></li>
       <li><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 18 9 12l4 3 7-9"/><path d="M15 6h5v5"/></svg>
-        <b>Train an RL teacher</b><span>16,384 simulated robots learn every skill and how to chain them.</span></li>
+        <b>Train an RL teacher</b><span>16,384 simulated robots learn every skill and the handoff from one to the next.</span></li>
       <li><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M2.5 12s3.5-6.5 9.5-6.5S21.5 12 21.5 12s-3.5 6.5-9.5 6.5S2.5 12 2.5 12z"/><circle cx="12" cy="12" r="2.8"/></svg>
         <b>Distill into a VLA</b><span>A vision-language model copies the teacher from camera images and words.</span></li>
       <li class="win"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 12.5 9.5 18 20 6.5"/></svg>
@@ -149,6 +157,23 @@
   </section>
 
   <section>
+    <h2 class="paper-h">Why this way?</h2>
+    <p class="paper-text">There are simpler-sounding ways to get a robot to do "stack, then unstack, then restack". Here is why each one wasn't the path.</p>
+    <div class="qa">
+      <h3>"Why not just fine-tune a VLA on the clips?"</h3>
+      <p>Because the clips have no robot in them. They show a human hand, which has no gripper commands and moves nothing like a two-finger gripper, so there are no actions to copy. And even with robot actions, every clip is one skill. When I trained SmolVLA directly on single-skill demonstrations, it learned a little pushing (16 of 100), no picking up, and <b>0 on every combined task</b>. A VLA does not compose skills by itself just because each one is in the data.</p>
+      <h3>"Then why not record robot demonstrations of the long tasks?"</h3>
+      <p>That's exactly the cost this project avoids. With two objects, a target and three skills, the number of 4- and 6-step tasks grows fast, and every new combination would need new teleoperated demos. The bet here: film each skill once, cheaply, with a phone, and get <i>every</i> combination without demonstrating any of them.</p>
+      <h3>"Why not hand-write a reward for each task?"</h3>
+      <p>I tried, and every hand-written reward got gamed: the policy sat on the gripper's release threshold, then pushed instead of lifting. A reward taken from the clips says what the object should do: where it goes, how high and when it has settled. It doesn't care how the robot holds the object, and the same reward works for any combination of skills.</p>
+      <h3>"Why train an RL teacher first, instead of the VLA directly?"</h3>
+      <p>RL on a 450M-parameter model that reads images is slow and needs a huge number of tries. A small teacher that sees the exact object positions learns every skill in about an hour across 16,384 simulated scenes. Distillation then turns that into a policy that works from cameras and words. The teacher does the exploring; the VLA only has to imitate.</p>
+      <h3>"Why give the whole sentence, instead of a planner feeding one command at a time?"</h3>
+      <p>A planner is a fair alternative, and it scores higher here (90 vs 60 on the 4-step task, same data). But it moves the hardest part, knowing when a step is really finished and what comes next, out of the model and into hand-written glue. I wanted the model to read the full instruction and keep its own place. The "(done)" marks are the simplest way I found to let it do that.</p>
+    </div>
+  </section>
+
+  <section>
     <h2 class="paper-h">1 · Film atomic skills</h2>
     <p class="paper-text">The only demonstrations in this project are short phone clips of me doing one skill at a time on a real cube and a crisps can. <b>43 clips</b> were usable: 12 pushes, 10 pick-ups and 21 put-downs (on the target, on the table, or on the other object). None of them shows two skills in a row, and none shows any of the tasks in the results.</p>
     <div class="clips">
@@ -182,6 +207,7 @@
     <h2 class="paper-h">3 · Train an RL teacher</h2>
     <p class="paper-text">A Franka Panda in Isaac Lab learns with PPO across <b>16,384 parallel scenes</b> for 400 iterations. The teacher is privileged: it sees the exact position of both objects and the template's next point, and it is told which command it is on. Each training episode has <b>one or two commands</b>. That is enough to learn every skill and the hand-over from one skill to the next. When the reward's "finished" check holds, the episode moves on to the next command.</p>
     <p class="paper-text">Because it is told which command it is on, the teacher chains as many as you give it: on random chains of <b>20 commands</b> it still finishes 90 of 100. Long tasks are not hard in themselves. The hard part is doing them without being told where you are, and that is the student's job.</p>
+    <div class="note why"><b>Design decision: teach handoffs, not sequences.</b> The teacher never trains on a whole long task. Every episode is one skill, or two skills back to back, and the second command starts from wherever the first one left the object and the arm. So what it learns is the <i>handoff</i>: finish a skill, notice it is finished, and start the next from that exact state. That is also what the VLA inherits. It doesn't memorise "stack, then unstack, then restack" as one long motion. It learns skills and how to switch between them, and the sentence decides the order. A 6-step task is just five handoffs in a row, each of a kind it has seen.</div>
     <div class="note problem"><b>Problem: a perfect teacher that nobody could copy.</b> The first teachers were excellent and useless. PPO learned "bang-bang" control: 30–55% of its actions sat at the limits, flipping sign from one step to the next. A VLA trained on those actions fit them <b>no better than predicting the average action</b> and scored 0 on almost every task. A penalty on changing actions barely smoothed them.</div>
     <div class="note why"><b>Design decision: put a low-pass filter on the teacher's arm.</b> The arm executes a running average of the teacher's commands (95% previous, 5% new), and the student learns the <i>executed</i> motion. The teacher learns to drive a smooth arm, and the student gets smooth labels. Smoother teachers made better students every time: going from a 0.7 to a 0.85 filter took pick-up from 51 to 63, and the 2-step tasks reached 44–49. The final teacher uses 0.95.</div>
   </section>
@@ -214,6 +240,10 @@
       <li><b>Its own marks:</b> <b>60 in 100</b>.</li>
       <li><b>The first two commands marked done in advance:</b> it believes the marks, skips straight to command three and finishes <b>42 times in 50</b>.</li>
     </ul>
+    <div class="vgrid" style="margin:0 0 1.2rem">
+      <figure><div class="video-slot" style="aspect-ratio:512/352"><video src="videos/nomarks_stuck.mp4" poster="videos/nomarks_stuck.jpg" data-autoplay autoplay muted loop controls playsinline preload="auto" style="object-fit:contain"></video></div><figcaption><b>Marks switched off (3×).</b> The sentence never changes, so the model keeps acting on command one. It never gets past it.</figcaption></figure>
+      <figure><div class="video-slot" style="aspect-ratio:512/352"><video src="videos/restack_6of6.mp4" poster="videos/restack_6of6.jpg" data-autoplay autoplay muted loop controls playsinline preload="auto" style="object-fit:contain"></video></div><figcaption><b>Its own marks (3×).</b> Each "(done)" moves it on to the next command, all six in order.</figcaption></figure>
+    </div>
     <p class="paper-text">For reference, a model trained on the same data but handed <b>one command at a time</b> by an outside pointer finishes the 4-step task 90 times in 100. The gap to 60 is the price of making the model keep its own place.</p>
   </section>
 
@@ -225,6 +255,10 @@
       <li><b>Move the cube while the arm reaches for it:</b> 12 of 50. Re-targeting a moving object is a weak spot.</li>
       <li><b>Take the cube out of the gripper</b> after "pick up" was marked: picked up again in 10 of 36.</li>
     </ul>
+    <div class="vgrid">
+      <figure><div class="video-slot" style="aspect-ratio:512/352"><video src="videos/knock_refetch.mp4" poster="videos/knock_refetch.jpg" data-autoplay autoplay muted loop controls playsinline preload="auto" style="object-fit:contain"></video></div><figcaption><b>Knocked away after it was done (2×).</b> Both commands are marked done, yet it goes back for the cube.</figcaption></figure>
+      <figure><div class="video-slot" style="aspect-ratio:512/352"><video src="videos/drop_repick.mp4" poster="videos/drop_repick.jpg" data-autoplay autoplay muted loop controls playsinline preload="auto" style="object-fit:contain"></video></div><figcaption><b>Dropped mid-carry (2×).</b> The cube is taken out of the gripper; it picks it up again and finishes.</figcaption></figure>
+    </div>
   </section>
 
   <section>
@@ -242,11 +276,40 @@
   </section>
 
   <section>
-    <h2 class="paper-h">Roads not taken</h2>
+    <h2 class="paper-h">What didn't work</h2>
+    <p class="paper-text">Most of the project was finding out what <i>doesn't</i> work. The early videos are from the first version of the setup (two cubes, a different table).</p>
+    <div class="vgrid">
+      <figure><div class="video-slot" style="aspect-ratio:2/1"><video src="videos/fail_never_release.mp4" poster="videos/fail_never_release.jpg" data-autoplay autoplay muted loop controls playsinline preload="auto" style="object-fit:contain"></video></div><figcaption><b>Raw RL, reward for carrying:</b> brings the cube to the target and never lets go.</figcaption></figure>
+      <figure><div class="video-slot" style="aspect-ratio:2/1"><video src="videos/fail_hold_up.mp4" poster="videos/fail_hold_up.jpg" data-autoplay autoplay muted loop controls playsinline preload="auto" style="object-fit:contain"></video></div><figcaption><b>Motion primitives:</b> picks the cube up, then holds it in the air forever.</figcaption></figure>
+      <figure><div class="video-slot" style="aspect-ratio:768/416"><video src="videos/fail_top_edge.mp4" poster="videos/fail_top_edge.jpg" data-autoplay autoplay muted loop controls playsinline preload="auto" style="object-fit:contain"></video></div><figcaption><b>Loose "arrived" check:</b> the fingers close on the top edge and the cube slips out.</figcaption></figure>
+      <figure><div class="video-slot" style="aspect-ratio:768/800"><video src="videos/fail_push_not_lift.mp4" poster="videos/fail_push_not_lift.jpg" data-autoplay autoplay muted loop controls playsinline preload="auto" style="object-fit:contain"></video></div><figcaption><b>Distance-to-goal reward:</b> top, pushed onto the target; bottom, actually picked and placed. Both scored as success.</figcaption></figure>
+    </div>
+    <div class="fails">
+      <div class="fail"><b>Fine-tune the VLA on single skills</b><p>Train SmolVLA directly on single-skill demonstrations and hope it composes. It doesn't.</p><span>push 16 · pick-up 0 · every combined task 0</span></div>
+      <div class="fail"><b>Clean scripted demonstrations</b><p>Perfect demos fit well, but the model never saw a mistake, so it can't recover from its own.</p><span>6 of 100 on the 2-step task</span></div>
+      <div class="fail"><b>A reward for grasping and carrying</b><p>The policy sat on the release threshold and opened and closed the fingers to collect both terms.</p><span>0 of 100, while 'placing' 99.6% of the time in training</span></div>
+      <div class="fail"><b>A reward for distance to the goal</b><p>Pushing the cube onto the target was the cheap way to get closer, so it stopped lifting.</p><span>19 of 100 when a real lift was required</span></div>
+      <div class="fail"><b>A vocabulary of motion primitives</b><p>RL over learned 2-second skills preferred pushing even more than RL on raw actions.</p><span>~75% of successes were pushes (raw actions ~50%)</span></div>
+      <div class="fail"><b>Starting every episode at home</b><p>With an object-only reward nothing changes until the gripper touches the object by chance.</p><span>nothing learned in 504 iterations</span></div>
+      <div class="fail"><b>A loose "hand has arrived" check</b><p>The hand stopped above the cube's centre, the fingers closed on the top edge and the cube slipped.</p><span>best lift 1.6 cm (the clips lift 14 cm)</span></div>
+      <div class="fail"><b>Imitating raw RL actions</b><p>Bang-bang actions flip sign every step. The VLA fit them no better than predicting the average.</p><span>0 on every task but push (14)</span></div>
+      <div class="fail"><b>Penalising action changes</b><p>A cost on changing actions kept the skills but barely smoothed the teacher.</p><span>still too jittery to imitate</span></div>
+      <div class="fail"><b>Smoothing the labels afterwards</b><p>Averaging the teacher's actions over half a second lowered the loss but didn't fix the fit.</p><span>loss 0.93 → 0.77, still near the average</span></div>
+      <div class="fail"><b>A camera history and a trained vision encoder</b><p>More inputs (an older frame, past actions, a closer camera, unfreezing vision) did not help the student.</p><span>worse than the plain student</span></div>
+      <div class="fail"><b>A counter instead of marks</b><p>"k of n done" as an input number. The language model used crossed-off words far better.</p><span>6-step task 20 vs 31 with marks</span></div>
+      <div class="fail"><b>A stricter done threshold</b><p>Waiting for a surer done signal helped some chains and hurt others.</p><span>no setting won everywhere</span></div>
+      <div class="fail"><b>Asking the model to double-check</b><p>With its last mark removed, it found the wrong marks, but redoing the step didn't follow.</p><span>long chains got worse, not better</span></div>
+    </div>
+  </section>
+
+  <section>
+    <h2 class="paper-h">What I'd do differently</h2>
     <ul class="paper-list">
-      <li><b>Fine-tune the VLA on the clips directly.</b> Replaying single-skill demonstrations in simulation and training SmolVLA on them gave push 16, pick-up 0 and every combined task 0. It never composes by itself.</li>
-      <li><b>Clean scripted demonstrations.</b> A VLA trained on perfect scripted demos fit them well but scored 6 of 100: it never saw itself recover from a small mistake. RL teachers explore, so their data contains recoveries.</li>
-      <li><b>A vocabulary of motions.</b> Turning each skill into a learned motion primitive and running RL on top of those primitives made the agent push even more often instead of lifting.</li>
+      <li><b>Track the hand as well as the object.</b> The object-only reward needed episodes that start mid-skill to get going. A tracked hand path from the same clips would give the approach for free.</li>
+      <li><b>Train on 3–4 command episodes, not just 2.</b> The done signal fires early on long chains. Seeing more hand-overs in training is the most direct fix.</li>
+      <li><b>Close the gap to the teacher.</b> Each skill is 44–63% for the student against 95–100% for the teacher. More data and longer training would help, and so would RL fine-tuning of the VLA itself, starting from the distilled model.</li>
+      <li><b>A separate "is it done?" check.</b> A small model that only judges whether a command is finished could write the marks more reliably than one output of the action model.</li>
+      <li><b>Run it on the real robot.</b> Everything here is in simulation. The clips are real; the robot is not, yet.</li>
     </ul>
   </section>
 
