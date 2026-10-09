@@ -172,7 +172,7 @@
       <h3>"Why not just fine-tune a VLA on the clips?"</h3>
       <p>Because you can never show it every task. A VLA does not compose skills by itself just because each one is in its data. When I trained SmolVLA directly on single-skill demonstrations, it learned a little pushing (16 of 100), no picking up, and <b>0 on every combined task</b>. That's the gap this project is about: show it what a lift looks like and what a put-down looks like, and it should work out for itself how to do one after the other, in the order a sentence asks. Atomic skills in, long-horizon tasks out.</p>
       <h3>"And why not copy my hand from the clips?"</h3>
-      <p>Because the robot isn't a hand. A human hand and a two-finger gripper grasp things in completely different ways, so copying the hand would teach the wrong motion, and the clips have no gripper commands to copy anyway. The clips only say what should happen to the <i>object</i>: where it goes, how high, when it has settled. The robot has to find out how to make that happen with its own body, and that's what RL is for.</p>
+      <p>Because the robot isn't a hand. A human hand and a two-finger gripper grasp things in completely different ways, so copying the hand would teach the wrong motion, and the clips have no gripper commands to copy anyway. The clips only say what should happen to the <i>object</i>: where it goes, how high, in which direction. The robot has to find out how to make that happen with its own body, and that's what RL is for.</p>
       <h3>"Then why not record robot demonstrations of the long tasks?"</h3>
       <p>That's exactly the cost this project avoids. With two objects, a target and three skills, the number of 4- and 6-step tasks grows fast, and every new combination would need new teleoperated demos. The bet here: film each skill once, cheaply, with a phone, and get <i>every</i> combination without demonstrating any of them.</p>
       <h3>"Why not hand-write a reward for each task?"</h3>
@@ -315,6 +315,7 @@
       <div class="fail"><b>Penalising action changes</b><p>A cost on changing actions kept the skills but barely smoothed the teacher.</p><span>still too jittery to imitate</span></div>
       <div class="fail"><b>Smoothing the labels afterwards</b><p>Averaging the teacher's actions over half a second lowered the loss but didn't fix the fit.</p><span>loss 0.93 → 0.77, still near the average</span></div>
       <div class="fail"><b>A camera history and a trained vision encoder</b><p>More inputs (an older frame, past actions, a closer camera, unfreezing vision) did not help the student.</p><span>worse than the plain student</span></div>
+      <div class="fail"><b>Rest speed and hold time from the clips</b><p>The teacher trained well (97.7% of training episodes done) but scored push 14 of 50 in the evaluation. Probably its 0.2 s hold is shorter than the evaluation's 0.5 s (not verified).</p><span>student: unstack 17/50 · restack 7/50 · push 9/50</span></div>
     </div>
   </section>
 
