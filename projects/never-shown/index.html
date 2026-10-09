@@ -1,0 +1,258 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>I Never Showed It the Task — Ayush Deshmukh</title>
+<meta name="description" content="I filmed only single skills with a phone. A reward inferred from those clips trains an RL teacher, which is distilled into a vision-language-action model that carries out multi-step instructions nobody demonstrated.">
+<link rel="canonical" href="https://theundercover01.github.io/ayushdeshmukh/projects/never-shown/">
+<meta property="og:type" content="website">
+<meta property="og:title" content="I Never Showed It the Task — Ayush Deshmukh">
+<meta property="og:description" content="Phone clips of single skills → a reward inferred from them → an RL teacher → a VLA that composes tasks it never saw.">
+<meta property="og:url" content="https://theundercover01.github.io/ayushdeshmukh/projects/never-shown/">
+<meta property="og:image" content="https://theundercover01.github.io/ayushdeshmukh/projects/never-shown/img/cover.jpg">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Caveat:wght@500;700&family=Instrument+Serif:ital@0;1&family=Source+Serif+4:ital,opsz,wght@0,8..60,400;0,8..60,600;1,8..60,400&family=Space+Grotesk:wght@400;500;700;800&family=JetBrains+Mono:wght@400;700&display=swap">
+<link rel="stylesheet" href="../../assets/css/style.css?v=7">
+<script>try{if(localStorage.getItem("theme")==="dark")document.documentElement.dataset.theme="dark"}catch(e){}</script>
+<style>
+  /* page-local: the pipeline strip, the sentence with its own "(done)" marks, the result bars */
+  .flow{list-style:none;margin:0 0 2.4rem;padding:0;display:grid;grid-template-columns:repeat(5,1fr);gap:.9rem;counter-reset:step}
+  .flow li{position:relative;counter-increment:step;background:var(--card);border:3px solid var(--fg);border-radius:6px;
+    box-shadow:5px 5px 0 var(--shadow);padding:.85rem .7rem .8rem;text-align:center}
+  .flow li::before{content:counter(step);position:absolute;top:-.85rem;left:50%;transform:translateX(-50%);width:1.6rem;height:1.6rem;
+    border-radius:50%;background:var(--accent-hi);color:#211d19;border:2px solid var(--fg);font:800 .85rem/1.45rem "Space Grotesk",sans-serif}
+  .flow li:not(:last-child)::after{content:"";position:absolute;right:-.85rem;top:50%;width:.8rem;height:3px;background:var(--fg)}
+  .flow svg{width:2.2rem;height:2.2rem;margin:.35rem auto .3rem;display:block;stroke:var(--fg);fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+  .flow b{display:block;font:700 .86rem/1.2 "Space Grotesk",sans-serif}
+  .flow span{display:block;margin-top:.3rem;font-size:.74rem;line-height:1.35;color:var(--muted)}
+  .flow li.win{background:var(--accent-hi)} .flow li.win b,.flow li.win span{color:#211d19} .flow li.win svg{stroke:#211d19}
+  @media (max-width:760px){
+    .flow{grid-template-columns:1fr;gap:1.3rem}
+    .flow li{display:block;text-align:left;padding:.8rem .8rem .8rem 1.5rem}
+    .flow li::before{left:-.7rem;top:50%;transform:translateY(-50%)}
+    .flow li:not(:last-child)::after{right:auto;left:50%;top:auto;bottom:-1.05rem;width:3px;height:.85rem}
+    .flow svg{display:none}
+    .flow span{margin-top:.1rem}
+  }
+  .clips{display:grid;grid-template-columns:repeat(4,1fr);gap:.8rem}
+  .clips figure{margin:0}
+  .clips figcaption{margin-top:.35rem;font:600 .8rem "Space Grotesk",sans-serif;text-align:center}
+  @media (max-width:760px){.clips{grid-template-columns:repeat(2,1fr)}}
+  .sentence{font:400 .82rem/2.1 "JetBrains Mono",monospace;background:var(--card);border:3px solid var(--fg);border-radius:6px;
+    box-shadow:5px 5px 0 var(--shadow);padding:.8rem 1rem;margin:0 0 .8rem}
+  .sentence .cmd{padding:.12rem .35rem;border-radius:3px;border:1.5px solid color-mix(in oklch, var(--fg) 35%, transparent)}
+  .sentence .done{opacity:.55;text-decoration:line-through;text-decoration-thickness:1.5px}
+  .sentence .mark{font:700 1.05rem "Caveat",cursive;color:var(--accent-warm);margin-left:.15rem}
+  .sentence .now{border-color:var(--accent-warm);background:color-mix(in oklch, var(--accent-warm) 14%, transparent);font-weight:700}
+  .bars{background:var(--card);border:3px solid var(--fg);border-radius:6px;box-shadow:6px 6px 0 var(--shadow);padding:1rem 1.1rem .9rem;margin:0 0 .8rem}
+  .bars .legend{display:flex;flex-wrap:wrap;gap:1.1rem;margin:0 0 .8rem;font:500 .78rem "Space Grotesk",sans-serif;color:var(--fg)}
+  .bars .legend i{display:inline-block;width:.8rem;height:.8rem;border-radius:2px;margin-right:.35rem;vertical-align:-.1rem}
+  .bars .row{display:grid;grid-template-columns:11.5rem 1fr;gap:.2rem .8rem;align-items:center;padding:.38rem 0;
+    border-top:1px solid color-mix(in oklch, var(--fg) 12%, transparent)}
+  .bars .row:first-of-type{border-top:0}
+  .bars .name{font:500 .8rem/1.25 "Space Grotesk",sans-serif;color:var(--fg)}
+  .bars .name small{display:block;color:var(--muted);font-weight:400;font-size:.7rem}
+  .bars .new{display:inline-block;margin-left:.3rem;padding:0 .3rem;border-radius:3px;background:var(--accent-hi);color:#211d19;font:700 .62rem/1.35 "Space Grotesk",sans-serif;vertical-align:.08rem}
+  .bars .track{display:grid;gap:2px;margin-right:2.2rem}
+  .bars .bar{position:relative;height:.62rem;border-radius:0 4px 4px 0;min-width:2px}
+  .bars .bar.s{background:var(--accent-warm)} .bars .bar.t{background:var(--accent-bold);opacity:.55}
+  .bars .bar em{position:absolute;left:calc(100% + .35rem);top:50%;transform:translateY(-50%);font:700 .7rem "JetBrains Mono",monospace;font-style:normal;color:var(--fg);white-space:nowrap}
+  .bars .bar.t em{font-weight:400;color:var(--muted)}
+  .bars .bar:hover{outline:2px solid var(--fg);outline-offset:1px}
+  @media (max-width:560px){.bars .row{grid-template-columns:1fr}}
+  .big{display:grid;grid-template-columns:repeat(3,1fr);gap:.8rem;margin:0 0 1.6rem}
+  .big div{background:var(--card);border:3px solid var(--fg);border-radius:6px;box-shadow:5px 5px 0 var(--shadow);padding:.7rem .8rem}
+  .big b{display:block;font:800 2rem/1 "Space Grotesk",sans-serif;color:var(--accent-warm)}
+  .big span{display:block;margin-top:.35rem;font-size:.78rem;line-height:1.35;color:var(--fg)}
+  @media (max-width:560px){.big{grid-template-columns:1fr}}
+  .vgrid{display:grid;grid-template-columns:repeat(2,1fr);gap:1rem}
+  .vgrid figure{margin:0}.vgrid figcaption{margin-top:.4rem;font-size:.8rem;color:var(--muted);line-height:1.4}.vgrid figcaption b{color:var(--fg)}
+  @media (max-width:640px){.vgrid{grid-template-columns:1fr}}
+  .video-slot.sim{aspect-ratio:512/352}.video-slot.wide{aspect-ratio:1260/404}
+  .video-slot.sim video,.video-slot.wide video{object-fit:contain}
+  .note{margin:1.2rem 0;padding:.85rem 1rem .85rem 1.1rem;border:2px solid var(--fg);border-left-width:7px;border-radius:4px;background:var(--card);font-size:.92rem;line-height:1.55}
+  .note b:first-child{display:block;font:700 .9rem/1.3 "Space Grotesk",sans-serif;margin-bottom:.25rem}
+  .note.why{border-left-color:var(--accent-bold)} .note.problem{border-left-color:var(--accent-warm)}
+</style>
+</head>
+<body>
+
+<header class="paper-bar">
+  <a class="paper-home" href="../../index.html"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 3 2 11.5h3V21h5.5v-6h3v6H19v-9.5h3z"/></svg>Ayush Deshmukh Home</a>
+  <button class="theme-toggle" type="button" aria-label="Switch to dark mode">☾ Dark mode</button>
+</header>
+
+<main class="paper">
+  <header class="paper-head">
+    <h1 class="paper-title">I Never Showed It the Task</h1>
+    <p class="paper-sub">Composing long manipulation tasks from phone clips of single skills</p>
+    <p class="paper-authors"><b>Ayush Deshmukh</b> · Isaac Lab, PPO, SmolVLA</p>
+    <div class="paper-links">
+      <a href="https://github.com/TheUndercover01/VLA-Humanoid" target="_blank" rel="noopener">Code</a>
+    </div>
+  </header>
+
+  <p class="tldr"><b>TL;DR</b> I filmed myself doing <b>single skills</b> with a phone: push an object, pick it up, put it down. I never filmed two in a row. From those clips I <b>inferred a reward</b>, trained an <b>RL teacher</b> on it in simulation, and <b>distilled</b> the teacher into a vision-language-action model. The model then gets one sentence with up to six commands and carries them out from camera images. It does tasks of <b>3, 4 and 6 steps</b> that it never saw, having only ever trained on 2.</p>
+
+  <figure class="paper-fig">
+    <div class="video-slot sim"><video src="videos/restack_6of6.mp4" poster="videos/restack_6of6.jpg" data-autoplay autoplay muted loop controls playsinline preload="auto"></video></div>
+    <figcaption><b>Six commands from one sentence, all done in order (3× speed).</b> <i>"Pick up the cube, then put the cube on the cylinder, then pick up the cube, then put the cube on the target, then pick up the cylinder, then put the cylinder on the cube."</i> Left: the camera the model sees; right: its wrist camera. The text on top is what the model itself thinks it is doing.</figcaption>
+  </figure>
+
+  <section>
+    <h2 class="paper-h">The idea in five steps</h2>
+    <ol class="flow">
+      <li><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="6" y="2.5" width="12" height="19" rx="2.5"/><circle cx="12" cy="8" r="2.6"/><path d="M10 18.5h4"/></svg>
+        <b>Film atomic skills</b><span>Push, pick up, put down. One skill per clip, on a real cube and can.</span></li>
+      <li><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="5"/><circle cx="12" cy="12" r="1.3"/></svg>
+        <b>Infer the reward</b><span>Track the object in each clip. Where it goes, and how, becomes the reward.</span></li>
+      <li><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 18 9 12l4 3 7-9"/><path d="M15 6h5v5"/></svg>
+        <b>Train an RL teacher</b><span>16,384 simulated robots learn every skill and how to chain them.</span></li>
+      <li><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M2.5 12s3.5-6.5 9.5-6.5S21.5 12 21.5 12s-3.5 6.5-9.5 6.5S2.5 12 2.5 12z"/><circle cx="12" cy="12" r="2.8"/></svg>
+        <b>Distill into a VLA</b><span>A vision-language model copies the teacher from camera images and words.</span></li>
+      <li class="win"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 12.5 9.5 18 20 6.5"/></svg>
+        <b>Compose new tasks</b><span>One sentence, up to six commands, never demonstrated.</span></li>
+    </ol>
+  </section>
+
+  <section>
+    <h2 class="paper-h">Results</h2>
+    <p class="paper-text">Each task is tried on <b>100 table layouts</b> the model never trained on. A run counts as a success when the final arrangement the sentence asks for is reached and holds for half a second. The model was trained on episodes of <b>at most two commands</b>; everything marked <span class="new" style="display:inline-block;padding:0 .3rem;border-radius:3px;background:var(--accent-hi);color:#211d19;font:700 .7rem 'Space Grotesk',sans-serif">NEVER SHOWN</span> is longer than anything it saw.</p>
+
+    <div class="big">
+      <div><b>60%</b><span>of 4-step <i>stack, then unstack to the target</i> runs finished; never shown</span></div>
+      <div><b>40%</b><span>of 3-step <i>push the can to the target, then stack the cube on it</i>; never shown</span></div>
+      <div><b>0 → 60%</b><span>on the 4-step task when the model's own "(done)" marks are switched on</span></div>
+    </div>
+
+    <figure class="bars" role="group" aria-label="Success rate per task, out of 100 layouts: the VLA student and the RL teacher">
+      <div class="legend"><span><i style="background:var(--accent-warm)"></i>VLA student: camera images + the sentence</span><span><i style="background:var(--accent-bold);opacity:.55"></i>RL teacher: sees the exact object positions</span></div>
+      <div class="row"><div class="name">Push to the target<small>1 command</small></div><div class="track"><div class="bar s" style="width:44%" title="Student: 44 of 100"><em>44</em></div><div class="bar t" style="width:95%" title="Teacher: 95 of 100"><em>95</em></div></div></div>
+      <div class="row"><div class="name">Pick up the cube<small>1 command</small></div><div class="track"><div class="bar s" style="width:51%" title="Student: 51 of 100"><em>51</em></div><div class="bar t" style="width:100%" title="Teacher: 100 of 100"><em>100</em></div></div></div>
+      <div class="row"><div class="name">Cube to the target<small>2 commands</small></div><div class="track"><div class="bar s" style="width:63%" title="Student: 63 of 100"><em>63</em></div><div class="bar t" style="width:100%" title="Teacher: 100 of 100"><em>100</em></div></div></div>
+      <div class="row"><div class="name">Cube on the can<small>2 commands</small></div><div class="track"><div class="bar s" style="width:42%" title="Student: 42 of 100"><em>42</em></div><div class="bar t" style="width:96%" title="Teacher: 96 of 100"><em>96</em></div></div></div>
+      <div class="row"><div class="name">Push, then stack<span class="new">NEVER SHOWN</span><small>3 commands</small></div><div class="track"><div class="bar s" style="width:40%" title="Student: 40 of 100"><em>40</em></div><div class="bar t" style="width:76%" title="Teacher: 76 of 100"><em>76</em></div></div></div>
+      <div class="row"><div class="name">Stack, then unstack<span class="new">NEVER SHOWN</span><small>4 commands</small></div><div class="track"><div class="bar s" style="width:60%" title="Student: 60 of 100"><em>60</em></div><div class="bar t" style="width:99%" title="Teacher: 99 of 100"><em>99</em></div></div></div>
+      <div class="row"><div class="name">Stack, unstack, restack<span class="new">NEVER SHOWN</span><small>6 commands</small></div><div class="track"><div class="bar s" style="width:31%" title="Student: 31 of 100"><em>31</em></div><div class="bar t" style="width:83%" title="Teacher: 83 of 100"><em>83</em></div></div></div>
+      <figcaption style="margin-top:.7rem;color:var(--muted);font-size:.8rem;line-height:1.45">Success out of 100 unseen layouts. The teacher is the ceiling: it sees the true object positions and is told which command it is on. The student only has two cameras and the sentence, and has to keep track of its own progress.</figcaption>
+    </figure>
+
+    <div class="vgrid" style="margin-top:1.6rem">
+      <figure><div class="video-slot sim"><video src="videos/unstack_4of4.mp4" poster="videos/unstack_4of4.jpg" data-autoplay autoplay muted loop controls playsinline preload="auto"></video></div><figcaption><b>Stack, then unstack to the target</b> (4 commands, never shown, 2×)</figcaption></figure>
+      <figure><div class="video-slot sim"><video src="videos/c3.mp4" poster="videos/c3.jpg" data-autoplay autoplay muted loop controls playsinline preload="auto"></video></div><figcaption><b>Push the can to the target, then stack the cube on it</b> (3 commands, never shown, 2×)</figcaption></figure>
+      <figure><div class="video-slot sim"><video src="videos/c1.mp4" poster="videos/c1.jpg" data-autoplay autoplay muted loop controls playsinline preload="auto"></video></div><figcaption><b>Pick up the cube, put it on the target</b> (2 commands, 2×)</figcaption></figure>
+      <figure><div class="video-slot sim"><video src="videos/c2.mp4" poster="videos/c2.jpg" data-autoplay autoplay muted loop controls playsinline preload="auto"></video></div><figcaption><b>Pick up the cube, put it on the can</b> (2 commands, 2×)</figcaption></figure>
+    </div>
+  </section>
+
+  <section>
+    <h2 class="paper-h">1 · Film atomic skills</h2>
+    <p class="paper-text">The only demonstrations in this project are short phone clips of me doing one skill at a time on a real cube and a crisps can. <b>43 clips</b> were usable: 12 pushes, 10 pick-ups and 21 put-downs (on the target, on the table, or on the other object). None of them shows two skills in a row, and none shows any of the tasks in the results.</p>
+    <div class="clips">
+      <figure><div class="video-slot"><video src="videos/clip_push.mp4" poster="videos/clip_push.jpg" data-autoplay autoplay muted loop controls playsinline preload="auto"></video></div><figcaption>Push</figcaption></figure>
+      <figure><div class="video-slot"><video src="videos/clip_lift.mp4" poster="videos/clip_lift.jpg" data-autoplay autoplay muted loop controls playsinline preload="auto"></video></div><figcaption>Pick up</figcaption></figure>
+      <figure><div class="video-slot"><video src="videos/clip_drop.mp4" poster="videos/clip_drop.jpg" data-autoplay autoplay muted loop controls playsinline preload="auto"></video></div><figcaption>Put down</figcaption></figure>
+      <figure><div class="video-slot"><video src="videos/clip_stack.mp4" poster="videos/clip_stack.jpg" data-autoplay autoplay muted loop controls playsinline preload="auto"></video></div><figcaption>Put on the other object</figcaption></figure>
+    </div>
+    <div class="note why"><b>Design decision: track the object, not the hand.</b> My hand and a two-finger gripper grasp things in completely different ways, so copying the hand would teach the robot the wrong motion. What carries over is what happens to the <i>object</i>: where it starts, where it ends up and how it gets there. Each object and the target carry an ArUco marker, which gives the object's position and orientation on the table in every frame. A calibration marker fixes the table plane and the scale.</div>
+  </section>
+
+  <section>
+    <h2 class="paper-h">2 · Infer the reward from the clips</h2>
+    <figure class="paper-fig">
+      <div class="video-slot wide"><video src="videos/clip_to_template.mp4" poster="videos/clip_to_template.jpg" data-autoplay autoplay muted loop controls playsinline preload="auto"></video></div>
+      <figcaption><b>From a phone clip to a reward.</b> The tracked markers give the object's path on the table. All clips of one skill together become a template the simulated object has to follow.</figcaption>
+    </figure>
+    <p class="paper-text">The reward looks only at the <b>object</b>, never at the robot's hand or gripper. Eight points on the object have to travel along the skill's template, from where the object starts to where the command wants it. Progress along the template is rewarded, and a command counts as finished when the object reaches its goal and stays there. Everything about the skill comes from the clips:</p>
+    <ul class="paper-list">
+      <li><b>Where the object goes:</b> lift height (20 cm), drop height and push direction, averaged over the clips of each skill.</li>
+      <li><b>How precisely:</b> the template's tolerance is 3 cm, which is how much my own clips wander around the average path.</li>
+      <li><b>When it is finished:</b> how still the object has to be, and for how many steps, measured per skill from how the objects come to rest at the end of my clips.</li>
+    </ul>
+    <p class="paper-text">A clip has no reward scale, so a few numbers are set by hand and labelled as such: a small cost per step, a bonus for each finished command and a 2 cm "close enough" radius at the goal.</p>
+    <div class="note problem"><b>Problem: every reward that mentioned the gripper got gamed.</b> My first rewards paid for grasping and carrying. The policy learned to sit exactly on the release threshold: it opened and closed the fingers on alternate steps to collect both the "holding" and the "released" reward, and never finished (0 of 100). Once "the object is near the goal" paid whether it was held or not, it simply <i>pushed</i> the cube onto the target instead of lifting it. These failures are why the final reward follows the object's path only. A push can't fake a 20 cm lift along a path.</div>
+    <div class="note problem"><b>Problem: the object went up and never settled.</b> With the path reward alone, the policy carried the cube along the whole lift path and then kept it moving in the air, so "pick up" never counted as done. Two fixes: a small reward for holding the object still at the goal, and a "finished" check that needs the object at rest for a few steps.</div>
+    <div class="note problem"><b>Problem: an object-only reward gives the arm nothing to go on at the start.</b> Until the gripper touches the object by chance, nothing in the reward changes. A run that always started from the robot's home pose learned <b>nothing in 504 iterations</b>. The fix was to start a share of training episodes from the middle of a skill, with the hand already at the object, so the reward signal shows up early.</div>
+  </section>
+
+  <section>
+    <h2 class="paper-h">3 · Train an RL teacher</h2>
+    <p class="paper-text">A Franka Panda in Isaac Lab learns with PPO across <b>16,384 parallel scenes</b> for 400 iterations. The teacher is privileged: it sees the exact position of both objects and the template's next point, and it is told which command it is on. Each training episode has <b>one or two commands</b>. That is enough to learn every skill and the hand-over from one skill to the next. When the reward's "finished" check holds, the episode moves on to the next command.</p>
+    <p class="paper-text">Because it is told which command it is on, the teacher chains as many as you give it: on random chains of <b>20 commands</b> it still finishes 90 of 100. Long tasks are not hard in themselves. The hard part is doing them without being told where you are, and that is the student's job.</p>
+    <div class="note problem"><b>Problem: a perfect teacher that nobody could copy.</b> The first teachers were excellent and useless. PPO learned "bang-bang" control: 30–55% of its actions sat at the limits, flipping sign from one step to the next. A VLA trained on those actions fit them <b>no better than predicting the average action</b> and scored 0 on almost every task. A penalty on changing actions barely smoothed them.</div>
+    <div class="note why"><b>Design decision: put a low-pass filter on the teacher's arm.</b> The arm executes a running average of the teacher's commands (95% previous, 5% new), and the student learns the <i>executed</i> motion. The teacher learns to drive a smooth arm, and the student gets smooth labels. Smoother teachers made better students every time: going from a 0.7 to a 0.85 filter took pick-up from 51 to 63, and the 2-step tasks reached 44–49. The final teacher uses 0.95.</div>
+  </section>
+
+  <section>
+    <h2 class="paper-h">4 · Distill into a vision-language-action model</h2>
+    <p class="paper-text">The teacher is recorded with cameras on, and <b>SmolVLA</b> (450M parameters) is trained to copy it from a front camera, a wrist camera and the sentence. It has no object positions and no command counter.</p>
+    <div class="note why"><b>Design decision: record every scene twice.</b> Each layout is recorded once with "the cube" named and once with "the cylinder". The images are identical, so the only way to know which object to move is to read the sentence. Without this, the model mostly went for whichever object was easier. With it, picking up the named object went from 45 to 80 in an earlier two-cube version.</div>
+  </section>
+
+  <section>
+    <h2 class="paper-h">How the model keeps its place: "(done)" marks</h2>
+    <p class="paper-text">This is the core of the project. The model gets the <b>whole sentence at once</b>, with no planner to split it and nothing from the simulator saying which command is current. So it has to keep track itself, from images alone.</p>
+    <p class="sentence" aria-label="Example of the sentence the model reads, halfway through a task">
+      <span class="cmd done">pick up the cube</span><span class="mark">(done)</span>, then
+      <span class="cmd done">put the cube on the cylinder</span><span class="mark">(done)</span>, then
+      <span class="cmd now">pick up the cube</span>, then
+      <span class="cmd">put the cube on the target</span>
+    </p>
+    <ol class="paper-list">
+      <li><b>The label.</b> The model has one extra output next to its arm actions: "this command is done". In training it is 1 for the last half-second of each command, the moment the teacher's own "finished" check switched it to the next one, and 0 otherwise.</li>
+      <li><b>The mark.</b> When the model runs, once that output stays above 0.85 for five steps in a row, "(done)" is written after the current command in the sentence.</li>
+      <li><b>The memory.</b> Next step, the model reads the sentence with the mark in it. The marks are its whole memory of what it has done, and it is the one writing them.</li>
+    </ol>
+    <div class="note why"><b>Design decision: marks in the text, not a number.</b> I also tried giving the same model a counter ("2 of 6 done") as an input number. With the same data and training, the marks won almost everywhere: the 6-step task 31 vs 20, push 44 vs 34. And the marks model's done signal was right far more often (59–72% vs 28–31%). A language model is good at reading which words are crossed off and bad at using a lone number.</div>
+    <div class="note why"><b>Design decision: train on two commands, pad the sentence to twenty.</b> Episodes only ever have one or two real commands, but the sentence is padded with up to 18 extra commands, some already marked done. That way the model has seen the current command at every position in a long sentence, which a 6-command task needs. It has a cost: with the same training budget, the short tasks dropped (cube on the can 75 → 42).</div>
+    <p class="paper-text"><b>Do the marks really matter?</b> I tested the same trained model three ways:</p>
+    <ul class="paper-list">
+      <li><b>Marks switched off</b> (the sentence never changes): the 4-step task finishes <b>0 times in 50</b>.</li>
+      <li><b>Its own marks:</b> <b>60 in 100</b>.</li>
+      <li><b>The first two commands marked done in advance:</b> it believes the marks, skips straight to command three and finishes <b>42 times in 50</b>.</li>
+    </ul>
+    <p class="paper-text">For reference, a model trained on the same data but handed <b>one command at a time</b> by an outside pointer finishes the 4-step task 90 times in 100. The gap to 60 is the price of making the model keep its own place.</p>
+  </section>
+
+  <section>
+    <h2 class="paper-h">Poking at it</h2>
+    <p class="paper-text">A few tests on the same model, without any retraining (50 layouts each):</p>
+    <ul class="paper-list">
+      <li><b>Knock the finished cube away.</b> The sentence still says "done", but the cube is fetched back about half the time (16 of 30). That's true even when its marks are erased (14 of 29). Training never showed a knock. The model reacts to "the cube is not on the target" in the image, not to the text.</li>
+      <li><b>Move the cube while the arm reaches for it:</b> 12 of 50. Re-targeting a moving object is a weak spot.</li>
+      <li><b>Take the cube out of the gripper</b> after "pick up" was marked: picked up again in 10 of 36.</li>
+    </ul>
+  </section>
+
+  <section>
+    <h2 class="paper-h">What still goes wrong</h2>
+    <div class="vgrid">
+      <figure><div class="video-slot sim"><video src="videos/restack_fail.mp4" poster="videos/restack_fail.jpg" data-autoplay autoplay muted loop controls playsinline preload="auto"></video></div><figcaption><b>A failed 6-step run (3×).</b> Three of the six commands get done in order, then it falls apart.</figcaption></figure>
+      <div>
+        <ul class="paper-list">
+          <li><b>The done signal fires early.</b> One premature mark puts every later step on the wrong command, so success drops with length. A stricter threshold helps some tasks and hurts others. Asking the model to double-check its last mark found the wrong marks, but didn't fix the steps.</li>
+          <li><b>Each single skill succeeds 44–63% of the time</b> on its own, against 95–100% for the teacher. Over six steps in a row, that compounds.</li>
+          <li><b>Stacking the can on the cube</b> is one of the weakest steps (41%), and it is the last one in the 6-step task.</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <h2 class="paper-h">Roads not taken</h2>
+    <ul class="paper-list">
+      <li><b>Fine-tune the VLA on the clips directly.</b> Replaying single-skill demonstrations in simulation and training SmolVLA on them gave push 16, pick-up 0 and every combined task 0. It never composes by itself.</li>
+      <li><b>Clean scripted demonstrations.</b> A VLA trained on perfect scripted demos fit them well but scored 6 of 100: it never saw itself recover from a small mistake. RL teachers explore, so their data contains recoveries.</li>
+      <li><b>A vocabulary of motions.</b> Turning each skill into a learned motion primitive and running RL on top of those primitives made the agent push even more often instead of lifting.</li>
+    </ul>
+  </section>
+
+  <footer class="site-footer paper-foot">© 2026 Ayush Deshmukh · <a href="../index.html">All side quests</a></footer>
+</main>
+
+<script src="../../assets/js/main.js"></script>
+</body>
+</html>
