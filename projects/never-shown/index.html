@@ -84,6 +84,15 @@
   .qa h3{margin:1.4rem 0 .4rem;font:700 1.25rem/1.25 "Caveat",cursive;font-size:1.45rem;color:var(--accent-warm)}
   .qa h3:first-child{margin-top:.4rem}
   .qa p{margin:0;font-size:1rem;line-height:1.65}
+  .journey{list-style:none;counter-reset:j;margin:1rem 0 1.6rem;padding:0 0 0 1.6rem;border-left:3px solid var(--fg)}
+  .journey li{counter-increment:j;position:relative;margin:0 0 1rem;padding:.75rem .9rem;background:var(--card);border:2px solid var(--fg);border-radius:4px}
+  .journey li::before{content:counter(j);position:absolute;left:-2.55rem;top:.7rem;width:1.7rem;height:1.7rem;border-radius:50%;border:2px solid var(--fg);
+    background:var(--bg);font:800 .85rem/1.55rem "Space Grotesk",sans-serif;text-align:center}
+  .journey li.bad::before{background:var(--accent-warm);color:#fff}.journey li.mid::before{background:var(--accent-hi);color:#211d19}.journey li.good::before{background:var(--accent-bold);color:#fff}
+  .journey b{font:700 .95rem/1.3 "Space Grotesk",sans-serif}
+  .journey p{margin:.25rem 0 .45rem;font-size:.88rem;line-height:1.5}
+  .journey span{display:inline-block;font:700 .74rem/1.35 "JetBrains Mono",monospace;color:var(--accent-warm);margin-bottom:.3rem}
+  .journey em{display:block;font-size:.86rem;line-height:1.45;color:var(--muted)}
 </style>
 </head>
 <body>
@@ -219,8 +228,17 @@
   </section>
 
   <section>
-    <h2 class="paper-h">How the model keeps its place: "(done)" marks</h2>
-    <p class="paper-text">This is the core of the project. The model gets the <b>whole sentence at once</b>, with no planner to split it and nothing from the simulator saying which command is current. So it has to keep track itself, from images alone.</p>
+    <h2 class="paper-h">The memory problem: how a long task actually gets done</h2>
+    <p class="paper-text">A long task needs three things: each <b>skill</b>, the <b>handoff</b> from one skill to the next, and knowing <b>where you are</b> in the list. The teacher covers the first two, and the student copies them. The third is what makes long tasks hard, and the teacher never had to solve it: the simulator simply tells it which command is current. The student only gets two cameras and the sentence.</p>
+    <p class="paper-text">The images don't tell you where you are. Take the 6-step task: <i>pick up the cube, put it on the cylinder, pick it up again, put it on the target, pick up the cylinder, put it on the cube.</i> The arm reaches for the cube in step 1 and again in step 3, from scenes that look almost the same, and the same arrangement shows up more than once along the way. From one picture, "which command am I on?" often has no answer. The model needs <b>memory</b>. Here is what I tried, in order:</p>
+    <ol class="journey">
+      <li class="bad"><b>Nothing: just the whole sentence.</b><p>The model reads the full instruction every step and has to infer progress from the image.</p><span>4-step task: 14 of 100, and in the right order just once (earlier two-cube version)</span><em>Without any memory it loses its place: the picture alone doesn't say which step it is on.</em></li>
+      <li class="bad"><b>Show it the past.</b><p>An extra camera frame from a few seconds earlier, then past actions and hand motion as inputs.</p><span>it didn't help</span><em>A frame from the past doesn't say which command that was either.</em></li>
+      <li class="mid"><b>An outside pointer, one command at a time.</b><p>The model gets only the current command, plus a "done" output. When it says done, an outside script moves to the next command.</p><span>4-step task: 90 of 100</span><em>It works, but the memory lives in a script, not in the model. I wanted the model to read the full instruction and keep its own place.</em></li>
+      <li class="mid"><b>A counter in the input.</b><p>Back to the whole sentence, plus "k commands done" as a number the model reads. Its own done output raises k.</p><span>4-step: 75 of 100 · 6-step: 5</span><em>Memory works! But the 6th position never came up in training, so the 6-step task broke.</em></li>
+      <li class="good"><b>"(done)" marks in the sentence itself.</b><p>Same done output, but instead of a number, it writes "(done)" after the finished command, in the words the model already reads. Sentences are padded so every position comes up in training.</p><span>6-step: 31 (counter: 20) · push 44 (counter: 34)</span><em>A language model is much better at seeing which words are crossed off than at using a lone number. Its done signal was also right far more often: 59–72% of the time, against 28–31% for the counter.</em></li>
+    </ol>
+    <p class="paper-text">So the "(done)" marks aren't decoration. They are the model's memory, and the model writes them itself. Halfway through the 4-step task, the sentence it reads looks like this:</p>
     <p class="sentence" aria-label="Example of the sentence the model reads, halfway through a task">
       <span class="cmd done">pick up the cube</span><span class="mark">(done)</span>, then
       <span class="cmd done">put the cube on the cylinder</span><span class="mark">(done)</span>, then
@@ -228,13 +246,12 @@
       <span class="cmd">put the cube on the target</span>
     </p>
     <ol class="paper-list">
-      <li><b>The label.</b> The model has one extra output next to its arm actions: "this command is done". In training it is 1 for the last half-second of each command, the moment the teacher's own "finished" check switched it to the next one, and 0 otherwise.</li>
-      <li><b>The mark.</b> When the model runs, once that output stays above 0.85 for five steps in a row, "(done)" is written after the current command in the sentence.</li>
-      <li><b>The memory.</b> Next step, the model reads the sentence with the mark in it. The marks are its whole memory of what it has done, and it is the one writing them.</li>
+      <li><b>Where the label comes from.</b> The teacher's handoffs. In training, the model's extra "this command is done" output is 1 for the last half-second before the teacher switched to its next command, and 0 otherwise. So the model learns to recognise the moment a handoff should happen.</li>
+      <li><b>How a mark is written.</b> When that output stays above 0.85 for five steps in a row, "(done)" goes after the current command.</li>
+      <li><b>How it is used.</b> Next step, the model reads the sentence with the mark in it, and the first unmarked command is the one to do.</li>
     </ol>
-    <div class="note why"><b>Design decision: marks in the text, not a number.</b> I also tried giving the same model a counter ("2 of 6 done") as an input number. With the same data and training, the marks won almost everywhere: the 6-step task 31 vs 20, push 44 vs 34. And the marks model's done signal was right far more often (59–72% vs 28–31%). A language model is good at reading which words are crossed off and bad at using a lone number.</div>
-    <div class="note why"><b>Design decision: train on two commands, pad the sentence to twenty.</b> Episodes only ever have one or two real commands, but the sentence is padded with up to 18 extra commands, some already marked done. That way the model has seen the current command at every position in a long sentence, which a 6-command task needs. It has a cost: with the same training budget, the short tasks dropped (cube on the can 75 → 42).</div>
-    <p class="paper-text"><b>Do the marks really matter?</b> I tested the same trained model three ways:</p>
+    <div class="note why"><b>Design decision: train on two commands, pad the sentence to twenty.</b> Episodes only ever have one or two real commands, but the sentence is padded with up to 18 extra commands, some already marked done. That way the model has seen the current command at every position in a long sentence, which is what broke the counter. It has a cost: with the same training budget, the short tasks dropped (cube on the can 75 → 42).</div>
+    <p class="paper-text"><b>Does the model really use its marks?</b> The same trained model, three ways:</p>
     <ul class="paper-list">
       <li><b>Marks switched off</b> (the sentence never changes): the 4-step task finishes <b>0 times in 50</b>.</li>
       <li><b>Its own marks:</b> <b>60 in 100</b>.</li>
@@ -244,7 +261,7 @@
       <figure><div class="video-slot" style="aspect-ratio:512/352"><video src="videos/nomarks_stuck.mp4" poster="videos/nomarks_stuck.jpg" data-autoplay autoplay muted loop controls playsinline preload="auto" style="object-fit:contain"></video></div><figcaption><b>Marks switched off (3×).</b> The sentence never changes, so the model keeps acting on command one. It never gets past it.</figcaption></figure>
       <figure><div class="video-slot" style="aspect-ratio:512/352"><video src="videos/restack_6of6.mp4" poster="videos/restack_6of6.jpg" data-autoplay autoplay muted loop controls playsinline preload="auto" style="object-fit:contain"></video></div><figcaption><b>Its own marks (3×).</b> Each "(done)" moves it on to the next command, all six in order.</figcaption></figure>
     </div>
-    <p class="paper-text">For reference, a model trained on the same data but handed <b>one command at a time</b> by an outside pointer finishes the 4-step task 90 times in 100. The gap to 60 is the price of making the model keep its own place.</p>
+    <div class="note problem"><b>What's still open: marks written too early.</b> The weak point is the done signal itself. If it fires before a step is really finished, every later step is on the wrong command. Three fixes didn't solve it. A stricter threshold (0.9 for 8 steps) helped the 4-step task but hurt the tasks with the cylinder. Voting over three samples was no better. Asking the model to double-check its last mark did find the wrong ones (93–100% of the marks it removed really weren't done), but the model didn't actually redo the step, and long chains got worse. The outside pointer's 90 against the model's own 60 is the price of the model keeping its own place.</div>
   </section>
 
   <section>
@@ -296,9 +313,6 @@
       <div class="fail"><b>Penalising action changes</b><p>A cost on changing actions kept the skills but barely smoothed the teacher.</p><span>still too jittery to imitate</span></div>
       <div class="fail"><b>Smoothing the labels afterwards</b><p>Averaging the teacher's actions over half a second lowered the loss but didn't fix the fit.</p><span>loss 0.93 → 0.77, still near the average</span></div>
       <div class="fail"><b>A camera history and a trained vision encoder</b><p>More inputs (an older frame, past actions, a closer camera, unfreezing vision) did not help the student.</p><span>worse than the plain student</span></div>
-      <div class="fail"><b>A counter instead of marks</b><p>"k of n done" as an input number. The language model used crossed-off words far better.</p><span>6-step task 20 vs 31 with marks</span></div>
-      <div class="fail"><b>A stricter done threshold</b><p>Waiting for a surer done signal helped some chains and hurt others.</p><span>no setting won everywhere</span></div>
-      <div class="fail"><b>Asking the model to double-check</b><p>With its last mark removed, it found the wrong marks, but redoing the step didn't follow.</p><span>long chains got worse, not better</span></div>
     </div>
   </section>
 
