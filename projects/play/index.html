@@ -38,6 +38,7 @@
 
   <div class="tabs" role="tablist">
     <button role="tab" id="t-sabotage" aria-selected="true" data-game="sabotage">Sabotage the robot</button>
+    <button role="tab" id="t-tictactoe" aria-selected="false" data-game="tictactoe">Tic-tac-toe</button>
     <button role="tab" id="t-playground" aria-selected="false" data-game="playground">Build a sentence</button>
   </div>
   <p class="paper-text" id="blurb"></p>
@@ -51,6 +52,7 @@
 <script>
 const BLURB = {
   sabotage: "You get one sabotage per round: move the object, knock it away, or write a fake \"(done)\". You win the round if the task isn't really done when the robot stops. Best of five. The 4- and 6-step tasks are the ones it never saw in training.",
+  tictactoe: "You play O. On its turn the game picks the robot's square and moves the green pad there; the robot only hears \"pick up the cube, then put the cube on the target\" and has to really place it. A fumbled cube is a lost turn.",
   playground: "Chain buttons into a sentence of up to ten commands (pick up, put down, push) and watch the robot work through it, with its own marks next to what the simulator says really happened."
 };
 let servers = null, current = "sabotage";
@@ -87,13 +89,13 @@ async function show(game) {
   if (current !== game) return;
   box.innerHTML = "";
   const f = document.createElement("iframe");
-  f.src = url + (game === "playground" ? "/?modes=build" : "/"); f.title = game === "sabotage" ? "Sabotage the robot" : "Build a sentence for the robot";
+  f.src = url + (game === "playground" ? "/?modes=build" : "/"); f.title = {sabotage: "Sabotage the robot", tictactoe: "Tic-tac-toe against the robot", playground: "Build a sentence for the robot"}[game];
   f.allow = "fullscreen"; box.appendChild(f);
 }
 
 document.querySelectorAll(".tabs button").forEach(b => b.onclick = () => show(b.dataset.game));
 const want = new URLSearchParams(location.search).get("game");
-show(want === "playground" ? "playground" : "sabotage");
+show(["playground", "tictactoe"].includes(want) ? want : "sabotage");
 </script>
 <script src="../../assets/js/main.js"></script>
 </body>
