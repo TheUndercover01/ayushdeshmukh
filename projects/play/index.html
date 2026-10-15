@@ -33,7 +33,7 @@
 <main class="paper">
   <header class="paper-head">
     <h1 class="paper-title">Play With the Robot</h1>
-    <p class="paper-sub">The robot from <a href="../never-shown/">I Never Showed It the Task</a>, live. It reads one sentence, works through it with two cameras, and writes its own "(done)" marks.</p>
+    <p class="paper-sub">The robot from <a href="../never-shown/">I Never Showed It the Task</a>, live.</p>
   </header>
 
   <div class="tabs" role="tablist">
@@ -44,16 +44,16 @@
   <p class="paper-text" id="blurb"></p>
 
   <div class="game" id="game"><div class="offline">Connecting to the robot…</div></div>
-  <p class="hint">The simulation runs on my own GPU, so the robot is only online when I've switched it on. One player at a time per scene; if it's busy you'll be put in a queue.</p>
+  <p class="hint">Runs on my own GPU, so it's only online sometimes. One player at a time.</p>
 
   <footer class="site-footer paper-foot">© 2026 Ayush Deshmukh · <a href="../index.html">All side quests</a></footer>
 </main>
 
 <script>
 const BLURB = {
-  sabotage: "You get one sabotage per round: move the object, knock it away, or write a fake \"(done)\". You win the round if the task isn't really done when the robot stops. Best of five. The 4- and 6-step tasks are the ones it never saw in training.",
-  tictactoe: "You play O. On its turn the game picks the robot's square and moves the green pad there; the robot only hears \"pick up the cube, then put the cube on the target\" and has to really place it. A fumbled cube is a lost turn.",
-  playground: "Chain buttons into a sentence of up to ten commands (pick up, put down, push) and watch the robot work through it, with its own marks next to what the simulator says really happened."
+  sabotage: "One sabotage per round. You win if the task isn't really done when the robot stops. Best of five.",
+  tictactoe: "You play O. The robot has to physically place its X; a fumble loses the turn.",
+  playground: "Build a sentence of up to ten commands and watch the robot work through it."
 };
 let servers = null, current = "sabotage";
 
@@ -82,8 +82,8 @@ async function show(game) {
   const url = servers && servers[game];
   if (!url || !(await alive(url))) {
     if (current !== game) return;
-    box.innerHTML = '<div class="offline"><b>The robot is offline right now.</b><br>It runs on my own GPU and isn\'t switched on at the moment. ' +
-      'The videos of what it can do are on the <a href="../never-shown/">project page</a>.</div>';
+    box.innerHTML = '<div class="offline"><b>The robot is offline right now.</b><br>' +
+      'Videos are on the <a href="../never-shown/">project page</a>.</div>';
     return;
   }
   if (current !== game) return;
