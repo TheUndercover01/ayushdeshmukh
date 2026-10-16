@@ -278,8 +278,11 @@
       <figure><div class="video-slot sim"><video src="videos/restack_fail_early.mp4" poster="videos/restack_fail_early.jpg" data-autoplay autoplay muted loop controls playsinline preload="auto"></video></div><figcaption><b>Marked done too early</b>, so a step is skipped (3×).</figcaption></figure>
     </div>
     <ul class="paper-list">
-      <li><b>The done signal fires too early.</b> It fires when an object is lifted and held still, whatever the command, and one early mark puts every later step on the wrong command. Stricter thresholds, voting, a self-check and an "(in progress)" tag didn't fix it.</li>
-      <li><b>The cylinder and pushing are the weak skills</b> (59 each, against 94–97 for the cube), and over six steps the misses add up.</li>
+      <li><b>8 commands: 0 of 100 in order.</b> The done signal fires whenever an object is lifted and held still, whatever the command, so the marks run ahead and it stops after four. The teacher does it 100 of 100.</li>
+      <li><b>The cylinder is the weak skill:</b> pick up 59, to the target 77, onto the cube 81, against 94–97 for the cube. It tips easily, and sentences that start with it mostly fail. Push is 59 too.</li>
+      <li><b>No undo.</b> A wrong "(done)" is never taken back, so the skipped step is never redone.</li>
+      <li><b>Put-downs are a little loose.</b> With a 1.5 cm, 0.5 s check the six-command score is 12, not 40.</li>
+      <li><b>One scene.</b> One cube, one cylinder, one target, two fixed cameras, in simulation. Anything new on the table hurts until it's in the data: flat tic-tac-toe pieces dropped placement to 38 of 100, back to 97 after one fine-tune.</li>
     </ul>
   </section>
 
@@ -305,11 +308,14 @@
 
   <section>
     <h2 class="paper-h">Next</h2>
-    <ul class="paper-list">
-      <li><b>A separate done judge.</b> The teacher chains commands without trouble; the limit is the student's done signal. A small model that only answers "is this command finished?" could write the marks more reliably.</li>
-      <li><b>Close the gap to the teacher</b> with more data and RL fine-tuning of the VLA itself.</li>
-      <li><b>A real robot.</b> The clips are real; the robot so far isn't.</li>
-    </ul>
+    <ol class="paper-list">
+      <li><b>A done judge.</b> A small separate model, image + sentence → "is this command finished?", trained with frames of the other commands as negatives. The action model's flag reads the image, not the text.</li>
+      <li><b>RL on the student itself,</b> starting from the distilled model, on the long tasks. The teacher shows the skills are learnable; the student is 3–54 points behind it per task.</li>
+      <li><b>Let it undo a mark.</b> A self-check already erases mostly wrong marks (93–100% of them really weren't done); it needs to redo the step too.</li>
+      <li><b>More cylinder data,</b> and a teacher that grasps it lower so it doesn't tip.</li>
+      <li><b>Varied scenes in the recordings</b> (distractors, textures, light), since one fine-tune on new pieces fixed them.</li>
+      <li><b>A real robot.</b> The clips are real; the robot isn't yet.</li>
+    </ol>
   </section>
 
   <footer class="site-footer paper-foot">© 2026 Ayush Deshmukh · <a href="../index.html">All side quests</a></footer>
