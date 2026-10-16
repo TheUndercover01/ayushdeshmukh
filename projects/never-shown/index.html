@@ -54,7 +54,9 @@
     border-top:1px solid color-mix(in oklch, var(--fg) 12%, transparent)}
   .bars .row:first-of-type{border-top:0}
   .bars .name{font:500 .8rem/1.25 "Space Grotesk",sans-serif;color:var(--fg)}
-  .bars .name small{display:block;color:var(--muted);font-weight:400;font-size:.7rem}
+  .bars .name{display:flex;flex-direction:column;align-items:flex-start;gap:.15rem}
+  .bars .name small{display:block;color:var(--muted);font-weight:400;font-size:.7rem;margin:0}
+  .bars .name .new{margin-left:0}
   .bars .new{display:inline-block;margin-left:.3rem;padding:0 .3rem;border-radius:3px;background:var(--accent-hi);color:#211d19;font:700 .62rem/1.35 "Space Grotesk",sans-serif;vertical-align:.08rem}
   .bars .track{display:grid;gap:2px;margin-right:2.2rem}
   .bars .bar{position:relative;height:.62rem;border-radius:0 4px 4px 0;min-width:2px}
@@ -76,7 +78,8 @@
   .note{margin:1.2rem 0;padding:.85rem 1rem .85rem 1.1rem;border:2px solid var(--fg);border-left-width:7px;border-radius:4px;background:var(--card);font-size:.92rem;line-height:1.55}
   .note b:first-child{display:block;font:700 .9rem/1.3 "Space Grotesk",sans-serif;margin-bottom:.25rem}
   .note.why{border-left-color:var(--accent-bold)} .note.problem{border-left-color:var(--accent-warm)}
-  .fails{display:grid;grid-template-columns:repeat(auto-fill,minmax(14rem,1fr));gap:.8rem;margin-top:1.4rem}
+  .fails{display:grid;grid-template-columns:repeat(4,1fr);gap:.8rem;margin-top:1.4rem}
+  @media (max-width:760px){.fails{grid-template-columns:repeat(2,1fr)}}
   .fail{background:var(--card);border:2px solid var(--fg);border-radius:4px;padding:.7rem .8rem;display:flex;flex-direction:column}
   .fail b{font:700 .84rem/1.25 "Space Grotesk",sans-serif}
   .fail p{margin:.3rem 0 .5rem;font-size:.8rem;line-height:1.45;color:var(--fg)}
@@ -221,7 +224,7 @@
   <section>
     <h2 class="paper-h">4 · Distill into a VLA</h2>
     <p class="paper-text">I record the teacher (3000 paired episodes + 1500 pushes, at most two commands each) and train <b>SmolVLA</b> (450M) to copy it from a front camera, a wrist camera and the sentence. No object positions, no command counter.</p>
-    <div class="note why"><b>Every scene is recorded twice</b>, once saying "the cube" and once "the cylinder". The images are the same, so the model has to read the sentence to pick the object. In an earlier version this took picking the right object from 45 to 80.</div>
+    <div class="note why"><b>Every scene is recorded twice.</b> Once saying "the cube" and once "the cylinder". The images are the same, so the model has to read the sentence to pick the object. In an earlier version this took picking the right object from 45 to 80.</div>
   </section>
 
   <section>
@@ -229,9 +232,9 @@
     <p class="paper-text">A long task needs the skills, the handoffs, and knowing <b>where you are</b>. The image doesn't tell you: in the 6-step task the arm reaches for the cube in step 1 and again in step 3, and the scenes look almost the same. What I tried:</p>
     <ol class="journey">
       <li class="bad"><b>Nothing, just the whole sentence.</b><br><span>4 commands: 14 of 100, in order once</span></li>
-      <li class="bad"><b>Show it the past</b> (older frames, past actions).<br><span>no help</span></li>
+      <li class="bad"><b>Show it the past (older frames, past actions).</b><br><span>no help</span></li>
       <li class="mid"><b>An outside pointer, one command at a time.</b><br><span>4 commands: 90 of 100</span><em>Works, but the memory is in a script, not the model.</em></li>
-      <li class="mid"><b>A counter in the input</b> ("k commands done").<br><span>4 commands: 75 · 6 commands: 5</span><em>The 6th position never came up in training.</em></li>
+      <li class="mid"><b>A counter in the input ("k commands done").</b><br><span>4 commands: 75 · 6 commands: 5</span><em>The 6th position never came up in training.</em></li>
       <li class="good"><b>"(done)" marks in the sentence itself.</b><br><span>6 commands: 40 of 100 in order</span><em>A language model reads marked words far better than a number.</em></li>
     </ol>
     <p class="paper-text">The model writes the marks itself. Halfway through the 4-step task it reads:</p>
@@ -286,7 +289,7 @@
       <figure><div class="video-slot" style="aspect-ratio:2/1"><video src="videos/fail_never_release.mp4" poster="videos/fail_never_release.jpg" data-autoplay autoplay muted loop controls playsinline preload="auto" style="object-fit:contain"></video></div><figcaption><b>Reward for carrying:</b> never lets go.</figcaption></figure>
       <figure><div class="video-slot" style="aspect-ratio:2/1"><video src="videos/fail_hold_up.mp4" poster="videos/fail_hold_up.jpg" data-autoplay autoplay muted loop controls playsinline preload="auto" style="object-fit:contain"></video></div><figcaption><b>Motion primitives:</b> holds the cube up forever.</figcaption></figure>
       <figure><div class="video-slot" style="aspect-ratio:2/1"><video src="videos/fail_top_edge.mp4" poster="videos/fail_top_edge.jpg" data-autoplay autoplay muted loop controls playsinline preload="auto" style="object-fit:contain"></video></div><figcaption><b>Loose "arrived" check:</b> grabs the top edge, the cube slips.</figcaption></figure>
-      <figure><div class="video-slot" style="aspect-ratio:1/1"><video src="videos/fail_push_not_lift.mp4" poster="videos/fail_push_not_lift.jpg" data-autoplay autoplay muted loop controls playsinline preload="auto" style="object-fit:contain"></video></div><figcaption><b>Distance-to-goal reward:</b> pushes (top) scored the same as lifting (bottom).</figcaption></figure>
+      <figure><div class="video-slot" style="aspect-ratio:2/1"><video src="videos/fail_push_not_lift.mp4" poster="videos/fail_push_not_lift.jpg" data-autoplay autoplay muted loop controls playsinline preload="auto" style="object-fit:contain"></video></div><figcaption><b>Distance-to-goal reward:</b> pushes instead of lifting.</figcaption></figure>
     </div>
     <div class="fails">
       <div class="fail"><b>Fine-tune the VLA on single skills</b><p>It didn't combine them.</p><span>combined tasks 0</span></div>
