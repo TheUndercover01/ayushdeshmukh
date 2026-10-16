@@ -96,6 +96,32 @@
   .journey p{margin:.25rem 0 .45rem;font-size:.88rem;line-height:1.5}
   .journey span{display:inline-block;font:700 .74rem/1.35 "JetBrains Mono",monospace;color:var(--accent-warm);margin-bottom:.3rem}
   .journey em{display:block;font-size:.86rem;line-height:1.45;color:var(--muted)}
+
+
+
+  /* 16 Oct: README-generated page */
+  .paper-sub i{display:block;margin-top:.35rem}
+  .paper video.v{display:inline-block;vertical-align:top;background:#000;border:3px solid var(--fg);border-radius:4px;box-shadow:4px 4px 0 var(--shadow);margin:.25rem .3%}
+  .paper .center{text-align:center;margin:0 0 .6rem}
+  .paper .center sub{display:block;font-size:.82rem;line-height:1.45;color:var(--muted);max-width:46rem;margin:0 auto}
+  .paper .center sub b{color:var(--fg)}
+  .paper .tbl{overflow-x:auto;margin:0 0 1.4rem}
+  .paper .tbl table{border-collapse:collapse;width:100%;font-size:.86rem;background:var(--card);border:3px solid var(--fg);box-shadow:5px 5px 0 var(--shadow)}
+  .paper .tbl th,.paper .tbl td{padding:.45rem .6rem;border-bottom:1px solid color-mix(in oklch, var(--fg) 15%, transparent);vertical-align:top}
+  .paper .tbl th{font:700 .8rem "Space Grotesk",sans-serif;text-align:left;border-bottom:2px solid var(--fg)}
+  .paper .tbl sub{font-size:.78rem;color:var(--muted)}
+  .paper table.gallery{width:100%;border-collapse:separate;border-spacing:.6rem;margin:0 -.6rem 1rem}
+  .paper table.gallery td{vertical-align:top;font-size:.8rem;line-height:1.4;color:var(--muted)}
+  .paper table.gallery video.v{width:100%;margin:0 0 .3rem}
+  .paper blockquote{margin:0 0 1rem;padding:.6rem .9rem;border-left:5px solid var(--accent-warm);background:var(--card);font:400 .85rem/1.7 "JetBrains Mono",monospace}
+  .paper pre{overflow-x:auto;background:var(--card);border:2px solid var(--fg);border-radius:4px;padding:.7rem .9rem;font-size:.8rem}
+  .paper h3{font:700 1.15rem/1.3 "Space Grotesk",sans-serif;margin:1.6rem 0 .5rem}
+  .paper ul,.paper ol{line-height:1.6}
+  .paper .bigplay{text-align:center;margin:1.4rem 0 2rem}
+  .paper .bigplay a{display:inline-block;text-decoration:none;font:800 1.15rem "Space Grotesk",sans-serif;color:var(--fg);background:var(--card);
+    border:3px solid var(--fg);border-radius:6px;box-shadow:5px 5px 0 var(--shadow);padding:.75rem 1.6rem}
+  .paper .bigplay a:hover{background:var(--accent-hi);color:#211d19}
+  .paper .clips{margin:0 0 .4rem}
 </style>
 </head>
 <body>
@@ -108,226 +134,502 @@
 <main class="paper">
   <header class="paper-head">
     <h1 class="paper-title">I Never Showed It the Task</h1>
-    <p class="paper-sub">If you only ever show a robot single skills, can it do a six-step task on its own?</p>
-    <p class="paper-authors"><b>Ayush Deshmukh</b> · Isaac Lab, PPO, SmolVLA</p>
-    <div class="paper-links">
-      <a href="https://github.com/TheUndercover01/VLA-Humanoid" target="_blank" rel="noopener">Code</a>
-      <a href="../play/">Play with it</a>
-    </div>
+    <p class="paper-sub">Composing multi-step manipulation from single-skill videos<i>Can a robot that only knows single skills do long tasks it was never shown?</i></p>
+    <p class="paper-authors"><b>Ayush Deshmukh</b></p>
   </header>
 
-  <p class="tldr"><b>TL;DR</b> I filmed myself doing <b>single skills</b> on my phone: push, pick up, put down, never two in a row. I turned the clips into a <b>reward</b>, trained an <b>RL teacher</b> with it in simulation and <b>distilled</b> the teacher into a vision-language-action model. Given one sentence with six commands, the model does all six in order in <b>40 of 100</b> runs, and four commands in <b>81 of 100</b>, though no training episode had more than two.</p>
+<div class="center">
+  <video class="v" src="videos/restack_6of6.mp4" poster="videos/restack_6of6.jpg" style="width:70%" data-autoplay autoplay muted loop controls playsinline preload="metadata"></video>
+</div>
+<div class="center"><sub><b>Six commands from one sentence, in order (3×).</b> The example sentence: <i>"Pick up the cube, then put the cube on the cylinder, then pick up the cube, then put the cube on the target, then pick up the cylinder, then put the cylinder on the cube."</i> Left: front camera. Right: wrist camera.</sub></div>
 
-  <figure class="paper-fig">
-    <div class="video-slot sim"><video src="videos/restack_6of6.mp4" poster="videos/restack_6of6.jpg" data-autoplay autoplay muted loop controls playsinline preload="auto"></video></div>
-    <figcaption><b>Six commands from one sentence, in order (3×).</b> The example sentence: <i>"Pick up the cube, then put the cube on the cylinder, then pick up the cube, then put the cube on the target, then pick up the cylinder, then put the cylinder on the cube."</i> Left: front camera. Right: wrist camera.</figcaption>
-  </figure>
+<p class="paper-text"><strong>Abstract.</strong> People rarely learn a task as a whole. We learn a few basic skills, like picking things up and putting them down, and reuse them everywhere: on objects we have never held, on tables we have never seen, and in sequences nobody demonstrated. Someone who can pick up a cup and can put one down doesn't need to be shown how to move a cup to the shelf; that task is just the two skills, one after the other. This project asks whether a small vision-language-action model (VLA) can do the same: learn only single skills, then carry out long multi-step tasks it was never trained on.</p>
+<p class="paper-text">I filmed myself on my phone doing single skills (pushing, picking up, putting down) and never recorded two consecutive skills. From the tracked object paths I built a reward, trained an RL teacher in simulation on episodes of at most two commands, and distilled it into SmolVLA (450M), which sees only two cameras and one sentence listing every command. The hard part is memory: from the camera alone the model can't tell which step it is on, so it has to track its own progress through the sentence. On 100 held-out layouts it completes a 4-step task in order 81 times and a 6-step task 40 times, yet it never trained on a single 4- or 6-step task: every training episode had at most two steps. <strong>The long tasks are composed entirely at inference!</strong></p>
+<p class="paper-text">For example, the robot gets this sentence once, at the start:</p>
+<pre><code>pick up the cube, then put the cube on the cylinder, then pick up the cube,
+then put the cube on the target, then pick up the cylinder, then put the cylinder on the cube
+</code></pre>
+<p class="paper-text">Each part between the commas is a <strong>command</strong>: one skill (pick up, put down, push) applied to one object, plus where it goes when the skill needs a destination, e.g. <em>put the cube on the cylinder</em>. This sentence has six. Nothing splits it up, and the simulator never tells the policy which command it's on.</p>
+<div class="bigplay"><a href="https://theundercover01.github.io/ayushdeshmukh/projects/play/">▶&nbsp; Play with the robot live</a></div>
 
-  <section>
-    <h2 class="paper-h">The idea in five steps</h2>
-    <ol class="flow">
-      <li><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="6" y="2.5" width="12" height="19" rx="2.5"/><circle cx="12" cy="8" r="2.6"/><path d="M10 18.5h4"/></svg>
-        <b>Film atomic skills</b><span>Push, pick up, put down. One skill per clip.</span></li>
-      <li><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="5"/><circle cx="12" cy="12" r="1.3"/></svg>
-        <b>Infer the reward</b><span>The object's tracked path becomes the reward.</span></li>
-      <li><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 18 9 12l4 3 7-9"/><path d="M15 6h5v5"/></svg>
-        <b>Train an RL teacher</b><span>16,384 simulated robots learn each skill and the handoff.</span></li>
-      <li><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M2.5 12s3.5-6.5 9.5-6.5S21.5 12 21.5 12s-3.5 6.5-9.5 6.5S2.5 12 2.5 12z"/><circle cx="12" cy="12" r="2.8"/></svg>
-        <b>Distill into a VLA</b><span>It copies the teacher from cameras and the sentence.</span></li>
-      <li class="win"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 12.5 9.5 18 20 6.5"/></svg>
-        <b>Compose new tasks</b><span>One sentence, six commands, never demonstrated.</span></li>
-    </ol>
-  </section>
+<section>
+<h2 class="paper-h" id="results">Results</h2>
+<p class="paper-text">Success rate (%) over 100 held-out table layouts per task. A run succeeds only if the simulator registers every command of the sentence as completed, in order (see <a href="#3--experimental-setup">Experimental setup</a>).</p>
+<div class="tbl"><table>
+<thead>
+<tr>
+<th style="text-align: left;">Task, and the sentence the robot gets</th>
+<th style="text-align: center;">Steps</th>
+<th style="text-align: right;">Student (2 RGB cameras + sentence)</th>
+<th style="text-align: right;">Teacher (privileged state, told the current step)</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;">Pick up the cube<br><sub><i>"pick up the cube"</i></sub></td>
+<td style="text-align: center;">1</td>
+<td style="text-align: right;">94</td>
+<td style="text-align: right;">100</td>
+</tr>
+<tr>
+<td style="text-align: left;">Pick up the cylinder<br><sub><i>"pick up the cylinder"</i></sub></td>
+<td style="text-align: center;">1</td>
+<td style="text-align: right;">59</td>
+<td style="text-align: right;">100</td>
+</tr>
+<tr>
+<td style="text-align: left;">Push the cube<br><sub><i>"push the cube to the target"</i></sub></td>
+<td style="text-align: center;">1</td>
+<td style="text-align: right;">59</td>
+<td style="text-align: right;">100</td>
+</tr>
+<tr>
+<td style="text-align: left;">Cube to the target<br><sub><i>"pick up the cube, then put the cube on the target"</i></sub></td>
+<td style="text-align: center;">2</td>
+<td style="text-align: right;">97</td>
+<td style="text-align: right;">100</td>
+</tr>
+<tr>
+<td style="text-align: left;">Cylinder to the target<br><sub><i>"pick up the cylinder, then put the cylinder on the target"</i></sub></td>
+<td style="text-align: center;">2</td>
+<td style="text-align: right;">77</td>
+<td style="text-align: right;">100</td>
+</tr>
+<tr>
+<td style="text-align: left;">Cube on the cylinder<br><sub><i>"pick up the cube, then put the cube on the cylinder"</i></sub></td>
+<td style="text-align: center;">2</td>
+<td style="text-align: right;">96</td>
+<td style="text-align: right;">100</td>
+</tr>
+<tr>
+<td style="text-align: left;">Cylinder on the cube<br><sub><i>"pick up the cylinder, then put the cylinder on the cube"</i></sub></td>
+<td style="text-align: center;">2</td>
+<td style="text-align: right;">81</td>
+<td style="text-align: right;">100</td>
+</tr>
+<tr>
+<td style="text-align: left;">Push, then stack<br><sub><i>"push the cylinder to the target, then pick up the cube, then put the cube on the cylinder"</i></sub></td>
+<td style="text-align: center;">3</td>
+<td style="text-align: right;">62</td>
+<td style="text-align: right;">94</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>Stack, then unstack</strong><br><sub><i>"pick up the cube, then put the cube on the cylinder, then pick up the cube, then put the cube on the target"</i></sub></td>
+<td style="text-align: center;"><strong>4</strong></td>
+<td style="text-align: right;"><strong>81</strong></td>
+<td style="text-align: right;">100</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>Restack</strong> (the example sentence)<br><sub><i>"pick up the cube, then put the cube on the cylinder, then pick up the cube, then put the cube on the target, then pick up the cylinder, then put the cylinder on the cube"</i></sub></td>
+<td style="text-align: center;"><strong>6</strong></td>
+<td style="text-align: right;"><strong>40</strong></td>
+<td style="text-align: right;">94</td>
+</tr>
+<tr>
+<td style="text-align: left;">Stack and unstack, twice<br><sub><i>"pick up the cube, then put the cube on the cylinder, then pick up the cube, then put the cube on the target, then pick up the cube, then put the cube on the cylinder, then pick up the cube, then put the cube on the target"</i></sub></td>
+<td style="text-align: center;">8</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">100</td>
+</tr>
+</tbody>
+</table></div>
+<p class="paper-text">Training episodes contain at most 2 commands; every row with 3 or more is out of distribution in length. Final model: <code>ours_cyl_marks_nolift</code>.</p>
+<div class="center">
+  <video class="v" src="videos/unstack_4of4.mp4" poster="videos/unstack_4of4.jpg" style="width:49%" data-autoplay autoplay muted loop controls playsinline preload="metadata"></video>
+  <video class="v" src="videos/restack8_marks_race.mp4" poster="videos/restack8_marks_race.jpg" style="width:49%" data-autoplay autoplay muted loop controls playsinline preload="metadata"></video>
+</div>
+<div class="center"><sub>Left: <b>Stack, then unstack</b> (4 commands, 2×). Right: the 8-step task. Its "(done)" marks run ahead after four steps and it stops.</sub></div>
 
-  <section>
-    <h2 class="paper-h">Results</h2>
-    <p class="paper-text">Each task is run on <b>100 table layouts</b> the model never trained on. A run counts only if the simulator saw <b>every command done, in order</b>. Training episodes had at most two commands, so everything marked <span class="new" style="display:inline-block;padding:0 .3rem;border-radius:3px;background:var(--accent-hi);color:#211d19;font:700 .7rem 'Space Grotesk',sans-serif">NEVER SHOWN</span> is longer than anything the model saw.</p>
+<div class="center">
+  <video class="v" src="videos/c1.mp4" poster="videos/c1.jpg" style="width:49%" data-autoplay autoplay muted loop controls playsinline preload="metadata"></video>
+  <video class="v" src="videos/c2.mp4" poster="videos/c2.jpg" style="width:49%" data-autoplay autoplay muted loop controls playsinline preload="metadata"></video>
+</div>
+<div class="center"><sub>Left: <b>Cube to the target</b> (2 commands, 2×). Right: <b>Cube on the can</b> (2 commands, 2×).</sub></div>
 
-    <div class="big">
-      <div><b>40%</b><span>6 commands, all in order: stack the cube on the cylinder, move it to the target, stack the cylinder on it. Never shown.</span></div>
-      <div><b>81%</b><span>4 commands, all in order: stack the cube on the cylinder, then move it to the target. Never shown.</span></div>
-    </div>
+<p class="paper-text"><strong>Play with it.</strong> The robot runs live on the <a href="https://theundercover01.github.io/ayushdeshmukh/projects/play/">play page</a> when my GPU is on. Three games:</p>
+<ul>
+<li><strong>Sabotage the robot.</strong> It gets a 2-, 4- or 6-step task and you get one sabotage per round: knock the object away or write a fake "(done)". You win if the task isn't really done when it stops. Winning takes understanding how its memory works.</li>
+<li><strong>Tic-tac-toe.</strong> You're O; the robot has to physically place each X. This robot is a fine-tune of an earlier student, first on the nine board squares, then on 2,000 recordings with flat X / O pieces on the board (had to add extra recordings cuz the perception kept messing up the robot actions).</li>
+<li><strong>Build a sentence.</strong> Write up to ten commands and watch it work through them.</li>
+</ul>
 
-    <p class="paper-text"><b>Scoring.</b> Picked up = raised 4 cm. On the target = within 5 cm of its centre. On the other object = within 5 cm and within 3 cm of the right height. Each held for 0.2 s. My first check (1.5 cm, 0.5 s) failed runs where the cube sat on the cylinder a few millimetres off; with it the 6-command score is 12. The teacher is scored the same way.</p>
+</section>
+<section>
+<h2 class="paper-h" id="1--hypotheses">1 · Hypotheses</h2>
+<p class="paper-text">The question: if a robot is only ever shown single skills, can it carry out a multi-step instruction I never demonstrated?</p>
+<ul>
+<li><strong>H1. Single-skill clips are enough to learn the skills.</strong> A reward built only from how the object moves in my phone clips can train an RL policy on every skill and on the handoff from one skill to the next.</li>
+<li><strong>H2. Skills plus handoffs compose.</strong> A VLA distilled from a teacher that only ever ran one or two commands per episode can do longer sentences at inference, because a long task is just more handoffs of kinds it has seen.</li>
+<li><strong>H3. The missing piece is memory, and it can live in the sentence.</strong> From the camera alone a policy can't tell which step it's on. If the model writes its own progress into its input as "(done)" marks, it can track progress without a planner or an outside counter.</li>
+</ul>
 
-    <figure class="bars" role="group" aria-label="Success rate per task, out of 100 layouts: the VLA student and the RL teacher">
-      <div class="legend"><span><i style="background:var(--accent-warm)"></i>VLA student: cameras + sentence</span><span><i style="background:var(--accent-bold);opacity:.55"></i>RL teacher: exact object positions</span></div>
-      <div class="row"><div class="name">Pick up the cube<small>1 command</small></div><div class="track"><div class="bar s" style="width:94%" title="Student: 94 of 100"><em>94</em></div><div class="bar t" style="width:100%" title="Teacher: 100 of 100"><em>100</em></div></div></div>
-      <div class="row"><div class="name">Push the cube to the target<small>1 command</small></div><div class="track"><div class="bar s" style="width:59%" title="Student: 59 of 100"><em>59</em></div><div class="bar t" style="width:100%" title="Teacher: 100 of 100"><em>100</em></div></div></div>
-      <div class="row"><div class="name">Put the cube on the target<small>2 commands</small></div><div class="track"><div class="bar s" style="width:97%" title="Student: 97 of 100"><em>97</em></div><div class="bar t" style="width:100%" title="Teacher: 100 of 100"><em>100</em></div></div></div>
-      <div class="row"><div class="name">Put the cube on the cylinder<small>2 commands</small></div><div class="track"><div class="bar s" style="width:96%" title="Student: 96 of 100"><em>96</em></div><div class="bar t" style="width:100%" title="Teacher: 100 of 100"><em>100</em></div></div></div>
-      <div class="row"><div class="name">Put the cylinder on the cube<small>2 commands</small></div><div class="track"><div class="bar s" style="width:81%" title="Student: 81 of 100"><em>81</em></div><div class="bar t" style="width:100%" title="Teacher: 100 of 100"><em>100</em></div></div></div>
-      <div class="row"><div class="name">Push the cylinder to the target, then stack the cube on it<span class="new">NEVER SHOWN</span><small>3 commands</small></div><div class="track"><div class="bar s" style="width:62%" title="Student: 62 of 100"><em>62</em></div><div class="bar t" style="width:94%" title="Teacher: 94 of 100"><em>94</em></div></div></div>
-      <div class="row"><div class="name">Stack the cube on the cylinder, then move it to the target<span class="new">NEVER SHOWN</span><small>4 commands</small></div><div class="track"><div class="bar s" style="width:81%" title="Student: 81 of 100"><em>81</em></div><div class="bar t" style="width:100%" title="Teacher: 100 of 100"><em>100</em></div></div></div>
-      <div class="row"><div class="name">The same, then stack the cylinder on the cube<span class="new">NEVER SHOWN</span><small>6 commands</small></div><div class="track"><div class="bar s" style="width:40%" title="Student: 40 of 100"><em>40</em></div><div class="bar t" style="width:94%" title="Teacher: 94 of 100"><em>94</em></div></div></div>
-      <figcaption style="margin-top:.7rem;color:var(--muted);font-size:.8rem;line-height:1.45">All commands done in order, out of 100 unseen layouts. The teacher is told which command it's on; the student has to keep track itself.</figcaption>
-    </figure>
+</section>
+<section>
+<h2 class="paper-h" id="2--method">2 · Method</h2>
+<div class="center">
+  <img src="img/pipeline.svg" alt="Film skills, infer the reward, train an RL teacher, distill into a VLA, compose tasks" width="100%">
+</div>
 
-    <div class="vgrid" style="margin-top:1.6rem">
-      <figure style="grid-column:1/-1"><div class="video-slot sim"><video src="videos/unstack_4of4.mp4" poster="videos/unstack_4of4.jpg" data-autoplay autoplay muted loop controls playsinline preload="auto"></video></div><figcaption><b>Stack, then unstack</b> (4 commands, 2×)</figcaption></figure>
-      <figure><div class="video-slot sim"><video src="videos/c1.mp4" poster="videos/c1.jpg" data-autoplay autoplay muted loop controls playsinline preload="auto"></video></div><figcaption><b>Cube to the target</b> (2 commands, 2×)</figcaption></figure>
-      <figure><div class="video-slot sim"><video src="videos/c2.mp4" poster="videos/c2.jpg" data-autoplay autoplay muted loop controls playsinline preload="auto"></video></div><figcaption><b>Cube on the can</b> (2 commands, 2×)</figcaption></figure>
-    </div>
-  </section>
+<h3 id="21-clips">2.1 Clips</h3>
+<div class="center">
+  <div class="clips"><figure><video class="v" src="videos/clip_push.mp4" poster="videos/clip_push.jpg" style="width:100%" data-autoplay autoplay muted loop controls playsinline preload="metadata"></video></figure><figure><video class="v" src="videos/clip_lift.mp4" poster="videos/clip_lift.jpg" style="width:100%" data-autoplay autoplay muted loop controls playsinline preload="metadata"></video></figure><figure><video class="v" src="videos/clip_drop.mp4" poster="videos/clip_drop.jpg" style="width:100%" data-autoplay autoplay muted loop controls playsinline preload="metadata"></video></figure><figure><video class="v" src="videos/clip_stack.mp4" poster="videos/clip_stack.jpg" style="width:100%" data-autoplay autoplay muted loop controls playsinline preload="metadata"></video></figure></div>
+</div>
+<div class="center"><sub>Push · Pick up · Put down · Put on the other object</sub></div>
 
-  <section>
-    <h2 class="paper-h">Why this way?</h2>
-    <div class="qa">
-      <h3>Why not fine-tune a VLA on the clips?</h3>
-      <p>It doesn't learn to combine skills. Trained directly on single-skill demos, SmolVLA learned some pushing (16 of 100), no picking up, and scored <b>0 on every combined task</b>.</p>
-      <h3>Why not copy my hand?</h3>
-      <p>A hand and a two-finger gripper grasp differently, and the clips have no gripper commands. What transfers is what happens to the <i>object</i>. RL works out how the gripper makes that happen.</p>
-      <h3>Why not record robot demos of the long tasks?</h3>
-      <p>Every combination would need its own teleoperated demos. I wanted to film each skill once and get the combinations for free.</p>
-      <h3>Why not hand-write a reward per task?</h3>
-      <p>I tried; the policy gamed every one. A reward on the object's path doesn't care how the object is held, and works for any combination.</p>
-      <h3>Why an RL teacher first?</h3>
-      <p>RL on a 450M image model is very slow. A small teacher with exact positions learns every skill in about an hour on 16,384 parallel scenes; the VLA only has to copy it.</p>
-      <h3>Why the whole sentence, not one command at a time?</h3>
-      <p>Feeding commands one by one works and scores higher (90 vs 76 on 4 commands), but then the memory lives in a script. I wanted the model to keep its own place.</p>
-    </div>
-  </section>
+<p class="paper-text">43 usable phone clips of me with a real cube and a crisps (only original flavour was available at Tesco lol) can: 12 pushes, 10 pick-ups, 21 put-downs, I never record two skills in a row. ArUco markers on each object, the target and a calibration marker give each object's position and orientation on the table in every frame.</p>
+<h3 id="22-how-is-the-reward-inferred-from-the-clips">2.2 How is the reward inferred from the clips?</h3>
+<div class="center">
+  <video class="v" src="videos/clip_to_template.mp4" poster="videos/clip_to_template.jpg" style="width:100%" data-autoplay autoplay muted loop controls playsinline preload="metadata"></video>
+</div>
+<div class="center"><sub>The tracked path (orange) and the template the reward uses (green).</sub></div>
 
-  <section>
-    <h2 class="paper-h">1 · Film atomic skills</h2>
-    <p class="paper-text"><b>43 phone clips</b> of me with a real cube and a crisps can: 12 pushes, 10 pick-ups, 21 put-downs. Never two skills in a row, and none of the tested tasks. An ArUco marker on each object and the target gives its position on the table in every frame.</p>
-    <div class="clips">
-      <figure><div class="video-slot"><video src="videos/clip_push.mp4" poster="videos/clip_push.jpg" data-autoplay autoplay muted loop controls playsinline preload="auto"></video></div><figcaption>Push</figcaption></figure>
-      <figure><div class="video-slot"><video src="videos/clip_lift.mp4" poster="videos/clip_lift.jpg" data-autoplay autoplay muted loop controls playsinline preload="auto"></video></div><figcaption>Pick up</figcaption></figure>
-      <figure><div class="video-slot"><video src="videos/clip_drop.mp4" poster="videos/clip_drop.jpg" data-autoplay autoplay muted loop controls playsinline preload="auto"></video></div><figcaption>Put down</figcaption></figure>
-      <figure><div class="video-slot"><video src="videos/clip_stack.mp4" poster="videos/clip_stack.jpg" data-autoplay autoplay muted loop controls playsinline preload="auto"></video></div><figcaption>Put on the other object</figcaption></figure>
-    </div>
-  </section>
+<p class="paper-text">Dense, object-centric keypoint reward. The 8 corner keypoints of the commanded object are tracked against a per-skill reference trajectory (start → goal), and the reward is the keypoints' progress along it inside a 3 cm tube (3 cm ≈ the median deviation of my clips from their mean path). Taken from the clips: lift height (≈20 cm), place height, push direction, allowed yaw change. Set by hand: the completion test (keypoint error &lt; ≈2 cm, object speed &lt; 0.1 m/s, held 0.3 s), a per-step time penalty and a per-command completion bonus.</p>
+<p class="paper-text">Two changes on top of that:</p>
+<ul>
+<li><strong>Exploration.</strong> With an object-only reward the signal is zero until first contact; a run from the robot initial pose learned absolutely nothing for 504 iterations :(. I prepend a gripper → object leg (straight-line reference from the TCP to the object centre, same 3 cm tube) and randomize the initial arm configuration every episode.</li>
+<li><strong>Reward hacking.</strong> The teacher then solved <em>push</em> by grasp-and-carry (85 of 100 push episodes lifted the object &gt; 3 cm). A lift penalty that is active only during push commands removed it (0 of 100). </li>
+</ul>
+<p class="paper-text">Before this reward I tried writing a separate reward by hand for each task, and the RL policy found a loophole in every one. Rewarding grasping and carrying made it open and close the gripper right at the release threshold to collect both rewards, without ever finishing. Rewarding distance to the goal made it push the cube onto the target instead of lifting it (see <a href="#45-what-didnt-work">What didn't work</a>). The keypoint reward uses the same formula for every command; only the template changes. There are three templates, one per skill (push, pick up, put down), each is measured from the clips. The current command picks the template and fills in the rest: <em>put the cube on the cylinder</em> uses the put-down template, applied to the cube, ending on top of the cylinder. Chaining commands just switches templates. It only scores where the object goes, so it doesn't depend on the robot's body.</p>
+<p class="paper-text"><strong>You might be wondering how I make sure no two commands</strong> Every training episode starts with the hand empty (a random arm pose; in 10% one object already stacked on the other), so the first command is always a pick-up or a push. The second command follows a fixed rule: after <em>pick up X</em> comes <em>put X down</em> (on the target or on the other object); after a push comes a pick-up. So the teacher never sees two pushes, a push after a pick-up, or a put-down of something it isn't holding. The long evaluation sentences and the sentence builder in the games follow the same rules.</p>
+<h3 id="23-rl-teacher">2.3 RL teacher</h3>
+<p class="paper-text">A Franka Panda in Isaac Lab, PPO with 16,384 simulated robots in parallel, 1000 iterations. The teachers observations are: the exact object positions, the next point on the path and the current command. Each episode has one or two commands, so it learns every skill and the handoff between two of them.</p>
+<p class="paper-text">RL is cheap here because the teacher sees everything. Running RL directly on a 450M-parameter model that only sees images would be far slower, so the teacher does the trial and error, and distillation turns it into a data source: I can record as many labelled episodes as I want, from any layout.</p>
+<h3 id="24-distillation">2.4 Distillation</h3>
+<p class="paper-text">SmolVLA, starting from the public <code>smolvla_base</code> weights, trained for 32K steps on 4,500 teacher episodes. It sees a front camera, a wrist camera and the sentence: no positions and no step counter.</p>
+<p class="paper-text">The 4,500 are split 3,000 + 1,500 on purpose. The 3,000 are <em>paired</em>: every scene is recorded twice, once with "the cube" in the sentence and once with "the cylinder". The images are the same, so the only way to know which object to move is to read the sentence (in an earlier version this took picking the right object from 45 to 80 of 100). The extra 1,500 are pushes, the weakest skill; in an earlier version more push data took push from 23 to 44.</p>
+<p class="paper-text"><strong>Smoothing the teacher first.</strong> The RL teacher learned jerky control: at each step it often slams a motion command all the way one way, then all the way the other. The arm still gets where it needs to go, so the teacher works. But to a student copying it, the commands jump back and forth almost at random, and the VLA learned nothing better than the average command. The fix: the arm doesn't carry out each new command directly. Every step it moves only 5% of the way toward the new command and keeps 95% of its previous motion. The jerky commands blur into one smooth motion, and the student learns to copy that smooth motion instead. The teacher is trained with this smoothing on, so it learns to work with it. A simpler option I didn't try (just hit me lol): keep the teacher as it was and label each frame with how the arm actually moved, not with what the policy asked for. The arm can't follow a command that flips every step, so its real motion is already smoother, and the teacher wouldn't need retraining.</p>
+<h3 id="25-memory-done-marks-in-the-sentence">2.5 Memory: "(done)" marks in the sentence</h3>
+<p class="paper-text">The model has one extra output, "is the current step done?". In training it is 1 for the half-second before the teacher moved on to its next command. At inference, when it stays above 0.85 for half a second, "(done)" is written after the current command, and the next time the model reads:</p>
+<blockquote>
+<p class="paper-text"><del>pick up the cube</del> <strong>(done)</strong>, then <del>put the cube on the cylinder</del> <strong>(done)</strong>, then <strong>pick up the cube</strong> ← now, then put the cube on the target</p>
+</blockquote>
+<p class="paper-text">The first command without a mark is the one to do. But a training episode has only one or two real commands, while a test sentence has up to eight. So in training the real commands are hidden inside a longer sentence of up to 10: random commands before them, already marked "(done)", and random ones after. For an episode that really does <em>pick up the cube, then put the cube on the target</em>, the student might read:</p>
+<blockquote>
+<p class="paper-text">push the cube to the target <strong>(done)</strong>, then pick up the cylinder <strong>(done)</strong>, then put the cylinder on the cube <strong>(done)</strong>, then <strong>pick up the cube</strong>, then put the cube on the target, then pick up the cylinder</p>
+</blockquote>
+<p class="paper-text">The number of commands in front is random, so the current command shows up at every position from 1 to 10 equally often. An earlier version padded at most 3 in front; it never saw a current command at position 6, and scored 5 of 100 on the 6-step task.</p>
+<div class="center">
+  <video class="v" src="videos/nomarks_stuck.mp4" poster="videos/nomarks_stuck.jpg" style="width:49%" data-autoplay autoplay muted loop controls playsinline preload="metadata"></video>
+  <video class="v" src="videos/restack_6of6.mp4" poster="videos/restack_6of6.jpg" style="width:49%" data-autoplay autoplay muted loop controls playsinline preload="metadata"></video>
+</div>
+<div class="center"><sub>Left: <b>Marks off</b> (3×): stuck on command one. Right: <b>Its own marks</b> (3×): all six in order.</sub></div>
 
-  <section>
-    <h2 class="paper-h">2 · Infer the reward from the clips</h2>
-    <figure class="paper-fig">
-      <div class="video-slot wide"><video src="videos/clip_to_template.mp4" poster="videos/clip_to_template.jpg" data-autoplay autoplay muted loop controls playsinline preload="auto"></video></div>
-      <figcaption>The tracked path (orange) and the template the reward uses (green).</figcaption>
-    </figure>
-    <p class="paper-text">The reward only looks at the <b>object</b>. Eight points on it have to follow the skill's template from start to goal, and the robot is paid for progress along it.</p>
-    <ul class="paper-list">
-      <li><b>From the clips:</b> lift height (20 cm), drop height, push direction, how much the object may turn, and the 3 cm tolerance (how much my own clips vary).</li>
-      <li><b>Set by hand:</b> "finished" = within 2 cm of the goal, slower than 0.1 m/s for 0.3 s; a small step cost, a bonus per command, a small bonus for holding still.</li>
-    </ul>
-    <div class="note problem"><b>Gripper rewards got gamed.</b> Paying for grasping and carrying, the policy flicked the fingers on the release threshold to collect both terms (0 of 100). Paying for "near the goal", it pushed instead of lifting. Pushing can't put a cube 20 cm in the air, so a path reward can't be gamed that way.</div>
-    <div class="note problem"><b>No signal at the start.</b> An object-only reward doesn't change until the gripper touches the object; from the home pose nothing was learned in 504 iterations. The fix is one chain, gripper → object → target, with every episode starting from a random arm pose.</div>
-    <div class="note problem"><b>It pushed by lifting.</b> With that chain, the teacher "pushed" by carrying the cube (85 of 100), and its student couldn't tell push from pick up. A small penalty for lifting during a push fixed it (0 of 100).</div>
-  </section>
 
-  <section>
-    <h2 class="paper-h">3 · Train an RL teacher</h2>
-    <p class="paper-text">A Franka Panda in Isaac Lab, PPO on <b>16,384 parallel scenes</b>, 1000 iterations. It sees the exact object positions and which command it's on. Each episode has <b>one or two commands</b>, enough to learn every skill and the <b>handoff</b> to the next. A 6-step task is five handoffs in a row. Told which command it's on, it does 94 of 100 six-command runs.</p>
-    <div class="note why"><b>A low-pass filter on the teacher's arm.</b> PPO learned bang-bang control that the VLA couldn't imitate (no better than predicting the average action). The arm now executes a running average of the teacher's commands (95% old, 5% new), and the student learns the smooth executed motion. Each step up in smoothing improved the student.</div>
-  </section>
+</section>
+<section>
+<h2 class="paper-h" id="3--experimental-setup">3 · Experimental setup</h2>
+<p class="paper-text">100 validation layouts per task, the arm starts at home, the whole sentence is given once, and each run has 6 s per command plus 5 s. Two scores: <strong>in order</strong> (the headline: every command done, one after the other, as counted by the simulator; the robot's own marks don't count) and <strong>lenient</strong> (only the final scene, if acheved, is considered as success). For 6 steps: 40 in order, 49 lenient.</p>
+<div class="tbl"><table>
+<thead>
+<tr>
+<th style="text-align: left;">Command</th>
+<th style="text-align: left;">Counts as done when</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;">pick up</td>
+<td style="text-align: left;">raised at least 4 cm</td>
+</tr>
+<tr>
+<td style="text-align: left;">on / pushed to the target</td>
+<td style="text-align: left;">within 5 cm of its centre</td>
+</tr>
+<tr>
+<td style="text-align: left;">on the other object</td>
+<td style="text-align: left;">within 5 cm, and within ±3 cm of resting height on top</td>
+</tr>
+<tr>
+<td style="text-align: left;">every result</td>
+<td style="text-align: left;">held for 0.2 s</td>
+</tr>
+</tbody>
+</table></div>
+<p class="paper-text">This is a loose check. With my first, strict check (1.5 cm, 0.5 s) the EXACT same model scores 12 on the 6-step task, 24 with the teacher's own check, 40 with this one: its put-downs are slightly off, not failed. Only the judge is looser; the robot's own done signal is unchanged, and the teacher is scored the same way.</p>
+<p class="paper-text"><strong>Why loosen it at all?</strong> The strict check was stricter than what the teacher itself learned to call "done". The teacher's completion test accepts an object up to about 2 cm from its resting pose after 0.3 s; the strict check wanted 1.5 cm for 0.5 s. The student learns "done" from the teacher's recordings, so it marks a put-down done exactly where the teacher would. I checked where the cube actually was each time the student wrote "(done)" after putting it on the cylinder. When the strict check agreed, the cube was 0.7 cm above its resting height (median). When the strict check disagreed, it was 1.7 cm above: just outside the strict 1.5 cm, but well inside the teacher's own 2 cm. Because the in-order score stops at the first rejected command, one put-down a few millimetres high failed every later command too. The loose check judges whether the task got done, not whether a cube landed within 1.5 cm.</p>
 
-  <section>
-    <h2 class="paper-h">4 · Distill into a VLA</h2>
-    <p class="paper-text">I record the teacher (3000 paired episodes + 1500 pushes, at most two commands each) and train <b>SmolVLA</b> (450M) to copy it from a front camera, a wrist camera and the sentence. No object positions, no command counter.</p>
-    <div class="note why"><b>Every scene is recorded twice.</b> Once saying "the cube" and once "the cylinder". The images are the same, so the model has to read the sentence to pick the object. In an earlier version this took picking the right object from 45 to 80.</div>
-  </section>
+</section>
+<section>
+<h2 class="paper-h" id="4--analysis">4 · Analysis</h2>
+<h3 id="41-h1-the-skills-are-learnable-from-clips-supported">4.1 H1: the skills are learnable from clips (supported)</h3>
+<p class="paper-text">The teacher, trained only on the clip-derived reward, does every single skill 100 of 100 and chains them: 94 of 100 on the 6-step task and 100 of 100 on the 8-step one. Single-skill clips are enough to learn the skills and the handoffs.</p>
+<h3 id="42-h2-skills-compose-up-to-a-point-partly-supported">4.2 H2: skills compose, up to a point (partly supported)</h3>
+<p class="paper-text">The student composes tasks it never saw: 62 on 3 steps, 81 on 4, 40 on 6. But it drops to 0 on 8, while the teacher stays at 100. The skills transfer; something else limits length.</p>
+<h3 id="43-h3-memory-in-the-sentence-works-and-its-the-bottleneck-supported-sort-off">4.3 H3: memory in the sentence works, and it's the bottleneck (supported, sort off)</h3>
+<p class="paper-text">From the camera alone you can't tell where you are. In the 6-step task the arm reaches for the cube in step 1 and again in step 3, and the scenes look almost the same; after step 4 the board looks exactly like a finished 4-step task. So the model needs some way to know which step it's on. I tried five, and scored each on the 4-step and the 6-step sentence (all commands done, in order, out of 100):</p>
+<div class="tbl"><table>
+<thead>
+<tr>
+<th style="text-align: left;">What I gave the model so it knows where it is</th>
+<th style="text-align: center;">4 steps</th>
+<th style="text-align: center;">6 steps</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;">Nothing extra, just the whole sentence</td>
+<td style="text-align: center;">1</td>
+<td style="text-align: center;">0</td>
+</tr>
+<tr>
+<td style="text-align: left;">Older camera frames and its own past actions</td>
+<td style="text-align: center;">≈0</td>
+<td style="text-align: center;">≈0</td>
+</tr>
+<tr>
+<td style="text-align: left;">One command at a time, fed by a script that moves on when the model says "done" (the memory sits outside the model)</td>
+<td style="text-align: center;">65</td>
+<td style="text-align: center;">38</td>
+</tr>
+<tr>
+<td style="text-align: left;">A counter in its input: "k steps done"</td>
+<td style="text-align: center;">42</td>
+<td style="text-align: center;">0</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>Its own "(done)" marks, written into the sentence</strong></td>
+<td style="text-align: center;"><strong>81</strong></td>
+<td style="text-align: center;"><strong>40</strong></td>
+</tr>
+</tbody>
+</table></div>
+<p class="paper-text">With nothing extra it can't tell step 1 from step 3 and keeps redoing the start. Old frames don't help: a frame from a second ago doesn't say which step that was either. The counter works for short sentences but had never seen a count of 5, so the 6-step task fails. The "(done)" marks beat everything, including the script, and the memory stays inside the model's own input. Only the last row is the final model; the others are earlier versions of the same pipeline.</p>
+<p class="paper-text"><strong>Does the done task help?</strong> The model really uses its marks (I tested on an earlier model with the same recipe). With marking switched off the 4-step task never finishes (0 of 50); with the first two marks written in advance it skips straight to step 3 and finishes 42 of 50.</p>
+<div class="center">
+  <video class="v" src="videos/knock_refetch.mp4" poster="videos/knock_refetch.jpg" style="width:49%" data-autoplay autoplay muted loop controls playsinline preload="metadata"></video>
+  <video class="v" src="videos/drop_repick.mp4" poster="videos/drop_repick.jpg" style="width:49%" data-autoplay autoplay muted loop controls playsinline preload="metadata"></video>
+</div>
+<div class="center"><sub>Left: <b>Knocked away after it was done</b> (2×). Right: <b>Dropped mid-carry</b> (2×).</sub></div>
 
-  <section>
-    <h2 class="paper-h">The memory problem</h2>
-    <p class="paper-text">A long task needs the skills, the handoffs, and knowing <b>where you are</b>. The image doesn't tell you: in the 6-step task the arm reaches for the cube in step 1 and again in step 3, and the scenes look almost the same. What I tried:</p>
-    <ol class="journey">
-      <li class="bad"><b>Nothing, just the whole sentence.</b><br><span>4 commands: 14 of 100, in order once</span></li>
-      <li class="bad"><b>Show it the past (older frames, past actions).</b><br><span>no help</span></li>
-      <li class="mid"><b>An outside pointer, one command at a time.</b><br><span>4 commands: 90 of 100</span><em>Works, but the memory is in a script, not the model.</em></li>
-      <li class="mid"><b>A counter in the input ("k commands done").</b><br><span>4 commands: 75 · 6 commands: 5</span><em>The 6th position never came up in training.</em></li>
-      <li class="good"><b>"(done)" marks in the sentence itself.</b><br><span>6 commands: 40 of 100 in order</span><em>A language model reads marked words far better than a number.</em></li>
-    </ol>
-    <p class="paper-text">The model writes the marks itself. Halfway through the 4-step task it reads:</p>
-    <p class="sentence" aria-label="Example of the sentence the model reads, halfway through a task">
-      <span class="cmd done">pick up the cube</span><span class="mark">(done)</span>, then
-      <span class="cmd done">put the cube on the cylinder</span><span class="mark">(done)</span>, then
-      <span class="cmd now">pick up the cube</span>, then
-      <span class="cmd">put the cube on the target</span>
-    </p>
-    <ul class="paper-list">
-      <li><b>Label:</b> an extra output is 1 for the last half-second before the teacher switched commands.</li>
-      <li><b>Mark:</b> above 0.85 for five steps → "(done)" after the current command. The first unmarked command is the one to do.</li>
-      <li><b>Padding:</b> training sentences are padded to 10 commands, some pre-marked, so every position shows up.</li>
-      <li><b>It uses them:</b> with marks off, 4 commands finish 0 of 50 times. With two marks written in advance, it skips to command three and finishes 42 of 50.</li>
-    </ul>
-    <div class="vgrid" style="margin:0 0 1.2rem">
-      <figure><div class="video-slot sim"><video src="videos/nomarks_stuck.mp4" poster="videos/nomarks_stuck.jpg" data-autoplay autoplay muted loop controls playsinline preload="auto"></video></div><figcaption><b>Marks off</b> (3×): stuck on command one.</figcaption></figure>
-      <figure><div class="video-slot sim"><video src="videos/restack_6of6.mp4" poster="videos/restack_6of6.jpg" data-autoplay autoplay muted loop controls playsinline preload="auto"></video></div><figcaption><b>Its own marks</b> (3×): all six in order.</figcaption></figure>
-    </div>
-  </section>
+<p class="paper-text">The limit is the done signal itself. It fires when an object is lifted and held still, whichever command is current, so it reads the image more than the sentence. On the 8-step sentence (<em>"pick up the cube, then put the cube on the cylinder, then pick up the cube, then put the cube on the target, then pick up the cube, then put the cube on the cylinder, then pick up the cube, then put the cube on the target"</em>) the marks reach 8 of 8 after four steps and the robot stops; in 60 of 100 runs exactly four steps were done in order.</p>
+<h3 id="44-where-the-6-step-runs-fail">4.4 Where the 6-step runs fail</h3>
+<p class="paper-text">So you don't have to scroll back up, the 6-step sentence is:</p>
+<blockquote>
+<p class="paper-text">"pick up the cube, then put the cube on the cylinder, then pick up the cube, then put the cube on the target, then pick up the cylinder, then put the cylinder on the cube"</p>
+</blockquote>
+<div class="center">
+  <video class="v" src="videos/restack_fail.mp4" poster="videos/restack_fail.jpg" style="width:49%" data-autoplay autoplay muted loop controls playsinline preload="metadata"></video>
+  <video class="v" src="videos/restack_fail_early.mp4" poster="videos/restack_fail_early.jpg" style="width:49%" data-autoplay autoplay muted loop controls playsinline preload="metadata"></video>
+</div>
+<div class="center"><sub>Left: <b>Knocks the cylinder over</b> at command five (3×). Right: <b>Marked done too early</b>, so a step is skipped (3×).</sub></div>
 
-  <section>
-    <h2 class="paper-h">Poking at it</h2>
-    <p class="paper-text">Disturbances it never saw in training (earlier model, 50 layouts each):</p>
-    <ul class="paper-list">
-      <li><b>Knock the finished cube away:</b> it goes back for it 16 of 30 times, reacting to the image rather than its marks.</li>
-      <li><b>Move the cube while the arm reaches:</b> 12 of 50. Re-targeting a moved object is weak.</li>
-      <li><b>Take the cube out of the gripper:</b> picked up again 10 of 36 times.</li>
-    </ul>
-    <div class="vgrid">
-      <figure><div class="video-slot sim"><video src="videos/knock_refetch.mp4" poster="videos/knock_refetch.jpg" data-autoplay autoplay muted loop controls playsinline preload="auto"></video></div><figcaption><b>Knocked away after it was done</b> (2×)</figcaption></figure>
-      <figure><div class="video-slot sim"><video src="videos/drop_repick.mp4" poster="videos/drop_repick.jpg" data-autoplay autoplay muted loop controls playsinline preload="auto"></video></div><figcaption><b>Dropped mid-carry</b> (2×)</figcaption></figure>
-    </div>
-  </section>
+<p class="paper-text">Of 100 runs, the failures stop at step 5, picking up the cylinder (25), step 4 (15) and step 2 (13); 21 runs knock something over. Two causes: early marks, and the cylinder, the weakest object (pick up 59, to the target 77, onto the cube 81, against 94–97 for the cube).</p>
+<h3 id="45-what-didnt-work">4.5 What didn't work</h3>
+<table class="gallery">
+<tr><td width="33%" valign="top"><video class="v" src="videos/wd_base.mp4" poster="videos/wd_base.jpg" style="width:100%" data-autoplay autoplay muted loop controls playsinline preload="metadata"></video><br><sub><b>1.</b> Base SmolVLA, no fine-tuning: the arm wanders.</sub></td><td width="33%" valign="top"><video class="v" src="videos/fail_never_release.mp4" poster="videos/fail_never_release.jpg" style="width:100%" data-autoplay autoplay muted loop controls playsinline preload="metadata"></video><br><sub><b>2.</b> Reward for grasping and carrying: never lets go.</sub></td><td width="33%" valign="top"><video class="v" src="videos/fail_push_not_lift.mp4" poster="videos/fail_push_not_lift.jpg" style="width:100%" data-autoplay autoplay muted loop controls playsinline preload="metadata"></video><br><sub><b>3.</b> Reward for distance to the goal: pushes instead of lifting.</sub></td></tr>
+<tr><td width="33%" valign="top"><video class="v" src="videos/fail_hold_up.mp4" poster="videos/fail_hold_up.jpg" style="width:100%" data-autoplay autoplay muted loop controls playsinline preload="metadata"></video><br><sub><b>4.</b> Motion-primitive actions: lifts the cube and holds it up forever.</sub></td><td width="33%" valign="top"><video class="v" src="videos/fail_top_edge.mp4" poster="videos/fail_top_edge.jpg" style="width:100%" data-autoplay autoplay muted loop controls playsinline preload="metadata"></video><br><sub><b>5.</b> 2 cm "arrived" radius: grabs the top edge, the cube slips.</sub></td><td width="33%" valign="top"><video class="v" src="videos/wd_wrong_object.mp4" poster="videos/wd_wrong_object.jpg" style="width:100%" data-autoplay autoplay muted loop controls playsinline preload="metadata"></video><br><sub><b>6.</b> No paired episodes: asked for the red cube, carries the blue one.</sub></td></tr>
+<tr><td width="33%" valign="top"><video class="v" src="videos/wd_no_memory.mp4" poster="videos/wd_no_memory.jpg" style="width:100%" data-autoplay autoplay muted loop controls playsinline preload="metadata"></video><br><sub><b>7.</b> Whole sentence, no memory: 0 of 6 steps in order.</sub></td><td width="33%" valign="top"><video class="v" src="videos/wd_one_command.mp4" poster="videos/wd_one_command.jpg" style="width:100%" data-autoplay autoplay muted loop controls playsinline preload="metadata"></video><br><sub><b>8.</b> One command at a time: the flag fires early, the script is at step 4 with 1 done.</sub></td><td width="33%" valign="top"><video class="v" src="videos/wd_number.mp4" poster="videos/wd_number.jpg" style="width:100%" data-autoplay autoplay muted loop controls playsinline preload="metadata"></video><br><sub><b>9.</b> A step count in the input: reaches 5 of 6, never 6.</sub></td></tr>
+<tr><td width="33%" valign="top"><video class="v" src="videos/wd_cliptol_burst.mp4" poster="videos/wd_cliptol_burst.jpg" style="width:100%" data-autoplay autoplay muted loop controls playsinline preload="metadata"></video><br><sub><b>10.</b> Stricter put-down from the clips: marks run to 8 of 8 with 4 done.</sub></td><td width="33%" valign="top"><video class="v" src="videos/wd_handleg_push.mp4" poster="videos/wd_handleg_push.jpg" style="width:100%" data-autoplay autoplay muted loop controls playsinline preload="metadata"></video><br><sub><b>11.</b> Teacher without the no-lift penalty: student pushes over the objects, still marks done.</sub></td></tr>
+</table>
 
-  <section>
-    <h2 class="paper-h">Play with it</h2>
-    <p class="paper-text">The robot runs live on <a href="../play/"><b>the play page</b></a> (when my GPU is on). Three games:</p>
-    <ul class="paper-list">
-      <li><b>Sabotage the robot.</b> It gets a 2-, 4- or 6-step task; you get one sabotage per round: knock the object away or write a fake "(done)". You win if the task isn't really done when it stops. To win you have to know how it works: it keeps its place only through its own "(done)" marks and never goes back to a marked step, so the right sabotage at the right moment beats it.</li>
-      <li><b>Tic-tac-toe.</b> You're O, the robot is X. The game picks its square and moves the green pad there; the robot has to really place a cube on it. A miss loses the turn.</li>
-      <li><b>Build a sentence.</b> Chain up to ten commands and watch it work through them.</li>
-    </ul>
-    <p class="paper-text">The tic-tac-toe robot is a fine-tune of an earlier student with the same recipe: first on recordings with the target on the nine squares, then on 2,000 more with random flat X and O pieces on the board. With pieces on the board it places its cube 97 of 100 times, against 38 before that second step.</p>
-  </section>
+<div class="tbl"><table>
+<thead>
+<tr>
+<th style="text-align: left;">Attempt</th>
+<th style="text-align: left;">Result</th>
+<th style="text-align: center;">Video</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;">Base SmolVLA, no fine-tuning</td>
+<td style="text-align: left;">0 on every task</td>
+<td style="text-align: center;">1</td>
+</tr>
+<tr>
+<td style="text-align: left;">Fine-tune the VLA directly on single skills</td>
+<td style="text-align: left;">push 16, pick-up 0, every combined task 0</td>
+<td style="text-align: center;"></td>
+</tr>
+<tr>
+<td style="text-align: left;">Clean scripted demos</td>
+<td style="text-align: left;">6 on 2-step tasks: it never saw a mistake, so it couldn't recover</td>
+<td style="text-align: center;"></td>
+</tr>
+<tr>
+<td style="text-align: left;">Reward for grasping and carrying</td>
+<td style="text-align: left;">toggled the gripper on the release threshold to collect both rewards, 0</td>
+<td style="text-align: center;">2</td>
+</tr>
+<tr>
+<td style="text-align: left;">Reward for distance to the goal</td>
+<td style="text-align: left;">pushed instead of lifting, 19</td>
+<td style="text-align: center;">3</td>
+</tr>
+<tr>
+<td style="text-align: left;">Motion-primitive vocabulary</td>
+<td style="text-align: left;">~75% of successes were pushes; often lifts and never puts down</td>
+<td style="text-align: center;">4</td>
+</tr>
+<tr>
+<td style="text-align: left;">First clip reward, 2 cm "arrived" radius</td>
+<td style="text-align: left;">the hand stops 1–2 cm above the cube's centre; pick-up 0%</td>
+<td style="text-align: center;">5</td>
+</tr>
+<tr>
+<td style="text-align: left;">Imitating raw RL actions</td>
+<td style="text-align: left;">0 on everything but push (14)</td>
+<td style="text-align: center;"></td>
+</tr>
+<tr>
+<td style="text-align: left;">Action-change penalty / smoothing labels afterwards</td>
+<td style="text-align: left;">loss 0.93 → 0.77, same poor fit</td>
+<td style="text-align: center;"></td>
+</tr>
+<tr>
+<td style="text-align: left;">No paired episodes</td>
+<td style="text-align: left;">picks the named object only about half the time (chance)</td>
+<td style="text-align: center;">6</td>
+</tr>
+<tr>
+<td style="text-align: left;">Whole sentence, no memory</td>
+<td style="text-align: left;">4 steps 14, 6 steps 12; almost never in order</td>
+<td style="text-align: center;">7</td>
+</tr>
+<tr>
+<td style="text-align: left;">One command at a time, the model's done flag moves the script on</td>
+<td style="text-align: left;">4 steps 21 in order (65 with a stricter flag), and the memory is outside the model</td>
+<td style="text-align: center;">8</td>
+</tr>
+<tr>
+<td style="text-align: left;">A step count in the input ("k done")</td>
+<td style="text-align: left;">6 steps: 5</td>
+<td style="text-align: center;">9</td>
+</tr>
+<tr>
+<td style="text-align: left;">Rest speed and hold time from the clips</td>
+<td style="text-align: left;">student 4 steps 17/50, 6 steps 7/50</td>
+<td style="text-align: center;"></td>
+</tr>
+<tr>
+<td style="text-align: left;">Stricter put-down from the clips (1.34 cm)</td>
+<td style="text-align: left;">better teacher; student stalls at step 3–4 of 6</td>
+<td style="text-align: center;">10</td>
+</tr>
+<tr>
+<td style="text-align: left;">Teacher without the no-lift penalty on pushes</td>
+<td style="text-align: left;">it grasped and carried instead of pushing; student push 16</td>
+<td style="text-align: center;">11</td>
+</tr>
+<tr>
+<td style="text-align: left;">Camera history, unfrozen vision</td>
+<td style="text-align: left;">worse than the plain student</td>
+<td style="text-align: center;"></td>
+</tr>
+<tr>
+<td style="text-align: left;">Padding to 20 commands</td>
+<td style="text-align: left;">short tasks drop (cube on cylinder 75 → 42)</td>
+<td style="text-align: center;"></td>
+</tr>
+<tr>
+<td style="text-align: left;">Stricter done signal (10–15 steps)</td>
+<td style="text-align: left;">many runs never mark</td>
+<td style="text-align: center;"></td>
+</tr>
+<tr>
+<td style="text-align: left;">Voting over 3 samples, re-arming, self-check</td>
+<td style="text-align: left;">no gain</td>
+<td style="text-align: center;"></td>
+</tr>
+<tr>
+<td style="text-align: left;">"(in progress)" tag on the current command</td>
+<td style="text-align: left;">no change</td>
+<td style="text-align: center;"></td>
+</tr>
+<tr>
+<td style="text-align: left;">Random pauses + the same image under two sentences</td>
+<td style="text-align: left;">the signal stops firing; 4 steps 51 → 11</td>
+<td style="text-align: center;"></td>
+</tr>
+</tbody>
+</table></div>
+<p class="paper-text">…and a lot more that didn't work. These are the ones worth knowing about.</p>
 
-  <section>
-    <h2 class="paper-h">What still goes wrong</h2>
-    <p class="paper-text">The 60 failed six-command runs stop mostly at <b>picking up the cylinder (25)</b>, putting the cube on the target (15) and putting the cube on the cylinder (13). 21 of 100 knock something over.</p>
-    <div class="vgrid">
-      <figure><div class="video-slot sim"><video src="videos/restack_fail.mp4" poster="videos/restack_fail.jpg" data-autoplay autoplay muted loop controls playsinline preload="auto"></video></div><figcaption><b>Knocks the cylinder over</b> at command five (3×).</figcaption></figure>
-      <figure><div class="video-slot sim"><video src="videos/restack_fail_early.mp4" poster="videos/restack_fail_early.jpg" data-autoplay autoplay muted loop controls playsinline preload="auto"></video></div><figcaption><b>Marked done too early</b>, so a step is skipped (3×).</figcaption></figure>
-    </div>
-    <ul class="paper-list">
-      <li><b>8 commands: 0 of 100 in order.</b> The done signal fires whenever an object is lifted and held still, whatever the command, so the marks run ahead and it stops after four. The teacher does it 100 of 100.</li>
-      <li><b>The cylinder is the weak skill:</b> pick up 59, to the target 77, onto the cube 81, against 94–97 for the cube. It tips easily, and sentences that start with it mostly fail. Push is 59 too.</li>
-      <li><b>No undo.</b> A wrong "(done)" is never taken back, so the skipped step is never redone.</li>
-      <li><b>Put-downs are a little loose.</b> With a 1.5 cm, 0.5 s check the six-command score is 12, not 40.</li>
-      <li><b>One scene.</b> One cube, one cylinder, one target, two fixed cameras, in simulation. Anything new on the table hurts until it's in the data: flat tic-tac-toe pieces dropped placement to 38 of 100, back to 97 after one fine-tune.</li>
-    </ul>
-  </section>
+</section>
+<section>
+<h2 class="paper-h" id="5--limitations">5 · Limitations</h2>
+<ul>
+<li><strong>"Done" has no time dimension, so the robot never learns to let go.</strong> A step is complete when the object reaches its goal pose and comes to rest. The test never looks at the gripper (which is a limitation of the object-centric reward), and it never asks the object to <em>stay</em> there once the next step starts. Releasing the object earns nothing. Example: <em>pick up the cube, put the cube on the target, pick up the cylinder, put the cylinder on the cube.</em> The cube reaches the target and gets marked done while still in the gripper. The robot then drags it toward the cylinder, opens whenever it happens to, grasps the cylinder and puts it on the cube wherever the cube now is. Object-centric goals need a spatio-temporal part: where the object has to be, and for how long (until the task ends or a later step moves it). The scoring has the same blind spot. A step counts once its result holds for 0.2 s, so this run can still score as a success.</li>
+<li><strong>8 steps: 0 of 100.</strong> The done signal follows the image, not the sentence. On the 8-step task, 60 of 100 runs stop at exactly 4 steps in order while the marks have already reached 8 of 8. The scene after step 4 looks like a finished 4-step task, so the model marks the rest done (see <a href="#43-h3-memory-in-the-sentence-works-and-its-the-bottleneck-supported-sort-off">section 4.3</a>).</li>
+<li><strong>No undo.</strong> A wrong "(done)" is never taken back, so the skipped step is never redone. A self-check that erases wrong marks finds them (93–100% correct), but the robot doesn't complete the step on the second try.</li>
+<li><strong>The headline uses a loose check.</strong> Positions within 5 cm and results held 0.2 s. With 1.5 cm / 0.5 s the 6-step score is 12 in order, not 40 (see <a href="#3--experimental-setup">Experimental setup</a>).</li>
+<li><strong>Cylinder and pushing are weak</strong> (59 each, the teacher gets 100). Grasped too high, the cylinder tips, and once it's on its side it can't be picked up (never in the data). Most sentences that start with the cylinder fail.</li>
+<li><strong>Not every part of the reward comes from the clips.</strong> The completion thresholds, time penalty, completion bonus and the gripper to object leg are set by hand. So is the no-lift penalty on push commands: the clips never show a push turning into a lift, but nothing in them says "don't lift" either, so I added it by hand after the teacher learned to grasp and carry instead of pushing.</li>
+<li><strong>One scene, in simulation.</strong> One cube, one cylinder, a fixed target, two fixed cameras. Anything new on the table hurts the results.</li>
+</ul>
 
-  <section>
-    <h2 class="paper-h">What didn't work</h2>
-    <div class="vgrid">
-      <figure><div class="video-slot" style="aspect-ratio:2/1"><video src="videos/fail_never_release.mp4" poster="videos/fail_never_release.jpg" data-autoplay autoplay muted loop controls playsinline preload="auto" style="object-fit:contain"></video></div><figcaption><b>Reward for carrying:</b> never lets go.</figcaption></figure>
-      <figure><div class="video-slot" style="aspect-ratio:2/1"><video src="videos/fail_hold_up.mp4" poster="videos/fail_hold_up.jpg" data-autoplay autoplay muted loop controls playsinline preload="auto" style="object-fit:contain"></video></div><figcaption><b>Motion primitives:</b> holds the cube up forever.</figcaption></figure>
-      <figure><div class="video-slot" style="aspect-ratio:2/1"><video src="videos/fail_top_edge.mp4" poster="videos/fail_top_edge.jpg" data-autoplay autoplay muted loop controls playsinline preload="auto" style="object-fit:contain"></video></div><figcaption><b>Loose "arrived" check:</b> grabs the top edge, the cube slips.</figcaption></figure>
-      <figure><div class="video-slot" style="aspect-ratio:2/1"><video src="videos/fail_push_not_lift.mp4" poster="videos/fail_push_not_lift.jpg" data-autoplay autoplay muted loop controls playsinline preload="auto" style="object-fit:contain"></video></div><figcaption><b>Distance-to-goal reward:</b> pushes instead of lifting.</figcaption></figure>
-    </div>
-    <div class="fails">
-      <div class="fail"><b>Fine-tune the VLA on single skills</b><p>It didn't combine them.</p><span>combined tasks 0</span></div>
-      <div class="fail"><b>Clean scripted demos</b><p>Never saw a mistake, so it couldn't recover from its own.</p><span>6 of 100 on 2 commands</span></div>
-      <div class="fail"><b>Imitating raw RL actions</b><p>Bang-bang actions; fit no better than the average.</p><span>0 on all but push</span></div>
-      <div class="fail"><b>Smoothing labels afterwards</b><p>Lower loss, same poor fit.</p><span>loss 0.93 → 0.77</span></div>
-      <div class="fail"><b>Camera history, unfrozen vision</b><p>More inputs didn't help.</p><span>worse than plain</span></div>
-      <div class="fail"><b>Rest and hold time from the clips</b><p>Good teacher, weak student.</p><span>4 commands 17 of 50</span></div>
-      <div class="fail"><b>Stricter put-down from the clips</b><p>Better teacher; student stalls at command 3–4.</p><span>6 commands: 6</span></div>
-      <div class="fail"><b>Same image under two sentences</b><p>Meant to make the flag read the sentence; it stopped marking.</p><span>4 commands 51 → 11</span></div>
-    </div>
-  </section>
+</section>
+<section>
+<h2 class="paper-h" id="6--future-work">6 · Future work</h2>
+<ol>
+<li><strong>A done judge.</strong> A small separate model, image + sentence → "is the current step finished?", trained with frames from the <em>other</em> steps as negatives, so it has to read the text.</li>
+<li><strong>Undo.</strong> A self-check already erases mostly wrong marks (93–100% of them really weren't done); it needs to redo the step too.</li>
+<li><strong>More cylinder data</strong>, and a teacher that grasps it lower so it doesn't tip. Or a cleaner solution may be to lean to place the cylinder upright regarless of orientation.</li>
+<li><strong>Varied scenes</strong> in the recordings (distractors, textures, lighting); one fine-tune on new pieces was enough to fix them.</li>
+<li><strong>A real robot.</strong> The clips are real; the robot isn't yet.</li>
+</ol>
 
-  <section>
-    <h2 class="paper-h">Next</h2>
-    <ol class="paper-list">
-      <li><b>A done judge.</b> A small separate model, image + sentence → "is this command finished?", trained with frames of the other commands as negatives. The action model's flag reads the image, not the text.</li>
-      <li><b>RL on the student itself,</b> starting from the distilled model, on the long tasks. The teacher shows the skills are learnable; the student is 3–54 points behind it per task.</li>
-      <li><b>Let it undo a mark.</b> A self-check already erases mostly wrong marks (93–100% of them really weren't done); it needs to redo the step too.</li>
-      <li><b>More cylinder data,</b> and a teacher that grasps it lower so it doesn't tip.</li>
-      <li><b>Varied scenes in the recordings</b> (distractors, textures, light), since one fine-tune on new pieces fixed them.</li>
-      <li><b>A real robot.</b> The clips are real; the robot isn't yet.</li>
-    </ol>
-  </section>
+</section>
+<section>
+<h2 class="paper-h" id="reproduce">Reproduce</h2>
+<p class="paper-text">Isaac Lab 2.3.2 / Isaac Sim 5.1, LeRobot 0.6.2, OpenCV with ArUco.</p>
+<pre><code class="language-bash"># clips -&gt; reward template
+python -m handtrack.track_objects &lt;clip&gt;
+python -m handtrack.make_clips &lt;root&gt; --calib ... --out data/processed/clips_real
+python -m motion.keypoint_ref --clips data/processed/clips_real --straight --out data/processed/keypoint_ref_real_straight.npz
+
+# teacher -&gt; recordings -&gt; student -&gt; eval
+scripts/run_nolift_pipeline.sh
+
+# eval with the loose check (student, teacher)
+NAME=ours_cyl_marks_nolift G=0 scripts/eval_cliptol_loose.sh
+G=0 scripts/eval_teacher_loose.sh
+
+# the live games
+play/run_sabotage.sh start; play/run_builder.sh start; play/run_tictactoe.sh start ours_cyl_marks_ttt_tiles
+PUSH=1 play/run_tunnels.sh start; play/watchdog.sh
+</code></pre>
+<div class="tbl"><table>
+<thead>
+<tr>
+<th style="text-align: left;">Step</th>
+<th style="text-align: left;">Code</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;">Clip tracking</td>
+<td style="text-align: left;"><code>handtrack/</code>, <code>motion/keypoint_ref.py</code></td>
+</tr>
+<tr>
+<td style="text-align: left;">Teacher</td>
+<td style="text-align: left;"><code>sim/envs/keypoint_env.py</code>, <code>sim/train_rl.py</code></td>
+</tr>
+<tr>
+<td style="text-align: left;">Recording</td>
+<td style="text-align: left;"><code>sim/record_keypoint_rollouts.py</code></td>
+</tr>
+<tr>
+<td style="text-align: left;">Student</td>
+<td style="text-align: left;"><code>vla/build_dataset.py --prompt_mode marks</code>, <code>scripts/distill_place.sh</code></td>
+</tr>
+<tr>
+<td style="text-align: left;">Eval</td>
+<td style="text-align: left;"><code>sim/eval_chains.py --learned_done --marks --whole_prompt</code></td>
+</tr>
+<tr>
+<td style="text-align: left;">Games</td>
+<td style="text-align: left;"><code>play/</code></td>
+</tr>
+</tbody>
+</table></div>
+<p class="paper-text">Paths in the scripts point to my machine (<code>/media/storage/...</code>); change them to yours.</p>
+
+</section>
+<section>
+<h2 class="paper-h" id="related-work">Related work</h2>
+<p class="paper-text">Learning from Play (Lynch et al. 2019), SPiRL, LAPA, Exp2VLA, VLA-OPD, SimpleVLA-RL, SmolVLA (LeRobot).</p>
+</section>
 
   <footer class="site-footer paper-foot">© 2026 Ayush Deshmukh · <a href="../index.html">All side quests</a></footer>
 </main>
