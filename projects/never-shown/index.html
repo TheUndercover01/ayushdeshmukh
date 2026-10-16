@@ -271,6 +271,17 @@
   </section>
 
   <section>
+    <h2 class="paper-h">Play with it</h2>
+    <p class="paper-text">The robot runs live on <a href="../play/"><b>the play page</b></a> (when my GPU is on). Three games:</p>
+    <ul class="paper-list">
+      <li><b>Sabotage the robot.</b> It gets a 2-, 4- or 6-step task; you get one sabotage per round: knock the object away or write a fake "(done)". You win if the task isn't really done when it stops. To win you have to know how it works: it keeps its place only through its own "(done)" marks and never goes back to a marked step, so the right sabotage at the right moment beats it.</li>
+      <li><b>Tic-tac-toe.</b> You're O, the robot is X. The game picks its square and moves the green pad there; the robot has to really place a cube on it. A miss loses the turn.</li>
+      <li><b>Build a sentence.</b> Chain up to ten commands and watch it work through them.</li>
+    </ul>
+    <p class="paper-text">The tic-tac-toe robot is a fine-tune of an earlier student with the same recipe: first on recordings with the target on the nine squares, then on 2,000 more with random flat X and O pieces on the board. With pieces on the board it places its cube 97 of 100 times, against 38 before that second step.</p>
+  </section>
+
+  <section>
     <h2 class="paper-h">What still goes wrong</h2>
     <p class="paper-text">The 60 failed six-command runs stop mostly at <b>picking up the cylinder (25)</b>, putting the cube on the target (15) and putting the cube on the cylinder (13). 21 of 100 knock something over.</p>
     <div class="vgrid">
