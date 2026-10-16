@@ -70,9 +70,6 @@ main.narrow{max-width:36rem}
 .tagline{margin:0 0 2.2rem;max-width:38ch;font-family:"Instrument Serif",Georgia,serif;font-style:italic;
   font-size:1.5rem;line-height:1.45}
 .tagline .mark-span{color:var(--accent-warm)}
-.bio-quote{margin:0 0 1.4rem;padding:.1rem 0 .1rem 1rem;max-width:52ch;border-left:4px solid var(--accent-warm);
-  font-family:"Instrument Serif",Georgia,serif;font-style:italic;font-size:1.3rem;line-height:1.4}
-.bio-quote .mark-span{color:var(--accent-warm)}
 .about .bio{max-width:74ch}
 .bio{margin:0;text-align:justify}
 .bio p{margin:0 0 14px}
