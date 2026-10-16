@@ -50,7 +50,7 @@
   .bars{background:var(--card);border:3px solid var(--fg);border-radius:6px;box-shadow:6px 6px 0 var(--shadow);padding:1rem 1.1rem .9rem;margin:0 0 .8rem}
   .bars .legend{display:flex;flex-wrap:wrap;gap:1.1rem;margin:0 0 .8rem;font:500 .78rem "Space Grotesk",sans-serif;color:var(--fg)}
   .bars .legend i{display:inline-block;width:.8rem;height:.8rem;border-radius:2px;margin-right:.35rem;vertical-align:-.1rem}
-  .bars .row{display:grid;grid-template-columns:11.5rem 1fr;gap:.2rem .8rem;align-items:center;padding:.38rem 0;
+  .bars .row{display:grid;grid-template-columns:15rem 1fr;gap:.2rem .8rem;align-items:center;padding:.38rem 0;
     border-top:1px solid color-mix(in oklch, var(--fg) 12%, transparent)}
   .bars .row:first-of-type{border-top:0}
   .bars .name{font:500 .8rem/1.25 "Space Grotesk",sans-serif;color:var(--fg)}
@@ -120,7 +120,7 @@
 
   <figure class="paper-fig">
     <div class="video-slot sim"><video src="videos/restack_6of6.mp4" poster="videos/restack_6of6.jpg" data-autoplay autoplay muted loop controls playsinline preload="auto"></video></div>
-    <figcaption><b>Six commands from one sentence, in order (3×).</b> <i>"Pick up the cube, then put the cube on the cylinder, then pick up the cube, then put the cube on the target, then pick up the cylinder, then put the cylinder on the cube."</i> Left: front camera. Right: wrist camera.</figcaption>
+    <figcaption><b>Six commands from one sentence, in order (3×).</b> The example sentence: <i>"Pick up the cube, then put the cube on the cylinder, then pick up the cube, then put the cube on the target, then pick up the cylinder, then put the cylinder on the cube."</i> Left: front camera. Right: wrist camera.</figcaption>
   </figure>
 
   <section>
@@ -144,8 +144,8 @@
     <p class="paper-text">Each task is run on <b>100 table layouts</b> the model never trained on. A run counts only if the simulator saw <b>every command done, in order</b>. Training episodes had at most two commands, so everything marked <span class="new" style="display:inline-block;padding:0 .3rem;border-radius:3px;background:var(--accent-hi);color:#211d19;font:700 .7rem 'Space Grotesk',sans-serif">NEVER SHOWN</span> is longer than anything the model saw.</p>
 
     <div class="big">
-      <div><b>40%</b><span>6 commands (stack, unstack, restack), all in order. Never shown.</span></div>
-      <div><b>81%</b><span>4 commands (stack, then unstack to the target), all in order. Never shown.</span></div>
+      <div><b>40%</b><span>6 commands, all in order: stack the cube on the cylinder, move it to the target, stack the cylinder on it. Never shown.</span></div>
+      <div><b>81%</b><span>4 commands, all in order: stack the cube on the cylinder, then move it to the target. Never shown.</span></div>
     </div>
 
     <p class="paper-text"><b>Scoring.</b> Picked up = raised 4 cm. On the target = within 5 cm of its centre. On the other object = within 5 cm and within 3 cm of the right height. Each held for 0.2 s. My first check (1.5 cm, 0.5 s) failed runs where the cube sat on the cylinder a few millimetres off; with it the 6-command score is 12. The teacher is scored the same way.</p>
@@ -153,13 +153,13 @@
     <figure class="bars" role="group" aria-label="Success rate per task, out of 100 layouts: the VLA student and the RL teacher">
       <div class="legend"><span><i style="background:var(--accent-warm)"></i>VLA student: cameras + sentence</span><span><i style="background:var(--accent-bold);opacity:.55"></i>RL teacher: exact object positions</span></div>
       <div class="row"><div class="name">Pick up the cube<small>1 command</small></div><div class="track"><div class="bar s" style="width:94%" title="Student: 94 of 100"><em>94</em></div><div class="bar t" style="width:100%" title="Teacher: 100 of 100"><em>100</em></div></div></div>
-      <div class="row"><div class="name">Push to the target<small>1 command</small></div><div class="track"><div class="bar s" style="width:59%" title="Student: 59 of 100"><em>59</em></div><div class="bar t" style="width:100%" title="Teacher: 100 of 100"><em>100</em></div></div></div>
-      <div class="row"><div class="name">Cube to the target<small>2 commands</small></div><div class="track"><div class="bar s" style="width:97%" title="Student: 97 of 100"><em>97</em></div><div class="bar t" style="width:100%" title="Teacher: 100 of 100"><em>100</em></div></div></div>
-      <div class="row"><div class="name">Cube on the can<small>2 commands</small></div><div class="track"><div class="bar s" style="width:96%" title="Student: 96 of 100"><em>96</em></div><div class="bar t" style="width:100%" title="Teacher: 100 of 100"><em>100</em></div></div></div>
-      <div class="row"><div class="name">Can on the cube<small>2 commands</small></div><div class="track"><div class="bar s" style="width:81%" title="Student: 81 of 100"><em>81</em></div><div class="bar t" style="width:100%" title="Teacher: 100 of 100"><em>100</em></div></div></div>
-      <div class="row"><div class="name">Push, then stack<span class="new">NEVER SHOWN</span><small>3 commands</small></div><div class="track"><div class="bar s" style="width:62%" title="Student: 62 of 100"><em>62</em></div><div class="bar t" style="width:94%" title="Teacher: 94 of 100"><em>94</em></div></div></div>
-      <div class="row"><div class="name">Stack, then unstack<span class="new">NEVER SHOWN</span><small>4 commands</small></div><div class="track"><div class="bar s" style="width:81%" title="Student: 81 of 100"><em>81</em></div><div class="bar t" style="width:100%" title="Teacher: 100 of 100"><em>100</em></div></div></div>
-      <div class="row"><div class="name">Stack, unstack, restack<span class="new">NEVER SHOWN</span><small>6 commands</small></div><div class="track"><div class="bar s" style="width:40%" title="Student: 40 of 100"><em>40</em></div><div class="bar t" style="width:94%" title="Teacher: 94 of 100"><em>94</em></div></div></div>
+      <div class="row"><div class="name">Push the cube to the target<small>1 command</small></div><div class="track"><div class="bar s" style="width:59%" title="Student: 59 of 100"><em>59</em></div><div class="bar t" style="width:100%" title="Teacher: 100 of 100"><em>100</em></div></div></div>
+      <div class="row"><div class="name">Put the cube on the target<small>2 commands</small></div><div class="track"><div class="bar s" style="width:97%" title="Student: 97 of 100"><em>97</em></div><div class="bar t" style="width:100%" title="Teacher: 100 of 100"><em>100</em></div></div></div>
+      <div class="row"><div class="name">Put the cube on the cylinder<small>2 commands</small></div><div class="track"><div class="bar s" style="width:96%" title="Student: 96 of 100"><em>96</em></div><div class="bar t" style="width:100%" title="Teacher: 100 of 100"><em>100</em></div></div></div>
+      <div class="row"><div class="name">Put the cylinder on the cube<small>2 commands</small></div><div class="track"><div class="bar s" style="width:81%" title="Student: 81 of 100"><em>81</em></div><div class="bar t" style="width:100%" title="Teacher: 100 of 100"><em>100</em></div></div></div>
+      <div class="row"><div class="name">Push the cylinder to the target, then stack the cube on it<span class="new">NEVER SHOWN</span><small>3 commands</small></div><div class="track"><div class="bar s" style="width:62%" title="Student: 62 of 100"><em>62</em></div><div class="bar t" style="width:94%" title="Teacher: 94 of 100"><em>94</em></div></div></div>
+      <div class="row"><div class="name">Stack the cube on the cylinder, then move it to the target<span class="new">NEVER SHOWN</span><small>4 commands</small></div><div class="track"><div class="bar s" style="width:81%" title="Student: 81 of 100"><em>81</em></div><div class="bar t" style="width:100%" title="Teacher: 100 of 100"><em>100</em></div></div></div>
+      <div class="row"><div class="name">The same, then stack the cylinder on the cube<span class="new">NEVER SHOWN</span><small>6 commands</small></div><div class="track"><div class="bar s" style="width:40%" title="Student: 40 of 100"><em>40</em></div><div class="bar t" style="width:94%" title="Teacher: 94 of 100"><em>94</em></div></div></div>
       <figcaption style="margin-top:.7rem;color:var(--muted);font-size:.8rem;line-height:1.45">All commands done in order, out of 100 unseen layouts. The teacher is told which command it's on; the student has to keep track itself.</figcaption>
     </figure>
 
