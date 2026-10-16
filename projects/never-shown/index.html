@@ -109,6 +109,7 @@
 
 
 
+
   /* 16 Oct: README-generated page */
   .paper-sub i{display:block;margin-top:.35rem;color:var(--accent-warm);font-weight:400}
   .paper video.v{display:inline-block;vertical-align:top;background:#000;border:3px solid var(--fg);border-radius:4px;box-shadow:4px 4px 0 var(--shadow);margin:.25rem .3%}
@@ -271,7 +272,7 @@
   <video class="v" src="videos/c1.mp4" poster="videos/c1.jpg" style="width:49%" data-autoplay autoplay muted loop controls playsinline preload="metadata"></video>
   <video class="v" src="videos/c2.mp4" poster="videos/c2.jpg" style="width:49%" data-autoplay autoplay muted loop controls playsinline preload="metadata"></video>
 </div>
-<div class="center"><sub>Left: <b>Cube to the target</b> (2 commands, 2×). Right: <b>Cube on the cylinder</b> (2 commands, 2×).</sub></div>
+<div class="center"><sub>Left: <b>Cube to the target</b> (2 commands, 2×). Right: <b>Cube on the can</b> (2 commands, 2×).</sub></div>
 
 <div class="note why"><b>Play with it.</b> The robot runs live on the <a href="https://theundercover01.github.io/ayushdeshmukh/projects/play/">play page</a> when my GPU is on. Three games:</div>
 <ul>
@@ -301,7 +302,7 @@
 </div>
 <div class="center"><sub>Push · Pick up · Put down · Put on the other object</sub></div>
 
-<p class="paper-text">43 usable phone clips of me with a real cube and a crisps (only original flavour was available at Tesco lol) can: 12 pushes, 10 pick-ups, 21 put-downs, never two skills in a row. ArUco markers on each object, the target and a calibration marker give each object's position and orientation on the table in every frame.</p>
+<p class="paper-text">43 usable phone clips of me with a real cube and a crisps (only original flavour was available at Tesco lol) can: 12 pushes, 10 pick-ups, 21 put-downs, I never record two skills in a row. ArUco markers on each object, the target and a calibration marker give each object's position and orientation on the table in every frame.</p>
 <h3 id="22-how-is-the-reward-inferred-from-the-clips">2.2 How is the reward inferred from the clips?</h3>
 <div class="center">
   <video class="v" src="videos/clip_to_template.mp4" poster="videos/clip_to_template.jpg" style="width:100%" data-autoplay autoplay muted loop controls playsinline preload="metadata"></video>
@@ -314,10 +315,10 @@
 <li><strong>Exploration.</strong> With an object-only reward the signal is zero until first contact; a run from the robot initial pose learned absolutely nothing for 504 iterations :(. I prepend a gripper → object leg (straight-line reference from the TCP to the object centre, same 3 cm tube) and randomize the initial arm configuration every episode.</li>
 <li><strong>Reward hacking.</strong> The teacher then solved <em>push</em> by grasp-and-carry (85 of 100 push episodes lifted the object &gt; 3 cm). A lift penalty that is active only during push commands removed it (0 of 100). </li>
 </ul>
-<p class="paper-text">Before this reward I tried writing a separate reward by hand for each task, and the RL policy found a loophole in every one. Rewarding grasping and carrying made it open and close the gripper right at the release threshold to collect both rewards, without ever finishing. Rewarding distance to the goal made it push the cube onto the target instead of lifting it (see <a href="#45-what-didnt-work">What didn't work</a>). The keypoint reward uses the same formula for every command; only the template changes. There are three templates, one per skill (push, pick up, put down), each measured from the clips. The current command picks the template and fills in the rest: <em>put the cube on the cylinder</em> uses the put-down template, applied to the cube, ending on top of the cylinder. Chaining commands just switches templates. It only scores where the object goes, so it doesn't depend on the robot's body.</p>
+<p class="paper-text">Before this reward I tried writing a separate reward by hand for each task, and the RL policy found a loophole in every one. Rewarding grasping and carrying made it open and close the gripper right at the release threshold to collect both rewards, without ever finishing. Rewarding distance to the goal made it push the cube onto the target instead of lifting it (see <a href="#45-what-didnt-work">What didn't work</a>). The keypoint reward uses the same formula for every command; only the template changes. There are three templates, one per skill (push, pick up, put down), each is measured from the clips. The current command picks the template and fills in the rest: <em>put the cube on the cylinder</em> uses the put-down template, applied to the cube, ending on top of the cylinder. Chaining commands just switches templates. It only scores where the object goes, so it doesn't depend on the robot's body.</p>
 <div class="note why"><b>You might be wondering how I make sure the commands come in a sensible order:</b> no two pushes in a row, and no put-down before a pick-up. Every training episode starts with the hand empty (a random arm pose; in 10% one object already stacked on the other), so the first command is always a pick-up or a push. The second command follows a fixed rule: after <em>pick up X</em> comes <em>put X down</em> (on the target or on the other object); after a push comes a pick-up. So the teacher never sees two pushes, a push after a pick-up, or a put-down of something it isn't holding. The long evaluation sentences and the sentence builder in the games follow the same rules.</div>
 <h3 id="23-rl-teacher">2.3 RL teacher</h3>
-<p class="paper-text">A Franka Panda in Isaac Lab, PPO with 16,384 simulated robots in parallel, 1000 iterations. The teacher's observations are: the exact object positions, the next point on the path and the current command. Each episode has one or two commands, so it learns every skill and the handoff between two of them.</p>
+<p class="paper-text">A Franka Panda in Isaac Lab, PPO with 16,384 simulated robots in parallel, 1000 iterations. The teachers observations are: the exact object positions, the next point on the path and the current command. Each episode has one or two commands, so it learns every skill and the handoff between two of them.</p>
 <p class="paper-text">RL is cheap here because the teacher sees everything. Running RL directly on a 450M-parameter model that only sees images would be far slower, so the teacher does the trial and error, and distillation turns it into a data source: I can record as many labelled episodes as I want, from any layout.</p>
 <h3 id="24-distillation">2.4 Distillation</h3>
 <p class="paper-text">SmolVLA, starting from the public <code>smolvla_base</code> weights, trained for 32K steps on 4,500 teacher episodes. It sees a front camera, a wrist camera and the sentence: no positions and no step counter.</p>
