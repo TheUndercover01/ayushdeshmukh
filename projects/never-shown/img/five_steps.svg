@@ -1,0 +1,49 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 250" width="1000" height="250">
+<rect x="184" y="120.5" width="22" height="3" fill="#211d19"/>
+<rect x="13" y="29" width="176" height="200" rx="7" fill="#211d19"/>
+<rect x="6" y="22" width="176" height="200" rx="7" fill="#fffdf8" stroke="#211d19" stroke-width="3"/>
+<circle cx="94.0" cy="22" r="14" fill="#e8bd2a" stroke="#211d19" stroke-width="2.5"/>
+<text x="94.0" y="27.5" text-anchor="middle" font-family="Space Grotesk, Helvetica Neue, Arial, sans-serif" font-size="15" font-weight="800" fill="#211d19">1</text>
+<g transform="translate(75.0,50) scale(1.6)" fill="none" stroke="#211d19" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="6" y="2.5" width="12" height="19" rx="2.5"/><circle cx="12" cy="8" r="2.6"/><path d="M10 18.5h4"/></g>
+<text x="94.0" y="124" text-anchor="middle" font-family="Space Grotesk, Helvetica Neue, Arial, sans-serif" font-size="16" font-weight="700" fill="#211d19">Film atomic skills</text>
+<text x="94.0" y="152" text-anchor="middle" font-family="Source Serif 4, Georgia, serif" font-size="14" fill="#726657">Push, pick up, put down.</text>
+<text x="94.0" y="171" text-anchor="middle" font-family="Source Serif 4, Georgia, serif" font-size="14" fill="#726657">One skill per clip.</text>
+<rect x="386" y="120.5" width="22" height="3" fill="#211d19"/>
+<rect x="215" y="29" width="176" height="200" rx="7" fill="#211d19"/>
+<rect x="208" y="22" width="176" height="200" rx="7" fill="#fffdf8" stroke="#211d19" stroke-width="3"/>
+<circle cx="296.0" cy="22" r="14" fill="#e8bd2a" stroke="#211d19" stroke-width="2.5"/>
+<text x="296.0" y="27.5" text-anchor="middle" font-family="Space Grotesk, Helvetica Neue, Arial, sans-serif" font-size="15" font-weight="800" fill="#211d19">2</text>
+<g transform="translate(277.0,50) scale(1.6)" fill="none" stroke="#211d19" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="5"/><circle cx="12" cy="12" r="1.3"/></g>
+<text x="296.0" y="124" text-anchor="middle" font-family="Space Grotesk, Helvetica Neue, Arial, sans-serif" font-size="16" font-weight="700" fill="#211d19">Infer the reward</text>
+<text x="296.0" y="152" text-anchor="middle" font-family="Source Serif 4, Georgia, serif" font-size="14" fill="#726657">The object's tracked path</text>
+<text x="296.0" y="171" text-anchor="middle" font-family="Source Serif 4, Georgia, serif" font-size="14" fill="#726657">becomes the reward.</text>
+<rect x="588" y="120.5" width="22" height="3" fill="#211d19"/>
+<rect x="417" y="29" width="176" height="200" rx="7" fill="#211d19"/>
+<rect x="410" y="22" width="176" height="200" rx="7" fill="#fffdf8" stroke="#211d19" stroke-width="3"/>
+<circle cx="498.0" cy="22" r="14" fill="#e8bd2a" stroke="#211d19" stroke-width="2.5"/>
+<text x="498.0" y="27.5" text-anchor="middle" font-family="Space Grotesk, Helvetica Neue, Arial, sans-serif" font-size="15" font-weight="800" fill="#211d19">3</text>
+<g transform="translate(479.0,50) scale(1.6)" fill="none" stroke="#211d19" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 18 9 12l4 3 7-9"/><path d="M15 6h5v5"/></g>
+<text x="498.0" y="124" text-anchor="middle" font-family="Space Grotesk, Helvetica Neue, Arial, sans-serif" font-size="16" font-weight="700" fill="#211d19">Train an RL teacher</text>
+<text x="498.0" y="152" text-anchor="middle" font-family="Source Serif 4, Georgia, serif" font-size="14" fill="#726657">16,384 simulated robots</text>
+<text x="498.0" y="171" text-anchor="middle" font-family="Source Serif 4, Georgia, serif" font-size="14" fill="#726657">learn each skill and</text>
+<text x="498.0" y="190" text-anchor="middle" font-family="Source Serif 4, Georgia, serif" font-size="14" fill="#726657">the handoff.</text>
+<rect x="790" y="120.5" width="22" height="3" fill="#211d19"/>
+<rect x="619" y="29" width="176" height="200" rx="7" fill="#211d19"/>
+<rect x="612" y="22" width="176" height="200" rx="7" fill="#fffdf8" stroke="#211d19" stroke-width="3"/>
+<circle cx="700.0" cy="22" r="14" fill="#e8bd2a" stroke="#211d19" stroke-width="2.5"/>
+<text x="700.0" y="27.5" text-anchor="middle" font-family="Space Grotesk, Helvetica Neue, Arial, sans-serif" font-size="15" font-weight="800" fill="#211d19">4</text>
+<g transform="translate(681.0,50) scale(1.6)" fill="none" stroke="#211d19" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M2.5 12s3.5-6.5 9.5-6.5S21.5 12 21.5 12s-3.5 6.5-9.5 6.5S2.5 12 2.5 12z"/><circle cx="12" cy="12" r="2.8"/></g>
+<text x="700.0" y="124" text-anchor="middle" font-family="Space Grotesk, Helvetica Neue, Arial, sans-serif" font-size="16" font-weight="700" fill="#211d19">Distill into a VLA</text>
+<text x="700.0" y="152" text-anchor="middle" font-family="Source Serif 4, Georgia, serif" font-size="14" fill="#726657">It copies the teacher</text>
+<text x="700.0" y="171" text-anchor="middle" font-family="Source Serif 4, Georgia, serif" font-size="14" fill="#726657">from cameras and</text>
+<text x="700.0" y="190" text-anchor="middle" font-family="Source Serif 4, Georgia, serif" font-size="14" fill="#726657">the sentence.</text>
+<rect x="821" y="29" width="176" height="200" rx="7" fill="#211d19"/>
+<rect x="814" y="22" width="176" height="200" rx="7" fill="#e8bd2a" stroke="#211d19" stroke-width="3"/>
+<circle cx="902.0" cy="22" r="14" fill="#e8bd2a" stroke="#211d19" stroke-width="2.5"/>
+<text x="902.0" y="27.5" text-anchor="middle" font-family="Space Grotesk, Helvetica Neue, Arial, sans-serif" font-size="15" font-weight="800" fill="#211d19">5</text>
+<g transform="translate(883.0,50) scale(1.6)" fill="none" stroke="#211d19" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12.5 9.5 18 20 6.5"/></g>
+<text x="902.0" y="124" text-anchor="middle" font-family="Space Grotesk, Helvetica Neue, Arial, sans-serif" font-size="16" font-weight="700" fill="#211d19">Compose new tasks</text>
+<text x="902.0" y="152" text-anchor="middle" font-family="Source Serif 4, Georgia, serif" font-size="14" fill="#211d19">One sentence, six</text>
+<text x="902.0" y="171" text-anchor="middle" font-family="Source Serif 4, Georgia, serif" font-size="14" fill="#211d19">commands, never</text>
+<text x="902.0" y="190" text-anchor="middle" font-family="Source Serif 4, Georgia, serif" font-size="14" fill="#211d19">demonstrated.</text>
+</svg>
