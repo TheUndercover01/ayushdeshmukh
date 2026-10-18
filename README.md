@@ -3,11 +3,7 @@
 Plain HTML/CSS/JS, no build step. Style: "Paper & Ink × Brutalist" — every
 component mixes hand-drawn touches (rotation, handwritten labels, a
 polaroid photo) with brutalist ones (thick borders, hard offset shadows)
-at once. The About page has a small robot (assets/js/robot.js) that fumbles
-its first wave, says hi from the hero, follows the cursor with its eyes,
-reacts when poked, naps after 10s idle and reacts to the dark-mode toggle.
-On screens smaller than 1200×900, extra robots peek up from behind each
-section's first card and celebrate; one waves goodbye from the footer.
+at once.
 
 ## Run it locally
 
@@ -20,7 +16,7 @@ Then open http://localhost:8000/.
 ## Structure
 
 ```
-index.html                     About: photo, bio, notes, publications preview, projects preview, robots
+index.html                     About: photo, bio, notes, publications preview, projects preview
 publications.html              Full publication list with BibTeX (click "BibTeX" to expand, "Copy" to copy)
 cv.html                        Education / experience timeline + CV download button
 projects/
@@ -32,7 +28,6 @@ blog/
 assets/
   css/style.css                Shared stylesheet (all pages)
   js/main.js                   Mobile nav, light/dark toggle, BibTeX show/copy (all pages)
-  js/robot.js                  The robots (index.html only)
   img/                         Photos, project figures
   papers/                      Paper PDFs
   cv.pdf                       ← add your CV PDF here (referenced by cv.html)
